@@ -3,342 +3,85 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🚀 SMART LIBRARY PJ Manager - AUTO + BOOLEAN</title>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    <title>Maintenance - Coimbatore Site</title>
     <style>
-        * { box-sizing: border-box; }
-        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: linear-gradient(135deg, #0f0f23 0%, #2a1a3d 50%, #1a0f2e 100%); color: #e2e8f0; min-height: 100vh; }
-        .container { max-width: 1600px; margin: 0 auto; padding: 20px; }
-        .login { max-width: 420px; margin: 100px auto; padding: 40px; background: rgba(255,255,255,0.1); backdrop-filter: blur(20px); border-radius: 20px; box-shadow: 0 25px 50px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2); }
-        .checkbox-group { display: flex; align-items: center; gap: 10px; margin: 15px 0; padding: 12px; background: rgba(255,255,255,0.1); border-radius: 8px; }
-        .toggle-btn { width: 50px; height: 28px; background: #4a5568; border-radius: 14px; position: relative; cursor: pointer; transition: all 0.3s; }
-        .toggle-btn.active { background: #10b981; }
-        .toggle-slider { width: 24px; height: 24px; background: white; border-radius: 50%; position: absolute; top: 2px; left: 2px; transition: transform 0.3s; }
-        .toggle-btn.active .toggle-slider { transform: translateX(22px); }
-        input { width: 100%; padding: 15px; margin: 12px 0; border: none; border-radius: 12px; background: rgba(255,255,255,0.9); font-size: 16px; transition: all 0.3s; }
-        button { width: 100%; padding: 15px; background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s; margin: 10px 0; }
-        button:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 15px 30px rgba(59,130,246,0.4); }
-        .dashboard { display: none; background: rgba(255,255,255,0.05); backdrop-filter: blur(20px); border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); overflow: hidden; }
-        .header { background: linear-gradient(135deg, #1e3a8a, #1e40af); padding: 25px 30px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
-        .header h1 { margin: 0; font-size: 28px; display: flex; align-items: center; gap: 12px; }
-        .status { padding: 15px 25px; background: rgba(16,185,129,0.2); border-radius: 12px; margin: 20px; text-align: center; border-left: 5px solid #10b981; }
-        .kanban { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; padding: 40px; min-height: 600px; }
-        .column { background: rgba(255,255,255,0.08); border-radius: 16px; padding: 25px; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.15); transition: all 0.3s; }
-        .column h3 { margin: 0 0 25px 0; font-size: 20px; color: #60a5fa; font-weight: 700; }
-        .task { background: rgba(255,255,255,0.15); margin: 15px 0; padding: 20px; border-radius: 12px; cursor: grab; transition: all 0.3s; border-left: 5px solid #10b981; }
-        .task:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
-        .task .boolean-row { display: flex; gap: 15px; margin: 10px 0; flex-wrap: wrap; }
-        .task.high { border-left-color: #ef4444; }
-        .progress-container { background: rgba(0,0,0,0.3); height: 8px; border-radius: 4px; margin: 12px 0; }
-        .progress-bar { height: 100%; background: linear-gradient(90deg, #10b981, #059669); transition: width 0.4s; border-radius: 4px; }
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 20px; margin-bottom: 30px; }
-        .stat-card { background: linear-gradient(135deg, rgba(59,130,246,0.2), rgba(29,78,216,0.2)); padding: 25px; border-radius: 16px; text-align: center; }
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 2000; }
-        .modal-content { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(255,255,255,0.15); padding: 40px; border-radius: 20px; max-width: 600px; width: 90%; }
-        .notification { position: fixed; top: 30px; right: 30px; padding: 20px 25px; background: linear-gradient(135deg, #10b981, #059669); color: white; border-radius: 12px; transform: translateX(400px); transition: transform 0.4s; z-index: 3000; }
-        .notification.show { transform: translateX(0); }
-        .notification.error { background: linear-gradient(135deg, #ef4444, #dc2626); }
-        @media (max-width: 768px) { .kanban { grid-template-columns: 1fr; } .header { flex-direction: column; text-align: center; } }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #ff6b35, #f7931e);
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 600px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 50px 30px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            color: #ff6b35;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        
+        .icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+        
+        p {
+            font-size: 1.2em;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        
+        .location {
+            color: #f7931e;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+        
+        .coming-soon {
+            background: #ff6b35;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 50px;
+            display: inline-block;
+            margin-top: 30px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        @media (max-width: 768px) {
+            h1 { font-size: 2em; }
+            .icon { font-size: 3em; }
+            p { font-size: 1em; }
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <div id="login" class="login">
-            <h2>🚀 SMART LIBRARY PJ Manager</h2>
-            
-            <!-- ✅ AUTO LOGIN TOGGLE -->
-            <div class="checkbox-group">
-                <label style="font-size: 16px; cursor: pointer;">🅰️ Auto Login</label>
-                <div class="toggle-btn" id="autoLoginToggle" onclick="toggleAutoLogin()">
-                    <div class="toggle-slider"></div>
-                </div>
-            </div>
-
-            <input type="text" id="username" placeholder="👤 admin / student1">
-            <input type="password" id="password" placeholder="🔒 admin123 / student123">
-            <button id="loginBtn" onclick="login()">🔐 Quick Login</button>
-            
-            <!-- ✅ QUICK BUTTONS -->
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px;">
-                <button onclick="quickLogin('admin')" style="font-size: 14px; padding: 12px;">👨‍💼 Admin</button>
-                <button onclick="quickLogin('student1')" style="font-size: 14px; padding: 12px;">👩‍🎓 Student1</button>
-            </div>
-            
-            <div id="status" style="font-size: 14px; text-align: center; margin-top: 15px; color: #10b981;">✅ Ready - Try Quick Buttons!</div>
-        </div>
-
-        <div id="adminDash" class="dashboard">
-            <div class="header">
-                <h1>👨‍💼 Library Admin</h1>
-                <div style="display: flex; gap: 10px; align-items: center;">
-                    <span id="adminStats" style="font-size: 18px;"></span>
-                    <span style="background: #10b981; padding: 6px 12px; border-radius: 20px; font-size: 12px;">🟢 LIVE</span>
-                    <button onclick="showAddTask()">➕ New Task</button>
-                    <button onclick="logout()">🚪 Logout</button>
-                </div>
-            </div>
-            <div class="status">
-                <strong>🔥 FIREBASE LIVE:</strong> <span id="liveCount">0</span> tasks | Auto-sync enabled
-            </div>
-            <div class="stats-grid">
-                <div class="stat-card"><h3 id="totalTasks">0</h3><p>📚 Total Tasks</p></div>
-                <div class="stat-card"><h3 id="doneTasks">0</h3><p>✅ Completed</p></div>
-                <div class="stat-card"><h3 id="urgentTasks">0</h3><p>🚨 Urgent</p></div>
-                <div class="stat-card"><h3 id="completeTasks">0</h3><p>☑️ Complete %</p></div>
-            </div>
-            <div class="kanban" id="kanbanBoard">
-                <div class="column" id="todo" ondrop="drop(event)" ondragover="allowDrop(event)"><h3>📚 To Do</h3></div>
-                <div class="column" id="progress" ondrop="drop(event)" ondragover="allowDrop(event)"><h3>⚡ In Progress</h3></div>
-                <div class="column" id="review" ondrop="drop(event)" ondragover="allowDrop(event)"><h3>🔍 Review</h3></div>
-                <div class="column" id="done" ondrop="drop(event)" ondragover="allowDrop(event)"><h3>✅ Done</h3></div>
-            </div>
-        </div>
-
-        <div id="studentDash" class="dashboard">
-            <div class="header">
-                <h1>👩‍🎓 Student Dashboard</h1>
-                <div style="display: flex; gap: 10px; align-items: center;">
-                    <span id="studentStats"></span>
-                    <span style="background: #10b981; padding: 6px 12px; border-radius: 20px;">🟢 LIVE</span>
-                    <button onclick="logout()">🚪 Logout</button>
-                </div>
-            </div>
-            <div class="status">
-                <strong>📚 My Tasks:</strong> <span id="myTasks">0</span> assigned projects
-            </div>
-            <div class="kanban" id="studentBoard"></div>
-        </div>
-
-        <div id="addTaskModal" class="modal">
-            <div class="modal-content">
-                <h2>➕ Create Library Task</h2>
-                <!-- ✅ BOOLEAN TOGGLES FOR TASK -->
-                <div class="boolean-row">
-                    <div class="checkbox-group">
-                        <label>📦 Physical Book</label>
-                        <div class="toggle-btn" id="physicalToggle"><div class="toggle-slider"></div></div>
-                    </div>
-                    <div class="checkbox-group">
-                        <label>📱 E-Book</label>
-                        <div class="toggle-btn" id="ebookToggle"><div class="toggle-slider"></div></div>
-                    </div>
-                </div>
-                <input type="text" id="newTaskName" placeholder="📖 Task Title">
-                <input type="text" id="newTaskStudent" placeholder="👤 Student (student1)">
-                <select id="newTaskPriority">
-                    <option value="normal">Normal</option>
-                    <option value="high">High 🚨</option>
-                </select>
-                <input type="date" id="newTaskDeadline">
-                <textarea id="newTaskDesc" placeholder="📝 Description" rows="3"></textarea>
-                <div style="display: flex; gap: 10px; margin-top: 20px;">
-                    <button onclick="createTask()" style="flex: 1;">✅ Save to Firebase</button>
-                    <button onclick="closeModal()" style="flex: 1; background: #6b7280;">❌ Cancel</button>
-                </div>
-            </div>
-        </div>
+        <div class="icon">🔧</div>
+        <h1>We're Under Maintenance</h1>
+        <p>Our Coimbatore team is working hard to bring you an even better experience!</p>
+        <p class="location">🌟 From Coimbatore, Tamil Nadu with ❤️</p>
+        <p>We'll be back online shortly. Thank you for your patience!</p>
+        <div class="coming-soon">Coming Soon!</div>
     </div>
-    <div id="notification" class="notification"></div>
-
-    <script>
-        // 🔥 FIREBASE CONFIG
-        const firebaseConfig = {
-            apiKey: "AIzaSyA7eoeeSQjQ4WkW7yII-EuPzzjYyt7njZw",
-            authDomain: "smart-librery-system.firebaseapp.com",
-            databaseURL: "https://smart-librery-system-default-rtdb.firebaseio.com",
-            projectId: "smart-librery-system",
-            storageBucket: "smart-librery-system.appspot.com",
-            messagingSenderId: "743750444687",
-            appId: "1:743750444687:web:9f385eadfad58d762bb2fa"
-        };
-
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
-        
-        // ✅ USERS
-        const VALID_USERS = {
-            'admin': { password: 'admin123', role: 'admin', name: 'Library Admin' },
-            'student1': { password: 'student123', role: 'student', name: 'Student One' },
-            'student2': { password: 'student223', role: 'student', name: 'Student Two' }
-        };
-
-        let currentUser = '', isAdmin = false, tasks = [], autoLogin = localStorage.getItem('autoLogin') === 'true';
-
-        // 🔥 REALTIME SYNC
-        db.ref('tasks').on('value', snapshot => {
-            tasks = snapshot.val() ? Object.values(snapshot.val()) : [];
-            if (currentUser) updateUI();
-        });
-
-        // ✅ AUTO LOGIN ON LOAD
-        window.addEventListener('load', async () => {
-            if (autoLogin && localStorage.getUser) {
-                currentUser = localStorage.getUser;
-                isAdmin = VALID_USERS[currentUser]?.role === 'admin';
-                showDashboard();
-                notify('✅ Auto Login Active!');
-                return;
-            }
-            
-            // Seed data
-            try {
-                const snap = await db.ref('tasks').once('value');
-                if (!snap.exists()) {
-                    await db.ref('tasks').set({
-                        task1: { id: 'task1', name: '📚 Catalog System', assignee: 'student1', status: 'todo', priority: 'high', progress: 20, deadline: '2026-03-05', description: 'Library database design', physicalBook: true, ebook: false },
-                        task2: { id: 'task2', name: '🔍 Search Feature', assignee: 'student2', status: 'progress', priority: 'normal', progress: 65, deadline: '2026-03-10', description: 'Advanced search', physicalBook: false, ebook: true }
-                    });
-                }
-                document.getElementById('status').textContent = '✅ Firebase Live + Ready';
-            } catch(e) {
-                document.getElementById('status').textContent = '⚠️ Check Firebase Rules';
-            }
-            
-            if (autoLogin) toggleAutoLogin(); // Enable toggle
-        });
-
-        // ✅ QUICK LOGIN FUNCTIONS
-        function quickLogin(user) {
-            document.getElementById('username').value = user;
-            document.getElementById('password').value = VALID_USERS[user].password;
-            login();
-        }
-
-        function login() {
-            const username = document.getElementById('username').value.trim();
-            const password = document.getElementById('password').value;
-            
-            if (VALID_USERS[username] && VALID_USERS[username].password === password) {
-                currentUser = username;
-                isAdmin = VALID_USERS[username].role === 'admin';
-                localStorage.setItem('getUser', username);
-                
-                if (document.getElementById('autoLoginToggle').classList.contains('active')) {
-                    localStorage.setItem('autoLogin', 'true');
-                }
-                
-                document.getElementById('login').style.display = 'none';
-                showDashboard();
-                notify('✅ Welcome ' + VALID_USERS[username].name);
-            } else {
-                notify('❌ Invalid credentials', 'error');
-            }
-        }
-
-        function toggleAutoLogin() {
-            const toggle = document.getElementById('autoLoginToggle');
-            toggle.classList.toggle('active');
-            autoLogin = toggle.classList.contains('active');
-            localStorage.setItem('autoLogin', autoLogin);
-            notify(autoLogin ? '✅ Auto Login ON' : '❌ Auto Login OFF');
-        }
-
-        // ✅ RENDERING (with BOOLEAN TOGGLES)
-        function createTaskElement(task) {
-            const div = document.createElement('div');
-            div.className = `task ${task.priority || 'normal'}`;
-            div.draggable = true;
-            div.dataset.id = task.id;
-            div.ondragstart = drag;
-            
-            div.innerHTML = `
-                <strong>${task.name}</strong>
-                <div class="progress-container">
-                    <div class="progress-bar" style="width: ${task.progress || 0}%"></div>
-                </div>
-                <small>👤 ${task.assignee} | ${task.priority?.toUpperCase()}</small>
-                ${task.description ? `<p>${task.description}</p>` : ''}
-                
-                <!-- ✅ BOOLEAN TOGGLES -->
-                <div class="boolean-row">
-                    <div class="checkbox-group">
-                        <label>📦 Physical</label>
-                        <div class="toggle-btn ${task.physicalBook ? 'active' : ''}" onclick="toggleBoolean('${task.id}', 'physicalBook')">
-                            <div class="toggle-slider"></div>
-                        </div>
-                    </div>
-                    <div class="checkbox-group">
-                        <label>📱 E-Book</label>
-                        <div class="toggle-btn ${task.ebook ? 'active' : ''}" onclick="toggleBoolean('${task.id}', 'ebook')">
-                            <div class="toggle-slider"></div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div style="margin-top: 10px; display: flex; gap: 8px;">
-                    ${isAdmin ? `<button onclick="deleteTask('${task.id}')" style="padding: 5px 10px; background: #ef4444;">🗑️</button>` : ''}
-                    <button onclick="updateProgress('${task.id}')" style="padding: 5px 12px; background: #10b981;">+25%</button>
-                </div>
-            `;
-            return div;
-        }
-
-        async function toggleBoolean(taskId, field) {
-            const taskRef = db.ref(`tasks/${taskId}`);
-            await taskRef.transaction(task => {
-                if (task) {
-                    task[field] = !task[field];
-                }
-                return task;
-            });
-        }
-
-        // ... rest of functions remain same (drag/drop, stats, etc.)
-        function showDashboard() { /* same as before */ }
-        function updateUI() { /* same as before */ }
-        function renderKanban() { /* same as before */ }
-        function renderStudentView() { /* same as before */ }
-        function allowDrop(e) { e.preventDefault(); }
-        function drag(e) { e.dataTransfer.setData('text', e.target.dataset.id); }
-        async function drop(e) {
-            const taskId = e.dataTransfer.getData('text');
-            const status = e.currentTarget.id;
-            await db.ref(`tasks/${taskId}`).update({ status });
-            notify(`✅ Moved to ${status}`);
-        }
-        async function updateProgress(id) {
-            const taskRef = db.ref(`tasks/${id}`);
-            const snap = await taskRef.once('value');
-            const task = snap.val();
-            await taskRef.update({ progress: Math.min((task.progress || 0) + 25, 100) });
-        }
-        async function deleteTask(id) {
-            if (confirm('Delete?')) await db.ref(`tasks/${id}`).remove();
-        }
-        async function createTask() {
-            const taskId = 'task' + Date.now();
-            await db.ref(`tasks/${taskId}`).set({
-                id: taskId, name: document.getElementById('newTaskName').value,
-                assignee: document.getElementById('newTaskStudent').value,
-                priority: document.getElementById('newTaskPriority').value,
-                deadline: document.getElementById('newTaskDeadline').value,
-                description: document.getElementById('newTaskDesc').value,
-                progress: 0, status: 'todo', physicalBook: false, ebook: false
-            });
-            closeModal();
-        }
-        function showAddTask() {
-            if (!isAdmin) return notify('❌ Admin only!', 'error');
-            document.getElementById('addTaskModal').style.display = 'block';
-            document.getElementById('newTaskDeadline').valueAsDate = new Date(Date.now() + 7*24*60*60*1000);
-        }
-        function closeModal() {
-            document.getElementById('addTaskModal').style.display = 'none';
-            document.querySelectorAll('#addTaskModal input, #addTaskModal textarea').forEach(el => el.value = '');
-        }
-        function notify(msg, type = 'success') {
-            const n = document.getElementById('notification');
-            n.textContent = msg;
-            n.className = `notification show ${type}`;
-            setTimeout(() => n.classList.remove('show'), 3000);
-        }
-        function logout() {
-            currentUser = ''; isAdmin = false;
-            document.querySelectorAll('.dashboard, .modal').forEach(el => el.style.display = 'none');
-            document.getElementById('login').style.display = 'block';
-        }
-        document.addEventListener('keypress', e => e.key === 'Enter' && login());
-    </script>
 </body>
 </html>
