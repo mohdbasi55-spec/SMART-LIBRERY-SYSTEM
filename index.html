@@ -1,11 +1,27 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>College Library - Advanced Dashboard</title>
+    <title>College Library - UniShelf</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; }
-        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; }
+        
+        /* LOGIN PAGE */
+        .login-container { display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .login-box { background: rgba(255,255,255,0.95); backdrop-filter: blur(20px); padding: 50px; border-radius: 25px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); width: 100%; max-width: 400px; text-align: center; }
+        .login-box h2 { margin-bottom: 30px; color: #2c3e50; font-size: 2em; }
+        .login-input { width: 100%; padding: 18px; margin: 15px 0; border: 2px solid #e1e8ed; border-radius: 15px; font-size: 16px; transition: all 0.3s; }
+        .login-input:focus { outline: none; border-color: #667eea; box-shadow: 0 0 20px rgba(102, 126, 234, 0.2); }
+        .login-btn { width: 100%; padding: 18px; background: linear-gradient(45deg, #667eea, #764ba2); color: white; border: none; border-radius: 15px; font-size: 18px; font-weight: bold; cursor: pointer; transition: all 0.3s; }
+        .login-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4); }
+        .user-type { display: flex; margin: 20px 0; gap: 15px; justify-content: center; }
+        .user-radio { display: none; }
+        .user-label { padding: 12px 25px; background: #f8f9fa; border-radius: 25px; cursor: pointer; transition: all 0.3s; font-weight: 500; }
+        .user-label:hover { background: #e9ecef; }
+        .user-radio:checked + .user-label { background: linear-gradient(45deg, #667eea, #764ba2); color: white; }
+
+        /* DASHBOARD PAGE */
+        .dashboard { display: none; padding: 20px; max-width: 1400px; margin: 0 auto; }
         .header { background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); padding: 30px; border-radius: 20px; text-align: center; color: white; margin-bottom: 30px; }
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin: 30px 0; }
         .stat-card { background: rgba(255,255,255,0.2); padding: 25px; border-radius: 15px; text-align: center; }
@@ -25,21 +41,46 @@
         .btn-primary { background: #3498db; color: white; }
         .btn-success { background: #27ae60; color: white; }
         .btn-danger { background: #e74c3c; color: white; }
+        .logout { position: fixed; top: 20px; right: 20px; background: rgba(255,255,255,0.2); color: white; padding: 10px 20px; border-radius: 25px; cursor: pointer; }
         .analytics { background: rgba(255,255,255,0.1); padding: 30px; border-radius: 20px; margin: 30px 0; }
-        canvas { max-height: 300px; }
     </style>
 </head>
 <body>
-    <div class="container">
+    <!-- LOGIN PAGE -->
+    <div class="login-container" id="loginPage">
+        <div class="login-box">
+            <h2>📚 College Library</h2>
+            <p style="color: #666; margin-bottom: 30px;">UniShelf Advanced System</p>
+            
+            <div class="user-type">
+                <input type="radio" id="admin" name="userType" class="user-radio" value="admin" checked>
+                <label for="admin" class="user-label">Admin</label>
+                
+                <input type="radio" id="student" name="userType" class="user-radio" value="student">
+                <label for="student" class="user-label">Student</label>
+            </div>
+
+            <form id="loginForm">
+                <input type="text" class="login-input" id="username" placeholder="Username/ID" required>
+                <input type="password" class="login-input" id="password" placeholder="Password" required>
+                <button type="submit" class="login-btn">Login →</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- DASHBOARD PAGE -->
+    <div class="dashboard" id="dashboard">
+        <div class="logout" onclick="logout()">Logout</div>
+        
         <div class="header">
-            <h1>📚 College Library Dashboard</h1>
-            <p>UniShelf Advanced | Real-time Book Tracking</p>
+            <h1>📚 Library Dashboard</h1>
+            <p id="userGreeting">Welcome, Admin!</p>
         </div>
 
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-number" id="totalBooks">1,247</div>
-                <div>Books</div>
+                <div>Total Books</div>
             </div>
             <div class="stat-card">
                 <div class="stat-number" id="issuedBooks">89</div>
@@ -64,13 +105,11 @@
             <canvas id="activityChart" width="400" height="200"></canvas>
         </div>
 
-        <div class="books-grid" id="booksGrid">
-            <!-- Books populated by JavaScript -->
-        </div>
+        <div class="books-grid" id="booksGrid"></div>
     </div>
 
     <script>
-        // Sample data (connects to UniShelf API in production)
+        // Sample data
         const booksData = [
             {id:1, title:"LibreOffice Writer Guide", author:"LibreOffice Team", isbn:"978-1-234567-89-0", copies:5, available:5, status:"available"},
             {id:2, title:"Calc Manual", author:"LibreOffice Team", isbn:"978-1-234567-90-6", copies:3, available:1, status:"issued"},
@@ -78,7 +117,38 @@
             {id:4, title:"Base Database Guide", author:"LibreOffice Team", isbn:"978-1-234567-92-0", copies:2, available:2, status:"available"}
         ];
 
-        // Real-time stats
+        // Login functionality
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const userType = document.querySelector('input[name="userType"]:checked').value;
+
+            // Simple demo login (admin/admin or student/1234)
+            if ((username === 'admin' && password === 'admin') || (username === 'student' && password === '1234')) {
+                document.getElementById('loginPage').style.display = 'none';
+                document.getElementById('dashboard').style.display = 'block';
+                document.getElementById('userGreeting').textContent = `Welcome, ${username}! (${userType})`;
+                initDashboard();
+            } else {
+                alert('Invalid credentials! Try: admin/admin or student/1234');
+            }
+        });
+
+        function logout() {
+            document.getElementById('loginPage').style.display = 'flex';
+            document.getElementById('dashboard').style.display = 'none';
+            document.getElementById('loginForm').reset();
+        }
+
+        // Dashboard functions
+        function initDashboard() {
+            updateStats();
+            renderBooks(booksData);
+            drawChart();
+            setupSearch();
+        }
+
         function updateStats() {
             document.getElementById('totalBooks').textContent = booksData.reduce((sum, b) => sum + b.copies, 0);
             document.getElementById('issuedBooks').textContent = booksData.filter(b => b.status !== 'available').length;
@@ -86,7 +156,6 @@
             document.getElementById('activeUsers').textContent = Math.floor(Math.random() * 200) + 100;
         }
 
-        // Render books
         function renderBooks(books) {
             const grid = document.getElementById('booksGrid');
             grid.innerHTML = books.map(book => `
@@ -99,37 +168,29 @@
                         <br>
                         <button class="btn btn-${book.status === 'available' ? 'success' : 'danger'} issue-btn" 
                                 onclick="handleAction(${book.id}, '${book.status}')">
-                            ${book.status === 'available' ? 'Issue' : 'Return'}
+                            ${book.status === 'available' ? 'Issue Book' : 'Return Book'}
                         </button>
-                        <button class="btn btn-primary" onclick="viewDetails(${book.id})">Details</button>
                     </div>
                 </div>
             `).join('');
         }
 
-        // Search functionality
-        document.getElementById('searchInput').addEventListener('input', (e) => {
-            const query = e.target.value.toLowerCase();
-            const filtered = booksData.filter(book => 
-                book.title.toLowerCase().includes(query) || 
-                book.author.toLowerCase().includes(query) ||
-                book.isbn.includes(query)
-            );
-            renderBooks(filtered);
-        });
+        function setupSearch() {
+            document.getElementById('searchInput').addEventListener('input', (e) => {
+                const query = e.target.value.toLowerCase();
+                const filtered = booksData.filter(book => 
+                    book.title.toLowerCase().includes(query) || 
+                    book.author.toLowerCase().includes(query) ||
+                    book.isbn.includes(query)
+                );
+                renderBooks(filtered);
+            });
+        }
 
-        // Book actions
         function handleAction(id, status) {
-            alert(`${status === 'available' ? 'Issued' : 'Returned'} book ID: ${id}`);
-            // In production: POST to UniShelf API
+            alert(`${status === 'available' ? '✅ Book Issued!' : '✅ Book Returned!'} ID: ${id}`);
         }
 
-        function viewDetails(id) {
-            alert(`Book details for ID: ${id}`);
-            // In production: Show modal with history
-        }
-
-        // Simple chart
         function drawChart() {
             const canvas = document.getElementById('activityChart');
             const ctx = canvas.getContext('2d');
@@ -140,17 +201,6 @@
             ctx.fillRect(140, 150, 20, -90);
             ctx.fillRect(170, 150, 20, -70);
         }
-
-        // Initialize
-        updateStats();
-        renderBooks(booksData);
-        drawChart();
-
-        // Auto-refresh every 30 seconds
-        setInterval(() => {
-            updateStats();
-            renderBooks(booksData);
-        }, 30000);
     </script>
 </body>
 </html>
