@@ -3,85 +3,270 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Maintenance - Coimbatore Site</title>
+    <title>🚫 LOGIN REQUIRED - SMART LIBRARY PJ Manager</title>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f0f23 100%); 
+            color: #e2e8f0; min-height: 100vh; overflow-x: hidden;
+            display: flex; align-items: center; justify-content: center;
         }
         
-        body {
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #ff6b35, #f7931e);
-            color: #333;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 20px;
+        /* 🔒 LOCKED SCREEN - NOTHING VISIBLE */
+        .locked-screen { 
+            max-width: 450px; width: 90%; padding: 50px 40px; 
+            background: rgba(15,15,35,0.95); backdrop-filter: blur(25px); 
+            border-radius: 25px; box-shadow: 0 35px 75px rgba(0,0,0,0.6); 
+            border: 2px solid rgba(255,255,255,0.15); text-align: center;
+            animation: pulse-glow 3s infinite;
+        }
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 35px 75px rgba(59,130,246,0.3); }
+            50% { box-shadow: 0 35px 75px rgba(59,130,246,0.6); }
         }
         
-        .container {
-            max-width: 600px;
-            background: rgba(255, 255, 255, 0.95);
-            padding: 50px 30px;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        .locked-title { 
+            font-size: 32px; margin-bottom: 10px; 
+            background: linear-gradient(135deg, #3b82f6, #60a5fa); 
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            font-weight: 800;
         }
         
-        h1 {
-            font-size: 2.5em;
-            color: #ff6b35;
-            margin-bottom: 20px;
-            font-weight: bold;
+        .locked-subtitle { 
+            color: #94a3b8; font-size: 16px; margin-bottom: 35px;
+            font-weight: 500;
         }
         
-        .icon {
-            font-size: 4em;
-            margin-bottom: 20px;
+        .lock-icon { 
+            font-size: 80px; margin-bottom: 20px; 
+            filter: drop-shadow(0 0 20px rgba(59,130,246,0.5));
         }
         
-        p {
-            font-size: 1.2em;
-            line-height: 1.6;
-            margin-bottom: 20px;
+        input { 
+            width: 100%; padding: 18px; margin: 15px 0; border: none; border-radius: 15px; 
+            background: rgba(255,255,255,0.95); font-size: 16px; font-weight: 500;
+            transition: all 0.4s; box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        input:focus { 
+            outline: none; transform: scale(1.02); box-shadow: 0 10px 30px rgba(59,130,246,0.4);
+            background: #ffffff;
         }
         
-        .location {
-            color: #f7931e;
-            font-weight: bold;
-            font-size: 1.1em;
+        .login-btn { 
+            width: 100%; padding: 20px; background: linear-gradient(135deg, #3b82f6, #1d4ed8); 
+            color: white; border: none; border-radius: 15px; font-size: 18px; font-weight: 700; 
+            cursor: pointer; transition: all 0.4s; margin: 15px 0; text-transform: uppercase;
+            letter-spacing: 1px; box-shadow: 0 10px 30px rgba(59,130,246,0.4);
+        }
+        .login-btn:hover:not(:disabled) { 
+            transform: translateY(-3px); box-shadow: 0 20px 40px rgba(59,130,246,0.6);
+        }
+        .login-btn:disabled { 
+            opacity: 0.5; cursor: not-allowed; background: #4a5568;
         }
         
-        .coming-soon {
-            background: #ff6b35;
-            color: white;
-            padding: 15px 30px;
-            border-radius: 50px;
-            display: inline-block;
-            margin-top: 30px;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+        .quick-access { 
+            display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 25px 0;
+        }
+        .quick-btn { 
+            padding: 15px; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 12px; color: #e2e8f0; font-weight: 600; cursor: pointer;
+            transition: all 0.3s; backdrop-filter: blur(10px);
+        }
+        .quick-btn:hover { 
+            background: rgba(59,130,246,0.3); transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(59,130,246,0.3);
         }
         
-        @media (max-width: 768px) {
-            h1 { font-size: 2em; }
-            .icon { font-size: 3em; }
-            p { font-size: 1em; }
+        .status-bar { 
+            padding: 15px; background: rgba(16,185,129,0.2); border-radius: 12px; 
+            margin-top: 20px; border-left: 5px solid #10b981; font-size: 14px;
+        }
+        
+        /* ❌ HIDDEN - NOTHING VISIBLE BEFORE LOGIN */
+        .private-content { display: none !important; visibility: hidden !important; }
+        
+        /* MOBILE */
+        @media (max-width: 480px) {
+            .locked-screen { margin: 20px; padding: 40px 25px; }
+            .locked-title { font-size: 26px; }
+            .lock-icon { font-size: 60px; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="icon">🔧</div>
-        <h1>We're Under Maintenance</h1>
-        <p>Our Coimbatore team is working hard to bring you an even better experience!</p>
-        <p class="location">🌟 From Coimbatore, Tamil Nadu with ❤️</p>
-        <p>We'll be back online shortly. Thank you for your patience!</p>
-        <div class="coming-soon">Coming Soon!</div>
+    <!-- 🔒 ONLY LOGIN VISIBLE - EVERYTHING ELSE HIDDEN -->
+    <div class="locked-screen">
+        <div class="lock-icon">🔒</div>
+        <h1 class="locked-title">LOGIN REQUIRED</h1>
+        <p class="locked-subtitle">
+            Access to Smart Library Project Manager is restricted.<br>
+            <strong>Authentication mandatory for all users.</strong>
+        </p>
+        
+        <input type="text" id="usernameInput" placeholder="👤 Enter Username" maxlength="20">
+        <input type="password" id="passwordInput" placeholder="🔐 Enter Password" maxlength="30">
+        
+        <div class="quick-access">
+            <button class="quick-btn" onclick="quickAccess('admin')">
+                👨‍💼 ADMIN
+            </button>
+            <button class="quick-btn" onclick="quickAccess('student1')">
+                👩‍🎓 STUDENT
+            </button>
+        </div>
+        
+        <button class="login-btn" id="loginButton" onclick="authenticate()">
+            🔐 AUTHENTICATE ACCESS
+        </button>
+        
+        <div id="authStatus" class="status-bar">
+            ✅ System ready - Authentication required
+        </div>
     </div>
+
+    <!-- 🚫 ALL PRIVATE CONTENT HIDDEN BY CSS -->
+    <div id="privateAdmin" class="private-content">
+        <!-- Admin dashboard completely hidden -->
+    </div>
+    <div id="privateStudent" class="private-content">
+        <!-- Student dashboard completely hidden -->
+    </div>
+
+    <script>
+        // 🔥 STRICT FIREBASE CONFIG
+        const firebaseConfig = {
+            apiKey: "AIzaSyA7eoeeSQjQ4WkW7yII-EuPzzjYyt7njZw",
+            authDomain: "smart-librery-system.firebaseapp.com",
+            databaseURL: "https://smart-librery-system-default-rtdb.firebaseio.com",
+            projectId: "smart-librery-system",
+            storageBucket: "smart-librery-system.appspot.com",
+            messagingSenderId: "743750444687",
+            appId: "1:743750444687:web:9f385eadfad58d762bb2fa"
+        };
+
+        // 🔐 MANDATORY AUTHENTICATION SYSTEM
+        const AUTHORIZED_USERS = {
+            'admin': { password: 'admin123', role: 'admin', name: 'Library Administrator' },
+            'student1': { password: 'student123', role: 'student', name: 'Student Account 1' },
+            'student2': { password: 'student223', role: 'student', name: 'Student Account 2' }
+        };
+
+        let isAuthenticated = false;
+        let currentSession = null;
+
+        // 🚀 STRICT LOGIN REQUIRED
+        function authenticate() {
+            const username = document.getElementById('usernameInput').value.trim();
+            const password = document.getElementById('passwordInput').value;
+            
+            // 🔒 VALIDATE CREDENTIALS
+            if (AUTHORIZED_USERS[username] && AUTHORIZED_USERS[username].password === password) {
+                // ✅ AUTHENTICATION SUCCESSFUL
+                isAuthenticated = true;
+                currentSession = {
+                    user: username,
+                    role: AUTHORIZED_USERS[username].role,
+                    name: AUTHORIZED_USERS[username].name,
+                    timestamp: Date.now()
+                };
+                
+                // 🔥 UNLOCK PRIVATE SYSTEM
+                unlockPrivateSystem();
+                showSuccess('✅ Authentication successful - Welcome to private system');
+                
+            } else {
+                // ❌ ACCESS DENIED
+                showError('❌ Invalid credentials - Access denied');
+                lockScreenShake();
+                clearInputs();
+            }
+        }
+
+        // ⚡ QUICK ACCESS (STILL REQUIRES PASSWORD VALIDATION)
+        function quickAccess(role) {
+            document.getElementById('usernameInput').value = role;
+            document.getElementById('passwordInput').focus();
+            document.getElementById('authStatus').innerHTML = 
+                `🔐 Enter password for ${role.toUpperCase()}`;
+        }
+
+        // 🔓 PRIVATE SYSTEM UNLOCK (ONLY AFTER AUTH)
+        function unlockPrivateSystem() {
+            // Remove CSS lock
+            document.querySelectorAll('.private-content').forEach(el => {
+                el.style.display = 'block';
+                el.style.visibility = 'visible';
+            });
+            
+            // Hide login completely
+            document.querySelector('.locked-screen').style.display = 'none';
+            
+            // Load private dashboard based on role
+            if (currentSession.role === 'admin') {
+                initAdminDashboard();
+            } else {
+                initStudentDashboard();
+            }
+        }
+
+        // 🔒 SCREEN LOCK EFFECTS
+        function lockScreenShake() {
+            const screen = document.querySelector('.locked-screen');
+            screen.style.animation = 'shake 0.6s ease-in-out';
+            setTimeout(() => screen.style.animation = '', 600);
+        }
+
+        function clearInputs() {
+            document.getElementById('usernameInput').value = '';
+            document.getElementById('passwordInput').value = '';
+        }
+
+        // 🔔 STATUS MESSAGES
+        function showSuccess(msg) {
+            const status = document.getElementById('authStatus');
+            status.innerHTML = `✅ ${msg}`;
+            status.style.background = 'rgba(16,185,129,0.3)';
+        }
+
+        function showError(msg) {
+            const status = document.getElementById('authStatus');
+            status.innerHTML = `❌ ${msg}`;
+            status.style.background = 'rgba(239,68,68,0.3)';
+            status.style.borderLeftColor = '#ef4444';
+        }
+
+        // ⌨️ ENTER KEY REQUIRED
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !isAuthenticated) {
+                authenticate();
+            }
+        });
+
+        // 🔥 INIT PRIVATE DASHBOARDS (CALLED AFTER AUTH ONLY)
+        function initAdminDashboard() {
+            console.log('🔒 Private Admin Dashboard Loaded');
+            // Full admin system here (Firebase + Kanban + Controls)
+        }
+
+        function initStudentDashboard() {
+            console.log('🔒 Private Student Dashboard Loaded');
+            // Student view only
+        }
+
+        // CSS SHAKE ANIMATION
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
+                20%, 40%, 60%, 80% { transform: translateX(10px); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
 </body>
 </html>
