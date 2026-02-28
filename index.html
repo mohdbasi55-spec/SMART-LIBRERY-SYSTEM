@@ -1,136 +1,187 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<title>Smart Library</title>
+<title>Smart Digital Library</title>
 <style>
-body {
-  margin:0;
-  font-family: Arial;
-  background:#121212;
-  color:white;
+body{
+ margin:0;
+ font-family:Georgia,serif;
+ background:#e3e7ef;
 }
-#shelf {
-  display:flex;
-  overflow-x:auto;
-  padding:20px;
+header{
+ background:#2c3e50;
+ color:white;
+ padding:15px;
+ text-align:center;
 }
-.book {
-  min-width:150px;
-  height:200px;
-  margin:10px;
-  background:linear-gradient(45deg,#ff9800,#ff5722);
-  border-radius:10px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  text-align:center;
-  cursor:pointer;
-  box-shadow:0 0 10px black;
+.library{
+ display:grid;
+ grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+ gap:20px;
+ padding:20px;
 }
-#reader {
-  display:none;
-  padding:20px;
+.book{
+ width:150px;
+ height:210px;
+ border-radius:8px;
+ color:white;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ text-align:center;
+ font-weight:bold;
+ cursor:pointer;
+ box-shadow:4px 4px 10px rgba(0,0,0,0.3);
+ transition:0.3s;
 }
-.page {
-  background:white;
-  color:black;
-  padding:20px;
-  min-height:300px;
-  border-radius:10px;
+.book:hover{transform:rotateY(-10deg) scale(1.05);}
+#reader{
+ display:none;
+ padding:20px;
+ text-align:center;
 }
-button {
-  padding:10px 20px;
-  margin:10px;
-  font-size:16px;
+.realbook{
+ width:380px;
+ margin:auto;
+ background:#fffdf5;
+ padding:25px;
+ border-radius:8px;
+ box-shadow:0 5px 15px rgba(0,0,0,0.4);
+ min-height:420px;
+ animation:flip 0.6s;
 }
+@keyframes flip{
+ from{transform:rotateY(90deg);}
+ to{transform:rotateY(0deg);}
+}
+.diagram{
+ width:100%;
+ height:120px;
+ border:2px dashed #555;
+ margin:10px 0;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ font-size:14px;
+ background:#f9f9f9;
+}
+button{
+ padding:10px 20px;
+ border:none;
+ border-radius:20px;
+ background:#27ae60;
+ color:white;
+ cursor:pointer;
+ margin:5px;
+}
+.meta{font-style:italic;color:#444;}
 </style>
 </head>
+
 <body>
 
-<h2 style="text-align:center;">📚 Smart Library System</h2>
+<header>
+<h2>📚 Smart Digital Library</h2>
+</header>
 
-<div id="shelf">
-  <div class="book" onclick="openBook()">Artificial Intelligence</div>
-</div>
+<div id="library" class="library"></div>
 
 <div id="reader">
-  <h3 id="title"></h3>
-  <div class="page" id="pageText"></div>
-  <button onclick="prevPage()">⬅ Prev</button>
-  <button onclick="nextPage()">Next ➡</button>
-  <button onclick="closeBook()">Close ❌</button>
+<button onclick="backToLibrary()">⬅ Back</button>
+<h3 id="bookTitle"></h3>
+<div class="realbook" id="page"></div>
+<br>
+<button onclick="prevPage()">⬅ Prev</button>
+<button onclick="nextPage()">Next ➡</button>
+<p id="pageNo"></p>
 </div>
 
 <script>
-let pages = [
-"Page 1: Artificial Intelligence\n\nAuthor: Smart Library\n\nAI is the science of making machines think.",
-"Page 2: Introduction\n\nAI helps computers learn and solve problems.",
-"Page 3: What is Intelligence?\n\nAbility to learn and decide.",
-"Page 4: What is AI?\n\nMachines that mimic humans.",
-"Page 5: History\n\n1950 Alan Turing.",
-"Page 6: Types of AI\n\nNarrow, General, Super.",
-"Page 7: Machine Learning\n\nLearning from data.",
-"Page 8: Deep Learning\n\nNeural networks.",
-"Page 9: Neural Network\n\nInput, hidden, output.",
-"Page 10: Data\n\nText, image, audio.",
-"Page 11: Daily Life\n\nMaps, YouTube.",
-"Page 12: Healthcare\n\nCancer detection.",
-"Page 13: Education\n\nSmart classrooms.",
-"Page 14: Business\n\nChatbots.",
-"Page 15: Robotics\n\nSmart robots.",
-"Page 16: NLP\n\nLanguage processing.",
-"Page 17: Vision\n\nFace recognition.",
-"Page 18: Ethics\n\nPrivacy issues.",
-"Page 19: Advantages\n\nFast and accurate.",
-"Page 20: Disadvantages\n\nExpensive.",
-"Page 21: Future\n\nSmart world.",
-"Page 22: AI vs Human\n\nLogic vs emotions.",
-"Page 23: Security\n\nBiometrics.",
-"Page 24: Agriculture\n\nCrop prediction.",
-"Page 25: Banking\n\nFraud detection.",
-"Page 26: Games\n\nChess bots.",
-"Page 27: Transport\n\nSelf driving.",
-"Page 28: Jobs\n\nNew careers.",
-"Page 29: Hardware\n\nCPU, GPU.",
-"Page 30: Software\n\nPython.",
-"Page 31: Process\n\nTrain and test.",
-"Page 32: Risks\n\nFake videos.",
-"Page 33: Safety\n\nRules.",
-"Page 34: Strong AI\n\nResearch.",
-"Page 35: Super AI\n\nTheory.",
-"Page 36: Space\n\nMars robots.",
-"Page 37: Smart Cities\n\nTraffic control.",
-"Page 38: Human life\n\nAssist humans.",
-"Page 39: Conclusion\n\nUse AI wisely.",
-"Page 40: End\n\nThank you."
+const topics=[
+"Artificial Intelligence","Data Science","Web Development","Cyber Security","Cloud Computing",
+"Machine Learning","Big Data","Blockchain","IoT","Operating System",
+"Database Management","Computer Networks","Python Programming","Java Programming","C Programming",
+"Mobile App Development","Digital Marketing","UI UX Design","Game Development","Software Engineering",
+"Statistics","Linear Algebra","Discrete Mathematics","Physics","Chemistry",
+"Biology","Environmental Science","Economics","Business Management","Accounting",
+"Entrepreneurship","Psychology","Sociology","History","Geography",
+"Political Science","English Literature","Tamil Literature","Journalism","Ethical Hacking",
+"Robotics","Embedded Systems","Compiler Design","Data Mining","Neural Networks"
 ];
 
-let current = 0;
+const authors=["Dr. A. Kumar","R. Sharma","S. Balaji","P. John","M. Rahman","L. Priya","D. Arjun","V. Meena"];
+const colors=["#e74c3c","#8e44ad","#2980b9","#16a085","#d35400","#2c3e50","#27ae60"];
 
-function openBook(){
-  document.getElementById("shelf").style.display="none";
-  document.getElementById("reader").style.display="block";
-  document.getElementById("title").innerText="Artificial Intelligence";
-  showPage();
+let books=[];
+topics.slice(0,50).forEach((t,i)=>{
+ let pages=[];
+ let author=authors[i%authors.length];
+
+ pages.push(`<h3>${t}</h3><div class='meta'>Author: ${author}</div><p>Cover page of the book "${t}".</p>`);
+ pages.push(`<h4>Introduction</h4><p>This book explains the concepts of ${t} in a simple way.</p><div class='diagram'>Diagram: Overview of ${t}</div>`);
+
+ for(let p=3;p<=39;p++){
+   pages.push(`<h4>${t} - Page ${p}</h4>
+   <p>This page explains important ideas of ${t} with examples.</p>
+   <div class='diagram'>Diagram related to ${t}</div>`);
+ }
+
+ pages.push(`<h4>Conclusion</h4><p>You have completed the book on ${t}.</p>`);
+
+ books.push({name:t,author:author,color:colors[i%colors.length],pages:pages});
+});
+
+let currentBook=null;
+let currentPage=0;
+
+function loadBooks(){
+ let lib=document.getElementById("library");
+ lib.innerHTML="";
+ books.forEach(b=>{
+   let d=document.createElement("div");
+   d.className="book";
+   d.style.background=b.color;
+   d.innerText=b.name;
+   d.onclick=()=>openBook(b);
+   lib.appendChild(d);
+ });
+}
+
+function openBook(book){
+ currentBook=book;
+ currentPage=0;
+ document.getElementById("library").style.display="none";
+ document.getElementById("reader").style.display="block";
+ document.getElementById("bookTitle").innerText=book.name+" – "+book.author;
+ showPage();
 }
 
 function showPage(){
-  document.getElementById("pageText").innerText=pages[current];
+ document.getElementById("page").innerHTML=currentBook.pages[currentPage];
+ document.getElementById("pageNo").innerText=
+ "Page "+(currentPage+1)+" / "+currentBook.pages.length;
 }
 
 function nextPage(){
-  if(current<pages.length-1){current++;showPage();}
+ if(currentPage < currentBook.pages.length-1){
+  currentPage++;
+  showPage();
+ }
 }
 
 function prevPage(){
-  if(current>0){current--;showPage();}
+ if(currentPage > 0){
+  currentPage--;
+  showPage();
+ }
 }
 
-function closeBook(){
-  document.getElementById("reader").style.display="none";
-  document.getElementById("shelf").style.display="flex";
+function backToLibrary(){
+ document.getElementById("reader").style.display="none";
+ document.getElementById("library").style.display="grid";
 }
+
+loadBooks();
 </script>
 
 </body>
