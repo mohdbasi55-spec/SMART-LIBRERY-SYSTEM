@@ -1,15 +1,104 @@
+
 <!DOCTYPE html>
 <html>
 <head>
 <title>Smart Digital Library</title>
 <script src="https://unpkg.com/html5-qrcode"></script>
 <style>
-body{margin:0;font-family:Arial;background:#f2f2f2}
-header{background:#2c3e50;color:white;padding:15px;text-align:center}
-#scanner,#dashboard{padding:20px}
-.books{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px}
-.book{background:#3498db;color:white;padding:15px;border-radius:10px;cursor:pointer;text-align:center}
-iframe,video,audio{width:100%;height:300px}
+body{
+  margin:0;
+  font-family:Segoe UI,Arial;
+  background:#eef2f7;
+}
+header{
+  background:#2c3e50;
+  color:white;
+  padding:15px;
+  text-align:center;
+}
+#scanner,#dashboard{padding:15px;}
+.container{
+  display:flex;
+}
+.sidebar{
+  width:80px;
+  background:#1e272e;
+  color:white;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding-top:10px;
+}
+.app{
+  width:50px;
+  height:50px;
+  background:#34495e;
+  margin:8px;
+  border-radius:12px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:12px;
+}
+.main{
+  flex:1;
+  padding:15px;
+}
+.stats{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  gap:10px;
+}
+.stat{
+  background:white;
+  padding:12px;
+  border-radius:12px;
+  text-align:center;
+  box-shadow:0 2px 6px rgba(0,0,0,0.1);
+}
+.books{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+  gap:15px;
+  margin-top:15px;
+}
+.book{
+  background:linear-gradient(to bottom,#ff7f50,#ff6348);
+  color:white;
+  padding:20px;
+  border-radius:15px;
+  text-align:center;
+  cursor:pointer;
+  box-shadow:0 4px 10px rgba(0,0,0,0.2);
+  transition:0.3s;
+}
+.book:hover{
+  transform:translateY(-5px) scale(1.05);
+}
+#viewer{
+  margin-top:15px;
+  background:white;
+  padding:10px;
+  border-radius:12px;
+  box-shadow:0 2px 8px rgba(0,0,0,0.2);
+}
+iframe,video,audio{
+  width:100%;
+  height:350px;
+}
+.search{
+  width:100%;
+  padding:10px;
+  border-radius:20px;
+  border:1px solid #ccc;
+}
+button{
+  padding:10px 20px;
+  border:none;
+  border-radius:20px;
+  background:#27ae60;
+  color:white;
+}
 </style>
 </head>
 
@@ -24,55 +113,98 @@ iframe,video,audio{width:100%;height:300px}
 </div>
 
 <div id="dashboard" style="display:none;">
-<h3>Books</h3>
+<div class="container">
+<div class="sidebar">
+<div class="app">Home</div>
+<div class="app">Books</div>
+<div class="app">Audio</div>
+<div class="app">Video</div>
+<div class="app">User</div>
+</div>
+
+<div class="main">
+<div class="stats">
+<div class="stat">Total Books: 50</div>
+<div class="stat">Login Count: <span id="loginCount">0</span></div>
+<div class="stat">Logout Count: <span id="logoutCount">0</span></div>
+<div class="stat">Most Read: <span id="mostRead">Book 1</span></div>
+</div>
+
+<input type="text" class="search" placeholder="Search book..." onkeyup="searchBook(this.value)">
+
 <div class="books" id="bookshelf"></div>
 
 <h3>Reader</h3>
 <div id="viewer"></div>
 
 <br>
-<button onclick="location.reload()">Scan QR to Logout</button>
+<button onclick="logout()">Scan QR to Logout</button>
+</div>
+</div>
 </div>
 
 <script>
+let loginCount=0,logoutCount=0;
+let readCount={};
 const books=[];
 for(let i=1;i<=50;i++){
-  books.push({name:"Book "+i,type:i%3});
+ books.push({name:"Book "+i,type:i%3});
+ readCount["Book "+i]=0;
 }
 
-function loadBooks(){
-  let shelf=document.getElementById("bookshelf");
-  shelf.innerHTML="";
-  books.forEach(b=>{
-    let d=document.createElement("div");
-    d.className="book";
-    d.innerText=b.name;
-    d.onclick=()=>openBook(b);
-    shelf.appendChild(d);
-  });
+function loadBooks(list=books){
+ let shelf=document.getElementById("bookshelf");
+ shelf.innerHTML="";
+ list.forEach(b=>{
+   let d=document.createElement("div");
+   d.className="book";
+   d.innerText=b.name;
+   d.onclick=()=>openBook(b);
+   shelf.appendChild(d);
+ });
 }
 
 function openBook(book){
-  let v=document.getElementById("viewer");
-  if(book.type==0){
-    v.innerHTML="<iframe src='https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf'></iframe>";
-  }else if(book.type==1){
-    v.innerHTML="<video controls src='https://www.w3schools.com/html/mov_bbb.mp4'></video>";
-  }else{
-    v.innerHTML="<audio controls src='https://www.w3schools.com/html/horse.mp3'></audio>";
-  }
+ let v=document.getElementById("viewer");
+ readCount[book.name]++;
+ updateMostRead();
+ if(book.type==0){
+  v.innerHTML="<iframe src='https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf'></iframe>";
+ }else if(book.type==1){
+  v.innerHTML="<video controls src='https://www.w3schools.com/html/mov_bbb.mp4'></video>";
+ }else{
+  v.innerHTML="<audio controls src='https://www.w3schools.com/html/horse.mp3'></audio>";
+ }
+}
+
+function updateMostRead(){
+ let max=0,b="Book 1";
+ for(let k in readCount){
+  if(readCount[k]>max){max=readCount[k];b=k;}
+ }
+ document.getElementById("mostRead").innerText=b;
+}
+
+function searchBook(val){
+ let f=books.filter(b=>b.name.toLowerCase().includes(val.toLowerCase()));
+ loadBooks(f);
+}
+
+function logout(){
+ logoutCount++;
+ document.getElementById("logoutCount").innerText=logoutCount;
+ location.reload();
 }
 
 function onScanSuccess(decodedText){
-  console.log("Scanned:", decodedText);
-
-  // URL irundhaalum login aagum
-  if(decodedText.includes("http") || decodedText.length>0){
-    document.getElementById("scanner").style.display="none";
-    document.getElementById("dashboard").style.display="block";
-    loadBooks();
-    html5QrCode.stop();
-  }
+ if(decodedText.length>0){
+  document.getElementById("scanner").style.display="none";
+  document.getElementById("dashboard").style.display="block";
+  loginCount++;
+  document.getElementById("loginCount").innerText=loginCount;
+  loadBooks();
+  html5QrCode.stop();
+ }
 }
 
 const html5QrCode=new Html5Qrcode("reader");
