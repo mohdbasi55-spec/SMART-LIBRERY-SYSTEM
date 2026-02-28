@@ -5,7 +5,7 @@
 <style>
 body{
  margin:0;
- font-family:Segoe UI,Arial;
+ font-family:Georgia,serif;
  background:#f0f3f8;
 }
 header{
@@ -16,42 +16,48 @@ header{
 }
 .library{
  display:grid;
- grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+ grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
  gap:20px;
  padding:20px;
 }
 .book{
- width:140px;
- height:200px;
- background:linear-gradient(135deg,#ff6a00,#ee0979);
- border-radius:8px;
+ width:150px;
+ height:210px;
+ border-radius:10px;
  color:white;
  display:flex;
  align-items:center;
  justify-content:center;
- font-weight:bold;
  text-align:center;
+ font-weight:bold;
  cursor:pointer;
- box-shadow:5px 5px 10px rgba(0,0,0,0.3);
+ box-shadow:5px 5px 12px rgba(0,0,0,0.3);
  transition:0.4s;
 }
-.book:hover{transform:rotateY(-10deg) scale(1.05);}
-
+.book:hover{transform:rotateY(-12deg) scale(1.05);}
 #reader{
  display:none;
  padding:20px;
 }
 .page{
- background:white;
- padding:20px;
+ background:#fffdf5;
+ padding:25px;
  border-radius:10px;
  box-shadow:0 4px 10px rgba(0,0,0,0.3);
- min-height:250px;
+ min-height:260px;
  animation:flip 0.6s;
+ position:relative;
 }
 @keyframes flip{
  from{transform:rotateY(90deg);}
  to{transform:rotateY(0deg);}
+}
+.menu{
+ position:absolute;
+ top:10px;
+ right:10px;
+ cursor:pointer;
+ font-size:18px;
 }
 button{
  padding:10px 20px;
@@ -61,6 +67,11 @@ button{
  color:white;
  cursor:pointer;
  margin:5px;
+}
+.meta{
+ font-style:italic;
+ color:#555;
+ margin-bottom:10px;
 }
 </style>
 </head>
@@ -76,7 +87,9 @@ button{
 <div id="reader">
 <button onclick="backToLibrary()">⬅ Back</button>
 <h3 id="bookTitle"></h3>
-<div class="page" id="page"></div>
+<div class="page" id="page">
+<span class="menu">⋮</span>
+</div>
 <br>
 <button onclick="prevPage()">⬅ Prev</button>
 <button onclick="nextPage()">Next ➡</button>
@@ -84,7 +97,7 @@ button{
 </div>
 
 <script>
-const topics = [
+const topics=[
 "Artificial Intelligence","Data Science","Web Development","Cyber Security","Cloud Computing",
 "Machine Learning","Big Data","Blockchain","IoT","Operating System",
 "Database Management","Computer Networks","Python Programming","Java Programming","C Programming",
@@ -93,19 +106,29 @@ const topics = [
 "Biology","Environmental Science","Economics","Business Management","Accounting",
 "Entrepreneurship","Psychology","Sociology","History","Geography",
 "Political Science","English Literature","Tamil Literature","Journalism","Ethical Hacking",
-"Robotics","Embedded Systems","Compiler Design","Data Mining","Neural Networks",
-"Deep Learning","Image Processing","Natural Language Processing"
+"Robotics","Embedded Systems","Compiler Design","Data Mining","Neural Networks"
 ];
+
+const authors=[
+"Dr. A. Kumar","R. Sharma","S. Balaji","P. John","M. Rahman",
+"L. Priya","D. Arjun","V. Meena","K. Santhosh","N. Farooq"
+];
+
+const colors=["#e74c3c","#8e44ad","#2980b9","#16a085","#d35400","#2c3e50","#27ae60"];
 
 let books=[];
 topics.slice(0,50).forEach((t,i)=>{
  let pages=[];
+ let author=authors[i%authors.length];
  for(let p=1;p<=40;p++){
-   pages.push("Topic: "+t+" | Page "+p+
-   ". This page explains important concepts of "+t+
-   " in simple language. Students can read this like a real book page by page.");
+   pages.push({
+     title:t,
+     author:author,
+     text:"Page "+p+" of "+t+". This page explains key concepts of "+t+
+     " in a story-like manner so that students feel like reading a real book instead of normal notes."
+   });
  }
- books.push({name:t,pages:pages});
+ books.push({name:t,author:author,color:colors[i%colors.length],pages:pages});
 });
 
 let currentBook=null;
@@ -117,6 +140,7 @@ function loadBooks(){
  books.forEach(b=>{
    let d=document.createElement("div");
    d.className="book";
+   d.style.background=b.color;
    d.innerText=b.name;
    d.onclick=()=>openBook(b);
    lib.appendChild(d);
@@ -128,13 +152,19 @@ function openBook(book){
  currentPage=0;
  document.getElementById("library").style.display="none";
  document.getElementById("reader").style.display="block";
- document.getElementById("bookTitle").innerText=book.name;
+ document.getElementById("bookTitle").innerText=book.name+" – "+book.author;
  showPage();
 }
 
 function showPage(){
- document.getElementById("page").innerText=currentBook.pages[currentPage];
- document.getElementById("pageNo").innerText="Page "+(currentPage+1)+" / "+currentBook.pages.length;
+ let pg=currentBook.pages[currentPage];
+ document.getElementById("page").innerHTML=
+ "<span class='menu'>⋮</span>"+
+ "<h4>"+pg.title+"</h4>"+
+ "<div class='meta'>Author: "+pg.author+"</div>"+
+ "<p>"+pg.text+"</p>";
+ document.getElementById("pageNo").innerText=
+ "Page "+(currentPage+1)+" / "+currentBook.pages.length;
 }
 
 function nextPage(){
