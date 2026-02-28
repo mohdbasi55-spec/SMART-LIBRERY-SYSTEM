@@ -6,7 +6,7 @@
 body{
  margin:0;
  font-family:Segoe UI,Arial;
- background:#eaeef6;
+ background:#eef2f7;
 }
 header{
  background:#2c3e50;
@@ -27,7 +27,7 @@ header{
  border-radius:20px;
  cursor:pointer;
 }
-.container{
+.library{
  display:grid;
  grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
  gap:20px;
@@ -47,8 +47,7 @@ header{
  cursor:pointer;
  box-shadow:5px 5px 10px rgba(0,0,0,0.3);
  position:relative;
- transform-style:preserve-3d;
- transition:transform 0.6s;
+ transition:0.4s;
 }
 .book:before{
  content:"";
@@ -60,19 +59,25 @@ header{
  background:rgba(0,0,0,0.2);
  border-radius:8px 0 0 8px;
 }
-.book:hover{
- transform:rotateY(-10deg);
-}
-#reader{
+.book:hover{transform:rotateY(-10deg);}
+#chapters,#reader{
  display:none;
  padding:20px;
+}
+.chapter{
+ background:white;
+ padding:12px;
+ border-radius:10px;
+ margin:10px 0;
+ cursor:pointer;
+ box-shadow:0 2px 6px rgba(0,0,0,0.2);
 }
 .page{
  background:white;
  padding:20px;
  border-radius:10px;
  box-shadow:0 4px 10px rgba(0,0,0,0.3);
- animation:flip 0.7s;
+ animation:flip 0.6s;
 }
 @keyframes flip{
  from{transform:rotateY(90deg);}
@@ -103,19 +108,31 @@ button{
 <div class="cat" onclick="filterBooks('Novel')">Novel</div>
 </div>
 
-<div id="library" class="container"></div>
+<div id="library" class="library"></div>
+
+<div id="chapters">
+<button onclick="backToLibrary()">⬅ Back to Library</button>
+<h3 id="bookTitle"></h3>
+<div id="chapterList"></div>
+</div>
 
 <div id="reader">
-<button onclick="back()">⬅ Back to Library</button>
+<button onclick="backToChapters()">⬅ Back to Chapters</button>
 <div class="page" id="page"></div>
 </div>
 
 <script>
 const books=[];
 for(let i=1;i<=50;i++){
- let cat = i%3==0?"Science": i%3==1?"Computer":"Novel";
- books.push({name:"Book "+i,category:cat});
+ let cat=i%3==0?"Science":i%3==1?"Computer":"Novel";
+ let chapters=[];
+ for(let c=1;c<=5;c++){
+  chapters.push("This is content of Chapter "+c+" in Book "+i+". Students can read this like a real book.");
+ }
+ books.push({name:"Book "+i,category:cat,chapters:chapters});
 }
+
+let currentBook=null;
 
 function loadBooks(list){
  let lib=document.getElementById("library");
@@ -130,25 +147,35 @@ function loadBooks(list){
 }
 
 function openBook(book){
+ currentBook=book;
  document.getElementById("library").style.display="none";
- document.getElementById("reader").style.display="block";
- document.getElementById("page").innerHTML=`
- <h3>${book.name}</h3>
- <p>
- This is a digital page of ${book.name}.  
- It simulates real book reading experience with page flip animation.  
- Students can read content digitally without downloading.
- </p>
- <p>
- Category: ${book.category}  
- Format: Digital Book
- </p>
- `;
+ document.getElementById("chapters").style.display="block";
+ document.getElementById("bookTitle").innerText=book.name+" - Chapters";
+ let cl=document.getElementById("chapterList");
+ cl.innerHTML="";
+ book.chapters.forEach((c,i)=>{
+  let div=document.createElement("div");
+  div.className="chapter";
+  div.innerText="Chapter "+(i+1);
+  div.onclick=()=>openChapter(i);
+  cl.appendChild(div);
+ });
 }
 
-function back(){
- document.getElementById("reader").style.display="none";
+function openChapter(i){
+ document.getElementById("chapters").style.display="none";
+ document.getElementById("reader").style.display="block";
+ document.getElementById("page").innerHTML="<h3>"+currentBook.name+" - Chapter "+(i+1)+"</h3><p>"+currentBook.chapters[i]+"</p>";
+}
+
+function backToLibrary(){
+ document.getElementById("chapters").style.display="none";
  document.getElementById("library").style.display="grid";
+}
+
+function backToChapters(){
+ document.getElementById("reader").style.display="none";
+ document.getElementById("chapters").style.display="block";
 }
 
 function filterBooks(cat){
