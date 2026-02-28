@@ -6,54 +6,77 @@
 <style>
 body{
   margin:0;
-  font-family:Arial;
-  background:#f2f2f2;
-  transition:0.5s;
+  font-family:Segoe UI,Arial;
+  background:#f4f6f8;
+  transition:0.4s;
 }
 .dark{
   background:#111;
   color:white;
 }
 header{
-  background:#2c3e50;
+  background:linear-gradient(to right,#2c3e50,#2980b9);
   color:white;
   padding:15px;
   text-align:center;
 }
 button{
-  padding:8px 15px;
+  padding:8px 14px;
   border:none;
-  border-radius:5px;
+  border-radius:20px;
   cursor:pointer;
+  background:#27ae60;
+  color:white;
 }
 #scanner,#dashboard{
   padding:20px;
 }
-.shelf{
-  display:flex;
-  overflow-x:auto;
-  gap:15px;
+.stats{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  gap:10px;
+}
+.stat{
+  background:white;
   padding:10px;
+  border-radius:10px;
+  text-align:center;
+  box-shadow:0 2px 5px rgba(0,0,0,0.1);
+}
+.dark .stat{background:#222;}
+.books{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
+  gap:15px;
+  margin-top:15px;
 }
 .book{
-  min-width:120px;
-  height:160px;
   background:#3498db;
   color:white;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  border-radius:10px;
+  padding:15px;
+  border-radius:15px;
+  text-align:center;
   cursor:pointer;
+  transition:0.3s;
 }
-.stats{
-  display:flex;
-  justify-content:space-around;
-  margin:10px 0;
+.book:hover{
+  transform:scale(1.05);
+  background:#1abc9c;
+}
+#viewer{
+  margin-top:15px;
 }
 iframe,video,audio{
   width:100%;
-  height:300px;
+  height:350px;
+  border-radius:10px;
+}
+.search{
+  margin:10px 0;
+  width:100%;
+  padding:10px;
+  border-radius:20px;
+  border:1px solid #ccc;
 }
 </style>
 </head>
@@ -71,13 +94,15 @@ iframe,video,audio{
 
 <div id="dashboard" style="display:none;">
 <div class="stats">
-<div>Total Books:50</div>
-<div>Login Count:<span id="loginCount">0</span></div>
-<div>Logout Count:<span id="logoutCount">0</span></div>
+<div class="stat">Total Books: 50</div>
+<div class="stat">Login Count: <span id="loginCount">0</span></div>
+<div class="stat">Logout Count: <span id="logoutCount">0</span></div>
+<div class="stat">Most Read: <span id="mostRead">Book 1</span></div>
 </div>
 
-<h3>Bookshelf</h3>
-<div class="shelf" id="bookshelf"></div>
+<input type="text" class="search" placeholder="Search book..." onkeyup="searchBook(this.value)">
+
+<div class="books" id="bookshelf"></div>
 
 <h3>Reader</h3>
 <div id="viewer"></div>
@@ -89,16 +114,18 @@ iframe,video,audio{
 <script>
 let loginCount=0;
 let logoutCount=0;
+let readCount={};
 
 const books=[];
 for(let i=1;i<=50;i++){
   books.push({name:"Book "+i,type:i%3});
+  readCount["Book "+i]=0;
 }
 
-function loadBooks(){
+function loadBooks(list=books){
   let shelf=document.getElementById("bookshelf");
   shelf.innerHTML="";
-  books.forEach(b=>{
+  list.forEach(b=>{
     let d=document.createElement("div");
     d.className="book";
     d.innerText=b.name;
@@ -109,6 +136,8 @@ function loadBooks(){
 
 function openBook(book){
   let v=document.getElementById("viewer");
+  readCount[book.name]++;
+  updateMostRead();
   if(book.type==0){
     v.innerHTML="<iframe src='https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf'></iframe>";
   }
@@ -118,6 +147,22 @@ function openBook(book){
   else{
     v.innerHTML="<audio controls src='https://www.w3schools.com/html/horse.mp3'></audio>";
   }
+}
+
+function updateMostRead(){
+  let max=0,book="Book 1";
+  for(let b in readCount){
+    if(readCount[b]>max){
+      max=readCount[b];
+      book=b;
+    }
+  }
+  document.getElementById("mostRead").innerText=book;
+}
+
+function searchBook(val){
+  let f=books.filter(b=>b.name.toLowerCase().includes(val.toLowerCase()));
+  loadBooks(f);
 }
 
 function toggleMode(){
@@ -130,7 +175,7 @@ function logout(){
   location.reload();
 }
 
-function onScanSuccess(txt){
+function onScanSuccess(){
   document.getElementById("scanner").style.display="none";
   document.getElementById("dashboard").style.display="block";
   loginCount++;
