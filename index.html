@@ -1,139 +1,150 @@
-
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Smart Digital Library</title>
-  <style>
-    body {
-      font-family: Arial;
-      background: #f2f2f2;
-      margin: 0;
-      text-align: center;
-    }
-    h1 {
-      background: #1e272e;
-      color: white;
-      padding: 15px;
-    }
-    #scanner, #dashboard {
-      background: white;
-      margin: 20px auto;
-      padding: 20px;
-      width: 90%;
-      border-radius: 10px;
-    }
-    .shelf {
-      display: flex;
-      overflow-x: auto;
-      gap: 10px;
-      padding: 10px;
-    }
-    .book {
-      min-width: 120px;
-      background: #74b9ff;
-      color: white;
-      padding: 10px;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-    .stats {
-      display: flex;
-      justify-content: space-around;
-      margin: 10px 0;
-    }
-    video, audio, iframe {
-      width: 90%;
-      height: 300px;
-    }
-    button {
-      padding: 10px 20px;
-      border: none;
-      background: green;
-      color: white;
-      border-radius: 5px;
-    }
-  </style>
+<title>Smart Digital Library</title>
+<script src="https://unpkg.com/html5-qrcode"></script>
+<style>
+body{
+  margin:0;
+  font-family:Arial;
+  background:#f2f2f2;
+  transition:0.5s;
+}
+.dark{
+  background:#111;
+  color:white;
+}
+header{
+  background:#2c3e50;
+  color:white;
+  padding:15px;
+  text-align:center;
+}
+button{
+  padding:8px 15px;
+  border:none;
+  border-radius:5px;
+  cursor:pointer;
+}
+#scanner,#dashboard{
+  padding:20px;
+}
+.shelf{
+  display:flex;
+  overflow-x:auto;
+  gap:15px;
+  padding:10px;
+}
+.book{
+  min-width:120px;
+  height:160px;
+  background:#3498db;
+  color:white;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:10px;
+  cursor:pointer;
+}
+.stats{
+  display:flex;
+  justify-content:space-around;
+  margin:10px 0;
+}
+iframe,video,audio{
+  width:100%;
+  height:300px;
+}
+</style>
 </head>
 
 <body>
-
-<h1>SMART DIGITAL LIBRARY</h1>
+<header>
+<h2>SMART DIGITAL LIBRARY</h2>
+<button onclick="toggleMode()">Dark / Light</button>
+</header>
 
 <div id="scanner">
-  <h2>Scan QR to Login</h2>
-  <div id="reader" style="width:300px;margin:auto;"></div>
+<h3>Scan QR to Login</h3>
+<div id="reader" style="width:300px;margin:auto;"></div>
 </div>
 
 <div id="dashboard" style="display:none;">
-  <h2>Library Dashboard</h2>
-
-  <div class="stats">
-    <div>Total Books: 50</div>
-    <div>Daily Users: 12</div>
-    <div>Most Read: Book 5</div>
-  </div>
-
-  <h3>Bookshelf</h3>
-  <div class="shelf" id="bookshelf"></div>
-
-  <h3>Reader</h3>
-  <div id="viewer"></div>
-
-  <br>
-  <button onclick="logout()">Scan QR to Logout</button>
+<div class="stats">
+<div>Total Books:50</div>
+<div>Login Count:<span id="loginCount">0</span></div>
+<div>Logout Count:<span id="logoutCount">0</span></div>
 </div>
 
-<script src="https://unpkg.com/html5-qrcode"></script>
+<h3>Bookshelf</h3>
+<div class="shelf" id="bookshelf"></div>
+
+<h3>Reader</h3>
+<div id="viewer"></div>
+
+<br>
+<button onclick="logout()">Scan QR to Logout</button>
+</div>
 
 <script>
-  const books = [];
-  for (let i = 1; i <= 50; i++) {
-    books.push({name: "Book " + i, type: i%3});
-  }
+let loginCount=0;
+let logoutCount=0;
 
-  function loadBooks() {
-    let shelf = document.getElementById("bookshelf");
-    shelf.innerHTML = "";
-    books.forEach(b => {
-      let div = document.createElement("div");
-      div.className = "book";
-      div.innerText = b.name;
-      div.onclick = () => openBook(b);
-      shelf.appendChild(div);
-    });
-  }
+const books=[];
+for(let i=1;i<=50;i++){
+  books.push({name:"Book "+i,type:i%3});
+}
 
-  function openBook(book) {
-    let v = document.getElementById("viewer");
-    if(book.type === 0) {
-      v.innerHTML = "<iframe src='https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf'></iframe>";
-    }
-    else if(book.type === 1) {
-      v.innerHTML = "<video controls src='https://www.w3schools.com/html/mov_bbb.mp4'></video>";
-    }
-    else {
-      v.innerHTML = "<audio controls src='https://www.w3schools.com/html/horse.mp3'></audio>";
-    }
-  }
+function loadBooks(){
+  let shelf=document.getElementById("bookshelf");
+  shelf.innerHTML="";
+  books.forEach(b=>{
+    let d=document.createElement("div");
+    d.className="book";
+    d.innerText=b.name;
+    d.onclick=()=>openBook(b);
+    shelf.appendChild(d);
+  });
+}
 
-  function logout() {
-    location.reload();
+function openBook(book){
+  let v=document.getElementById("viewer");
+  if(book.type==0){
+    v.innerHTML="<iframe src='https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf'></iframe>";
   }
-
-  function onScanSuccess(decodedText) {
-    document.getElementById("scanner").style.display = "none";
-    document.getElementById("dashboard").style.display = "block";
-    loadBooks();
-    html5QrCode.stop();
+  else if(book.type==1){
+    v.innerHTML="<video controls src='https://www.w3schools.com/html/mov_bbb.mp4'></video>";
   }
+  else{
+    v.innerHTML="<audio controls src='https://www.w3schools.com/html/horse.mp3'></audio>";
+  }
+}
 
-  const html5QrCode = new Html5Qrcode("reader");
-  html5QrCode.start(
-    { facingMode: "environment" },
-    { fps: 10, qrbox: 250 },
-    onScanSuccess
-  );
+function toggleMode(){
+  document.body.classList.toggle("dark");
+}
+
+function logout(){
+  logoutCount++;
+  document.getElementById("logoutCount").innerText=logoutCount;
+  location.reload();
+}
+
+function onScanSuccess(txt){
+  document.getElementById("scanner").style.display="none";
+  document.getElementById("dashboard").style.display="block";
+  loginCount++;
+  document.getElementById("loginCount").innerText=loginCount;
+  loadBooks();
+  html5QrCode.stop();
+}
+
+const html5QrCode=new Html5Qrcode("reader");
+html5QrCode.start(
+{facingMode:"environment"},
+{fps:10,qrbox:250},
+onScanSuccess
+);
 </script>
-
 </body>
 </html>
