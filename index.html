@@ -1,111 +1,138 @@
+
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Smart Library System</title>
+  <title>Smart Digital Library</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: Arial;
       background: #f2f2f2;
-      text-align: center;
       margin: 0;
+      text-align: center;
     }
-
     h1 {
-      background: #2c3e50;
+      background: #1e272e;
       color: white;
       padding: 15px;
     }
-
-    #loginBox, #dashboard {
+    #scanner, #dashboard {
       background: white;
-      padding: 20px;
       margin: 20px auto;
-      width: 80%;
+      padding: 20px;
+      width: 90%;
       border-radius: 10px;
     }
-
-    .book {
-      background: #ecf0f1;
-      margin: 5px;
-      padding: 8px;
-      border-radius: 5px;
+    .shelf {
+      display: flex;
+      overflow-x: auto;
+      gap: 10px;
+      padding: 10px;
     }
-
-    button {
-      padding: 10px 20px;
-      background: #27ae60;
+    .book {
+      min-width: 120px;
+      background: #74b9ff;
       color: white;
-      border: none;
-      border-radius: 5px;
+      padding: 10px;
+      border-radius: 8px;
       cursor: pointer;
     }
-
-    button:hover {
-      background: #219150;
+    .stats {
+      display: flex;
+      justify-content: space-around;
+      margin: 10px 0;
+    }
+    video, audio, iframe {
+      width: 90%;
+      height: 300px;
+    }
+    button {
+      padding: 10px 20px;
+      border: none;
+      background: green;
+      color: white;
+      border-radius: 5px;
     }
   </style>
 </head>
+
 <body>
 
-<h1>SMART LIBRARY SYSTEM</h1>
+<h1>SMART DIGITAL LIBRARY</h1>
 
-<div id="loginBox">
-  <h2>Login using QR</h2>
-  <p>(Demo QR Scan)</p>
-  <button onclick="login()">Scan QR to Login</button>
+<div id="scanner">
+  <h2>Scan QR to Login</h2>
+  <div id="reader" style="width:300px;margin:auto;"></div>
 </div>
 
 <div id="dashboard" style="display:none;">
-  <h2>Dashboard</h2>
-  <p>Total Books: <span id="totalBooks"></span></p>
-  <p>Total Users: <span id="totalUsers"></span></p>
-  <p>Currently Reading: <span id="readingUsers"></span></p>
-  <p>Available Books: <span id="availableBooks"></span></p>
+  <h2>Library Dashboard</h2>
 
-  <h3>Book List (Read Only)</h3>
-  <div id="bookList"></div>
+  <div class="stats">
+    <div>Total Books: 50</div>
+    <div>Daily Users: 12</div>
+    <div>Most Read: Book 5</div>
+  </div>
 
-  <br><br>
+  <h3>Bookshelf</h3>
+  <div class="shelf" id="bookshelf"></div>
+
+  <h3>Reader</h3>
+  <div id="viewer"></div>
+
+  <br>
   <button onclick="logout()">Scan QR to Logout</button>
 </div>
 
-<script>
-  let totalBooks = 50;
-  let totalUsers = 20;
-  let readingUsers = 5;
+<script src="https://unpkg.com/html5-qrcode"></script>
 
-  let books = [];
+<script>
+  const books = [];
   for (let i = 1; i <= 50; i++) {
-    books.push("Book " + i);
+    books.push({name: "Book " + i, type: i%3});
   }
 
-  function login() {
-    alert("QR Scanned Successfully! Login Success");
-    document.getElementById("loginBox").style.display = "none";
-    document.getElementById("dashboard").style.display = "block";
-    loadData();
+  function loadBooks() {
+    let shelf = document.getElementById("bookshelf");
+    shelf.innerHTML = "";
+    books.forEach(b => {
+      let div = document.createElement("div");
+      div.className = "book";
+      div.innerText = b.name;
+      div.onclick = () => openBook(b);
+      shelf.appendChild(div);
+    });
+  }
+
+  function openBook(book) {
+    let v = document.getElementById("viewer");
+    if(book.type === 0) {
+      v.innerHTML = "<iframe src='https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf'></iframe>";
+    }
+    else if(book.type === 1) {
+      v.innerHTML = "<video controls src='https://www.w3schools.com/html/mov_bbb.mp4'></video>";
+    }
+    else {
+      v.innerHTML = "<audio controls src='https://www.w3schools.com/html/horse.mp3'></audio>";
+    }
   }
 
   function logout() {
-    alert("QR Scanned Successfully! Logout Success");
     location.reload();
   }
 
-  function loadData() {
-    document.getElementById("totalBooks").innerText = totalBooks;
-    document.getElementById("totalUsers").innerText = totalUsers;
-    document.getElementById("readingUsers").innerText = readingUsers;
-    document.getElementById("availableBooks").innerText = totalBooks - readingUsers;
-
-    let list = document.getElementById("bookList");
-    list.innerHTML = "";
-    books.forEach(book => {
-      let div = document.createElement("div");
-      div.className = "book";
-      div.innerText = book + " (Read Only)";
-      list.appendChild(div);
-    });
+  function onScanSuccess(decodedText) {
+    document.getElementById("scanner").style.display = "none";
+    document.getElementById("dashboard").style.display = "block";
+    loadBooks();
+    html5QrCode.stop();
   }
+
+  const html5QrCode = new Html5Qrcode("reader");
+  html5QrCode.start(
+    { facingMode: "environment" },
+    { fps: 10, qrbox: 250 },
+    onScanSuccess
+  );
 </script>
 
 </body>
