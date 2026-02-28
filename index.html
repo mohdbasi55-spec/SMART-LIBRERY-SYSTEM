@@ -6,161 +6,158 @@
 body{
  margin:0;
  font-family:Segoe UI,Arial;
- background:#f4f6fb;
+ background:#eaeef6;
 }
 header{
- background:#34495e;
+ background:#2c3e50;
  color:white;
  padding:15px;
  text-align:center;
 }
-.container{
+.categories{
  display:flex;
+ gap:10px;
+ justify-content:center;
+ margin:10px;
 }
-.sidebar{
- width:70px;
- background:#2c3e50;
- display:flex;
- flex-direction:column;
- align-items:center;
- padding-top:10px;
-}
-.app{
- width:45px;
- height:45px;
- background:#3d566e;
+.cat{
+ padding:8px 18px;
+ background:#3498db;
  color:white;
- margin:8px;
- border-radius:12px;
+ border-radius:20px;
+ cursor:pointer;
+}
+.container{
+ display:grid;
+ grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+ gap:20px;
+ padding:20px;
+}
+.book{
+ width:140px;
+ height:200px;
+ background:linear-gradient(135deg,#ff6a00,#ee0979);
+ border-radius:8px;
+ color:white;
  display:flex;
  align-items:center;
  justify-content:center;
- font-size:12px;
-}
-.main{
- flex:1;
- padding:15px;
-}
-.stats{
- display:grid;
- grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
- gap:10px;
-}
-.stat{
- background:white;
- padding:12px;
- border-radius:12px;
- text-align:center;
- box-shadow:0 2px 6px rgba(0,0,0,0.1);
-}
-.search{
- width:100%;
- padding:10px;
- border-radius:20px;
- border:1px solid #ccc;
- margin-top:10px;
-}
-.books{
- display:grid;
- grid-template-columns:repeat(auto-fit,minmax(130px,1fr));
- gap:15px;
- margin-top:15px;
-}
-.book{
- background:linear-gradient(to bottom,#ff9966,#ff5e62);
- color:white;
- padding:18px;
- border-radius:15px;
+ font-weight:bold;
  text-align:center;
  cursor:pointer;
- box-shadow:0 4px 10px rgba(0,0,0,0.2);
- transition:0.3s;
+ box-shadow:5px 5px 10px rgba(0,0,0,0.3);
+ position:relative;
+ transform-style:preserve-3d;
+ transition:transform 0.6s;
+}
+.book:before{
+ content:"";
+ position:absolute;
+ left:0;
+ top:0;
+ width:15px;
+ height:100%;
+ background:rgba(0,0,0,0.2);
+ border-radius:8px 0 0 8px;
 }
 .book:hover{
- transform:translateY(-5px) scale(1.05);
+ transform:rotateY(-10deg);
 }
-#viewer{
- margin-top:15px;
+#reader{
+ display:none;
+ padding:20px;
+}
+.page{
  background:white;
- padding:10px;
- border-radius:12px;
- box-shadow:0 2px 8px rgba(0,0,0,0.2);
+ padding:20px;
+ border-radius:10px;
+ box-shadow:0 4px 10px rgba(0,0,0,0.3);
+ animation:flip 0.7s;
 }
-iframe,video,audio{
- width:100%;
- height:350px;
+@keyframes flip{
+ from{transform:rotateY(90deg);}
+ to{transform:rotateY(0deg);}
+}
+button{
+ padding:10px 20px;
+ border:none;
+ border-radius:20px;
+ background:#27ae60;
+ color:white;
+ cursor:pointer;
+ margin-bottom:10px;
 }
 </style>
 </head>
 
 <body>
+
 <header>
-<h2>SMART DIGITAL LIBRARY</h2>
+<h2>📚 Smart Digital Library</h2>
 </header>
 
-<div class="container">
-<div class="sidebar">
-<div class="app">🏠</div>
-<div class="app">📚</div>
-<div class="app">🎧</div>
-<div class="app">🎥</div>
-<div class="app">👤</div>
+<div class="categories">
+<div class="cat" onclick="filterBooks('All')">All</div>
+<div class="cat" onclick="filterBooks('Science')">Science</div>
+<div class="cat" onclick="filterBooks('Computer')">Computer</div>
+<div class="cat" onclick="filterBooks('Novel')">Novel</div>
 </div>
 
-<div class="main">
+<div id="library" class="container"></div>
 
-<div class="stats">
-<div class="stat">Total Books: 50</div>
-<div class="stat">Users Reading: 12</div>
-<div class="stat">Available Now: 35</div>
-<div class="stat">Most Read: Book 1</div>
-</div>
-
-<input type="text" class="search" placeholder="Search book..." onkeyup="searchBook(this.value)">
-
-<div class="books" id="bookshelf"></div>
-
-<h3>📖 Reader</h3>
-<div id="viewer"></div>
-
-</div>
+<div id="reader">
+<button onclick="back()">⬅ Back to Library</button>
+<div class="page" id="page"></div>
 </div>
 
 <script>
 const books=[];
 for(let i=1;i<=50;i++){
- books.push({name:"Book "+i,type:i%3});
+ let cat = i%3==0?"Science": i%3==1?"Computer":"Novel";
+ books.push({name:"Book "+i,category:cat});
 }
 
-function loadBooks(list=books){
- let shelf=document.getElementById("bookshelf");
- shelf.innerHTML="";
+function loadBooks(list){
+ let lib=document.getElementById("library");
+ lib.innerHTML="";
  list.forEach(b=>{
    let d=document.createElement("div");
    d.className="book";
-   d.innerText=b.name;
+   d.innerText=b.name+"\n("+b.category+")";
    d.onclick=()=>openBook(b);
-   shelf.appendChild(d);
+   lib.appendChild(d);
  });
 }
 
 function openBook(book){
- let v=document.getElementById("viewer");
- if(book.type==0){
-  v.innerHTML="<iframe src='https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf'></iframe>";
- }else if(book.type==1){
-  v.innerHTML="<video controls src='https://www.w3schools.com/html/mov_bbb.mp4'></video>";
- }else{
-  v.innerHTML="<audio controls src='https://www.w3schools.com/html/horse.mp3'></audio>";
- }
+ document.getElementById("library").style.display="none";
+ document.getElementById("reader").style.display="block";
+ document.getElementById("page").innerHTML=`
+ <h3>${book.name}</h3>
+ <p>
+ This is a digital page of ${book.name}.  
+ It simulates real book reading experience with page flip animation.  
+ Students can read content digitally without downloading.
+ </p>
+ <p>
+ Category: ${book.category}  
+ Format: Digital Book
+ </p>
+ `;
 }
 
-function searchBook(val){
- let f=books.filter(b=>b.name.toLowerCase().includes(val.toLowerCase()));
- loadBooks(f);
+function back(){
+ document.getElementById("reader").style.display="none";
+ document.getElementById("library").style.display="grid";
 }
 
-loadBooks();
+function filterBooks(cat){
+ if(cat=="All") loadBooks(books);
+ else loadBooks(books.filter(b=>b.category==cat));
+}
+
+loadBooks(books);
 </script>
+
 </body>
 </html>
