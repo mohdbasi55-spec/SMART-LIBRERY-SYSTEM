@@ -1,137 +1,135 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+<meta charset="UTF-8">
 <title>Smart Library</title>
 <style>
-body{
-margin:0;
-font-family:Georgia;
-background:#1e1e1e;
-color:white;
+body {
+  margin:0;
+  font-family: Arial;
+  background:#121212;
+  color:white;
 }
-h1{text-align:center;}
-
-#library{
-display:grid;
-grid-template-columns:repeat(auto-fill,minmax(140px,1fr));
-gap:20px;
-padding:20px;
+#shelf {
+  display:flex;
+  overflow-x:auto;
+  padding:20px;
 }
-
-.book{
-background:linear-gradient(135deg,#ff9800,#ff5722);
-height:200px;
-border-radius:10px;
-display:flex;
-align-items:center;
-justify-content:center;
-text-align:center;
-font-weight:bold;
-cursor:pointer;
-transition:0.3s;
-box-shadow:0 0 10px black;
+.book {
+  min-width:150px;
+  height:200px;
+  margin:10px;
+  background:linear-gradient(45deg,#ff9800,#ff5722);
+  border-radius:10px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  cursor:pointer;
+  box-shadow:0 0 10px black;
 }
-.book:hover{
-transform:scale(1.05);
+#reader {
+  display:none;
+  padding:20px;
 }
-
-#reader{
-display:none;
-padding:20px;
+.page {
+  background:white;
+  color:black;
+  padding:20px;
+  min-height:300px;
+  border-radius:10px;
 }
-.page{
-background:#fff;
-color:black;
-border-radius:10px;
-padding:20px;
-min-height:350px;
-font-size:18px;
-line-height:1.6;
-box-shadow:0 0 10px black;
+button {
+  padding:10px 20px;
+  margin:10px;
+  font-size:16px;
 }
-
-button{
-padding:10px 20px;
-margin:10px;
-font-size:16px;
-border:none;
-border-radius:5px;
-cursor:pointer;
-}
-
 </style>
 </head>
-
 <body>
 
-<h1>📚 Smart Library</h1>
+<h2 style="text-align:center;">📚 Smart Library System</h2>
 
-<div id="library">
-<div class="book" onclick="openBook('ai')">Artificial Intelligence</div>
-<div class="book" onclick="openBook('ml')">Machine Learning</div>
-<div class="book" onclick="openBook('ds')">Data Science</div>
+<div id="shelf">
+  <div class="book" onclick="openBook()">Artificial Intelligence</div>
 </div>
 
 <div id="reader">
-<h2 id="bookTitle"></h2>
-<div class="page" id="pageText"></div>
-<button onclick="prevPage()">⬅ Prev</button>
-<button onclick="nextPage()">Next ➡</button>
-<button onclick="back()">Back</button>
+  <h3 id="title"></h3>
+  <div class="page" id="pageText"></div>
+  <button onclick="prevPage()">⬅ Prev</button>
+  <button onclick="nextPage()">Next ➡</button>
+  <button onclick="closeBook()">Close ❌</button>
 </div>
 
 <script>
-let books={
-ai:[
-"Artificial Intelligence\nAuthor: Smart Library\n\nAI is the science of making machines intelligent.",
-"History of AI\n\n1950 Alan Turing introduced machine thinking.",
-"Types of AI\n\nNarrow AI, General AI, Super AI.",
-"Applications\n\nHealthcare, Education, Banking.",
-"Conclusion\n\nAI will shape the future."
-],
-ml:[
-"Machine Learning\nAuthor: Smart Library\n\nML is subset of AI.",
-"Supervised Learning\n\nUses labeled data.",
-"Unsupervised Learning\n\nFinds patterns.",
-"Deep Learning\n\nNeural networks.",
-"Conclusion\n\nML powers modern AI."
-],
-ds:[
-"Data Science\nAuthor: Smart Library\n\nScience of data.",
-"Data Collection\n\nFrom sensors, web.",
-"Data Analysis\n\nUsing Python.",
-"Visualization\n\nGraphs & charts.",
-"Conclusion\n\nData is new oil."
-]
-};
+let pages = [
+"Page 1: Artificial Intelligence\n\nAuthor: Smart Library\n\nAI is the science of making machines think.",
+"Page 2: Introduction\n\nAI helps computers learn and solve problems.",
+"Page 3: What is Intelligence?\n\nAbility to learn and decide.",
+"Page 4: What is AI?\n\nMachines that mimic humans.",
+"Page 5: History\n\n1950 Alan Turing.",
+"Page 6: Types of AI\n\nNarrow, General, Super.",
+"Page 7: Machine Learning\n\nLearning from data.",
+"Page 8: Deep Learning\n\nNeural networks.",
+"Page 9: Neural Network\n\nInput, hidden, output.",
+"Page 10: Data\n\nText, image, audio.",
+"Page 11: Daily Life\n\nMaps, YouTube.",
+"Page 12: Healthcare\n\nCancer detection.",
+"Page 13: Education\n\nSmart classrooms.",
+"Page 14: Business\n\nChatbots.",
+"Page 15: Robotics\n\nSmart robots.",
+"Page 16: NLP\n\nLanguage processing.",
+"Page 17: Vision\n\nFace recognition.",
+"Page 18: Ethics\n\nPrivacy issues.",
+"Page 19: Advantages\n\nFast and accurate.",
+"Page 20: Disadvantages\n\nExpensive.",
+"Page 21: Future\n\nSmart world.",
+"Page 22: AI vs Human\n\nLogic vs emotions.",
+"Page 23: Security\n\nBiometrics.",
+"Page 24: Agriculture\n\nCrop prediction.",
+"Page 25: Banking\n\nFraud detection.",
+"Page 26: Games\n\nChess bots.",
+"Page 27: Transport\n\nSelf driving.",
+"Page 28: Jobs\n\nNew careers.",
+"Page 29: Hardware\n\nCPU, GPU.",
+"Page 30: Software\n\nPython.",
+"Page 31: Process\n\nTrain and test.",
+"Page 32: Risks\n\nFake videos.",
+"Page 33: Safety\n\nRules.",
+"Page 34: Strong AI\n\nResearch.",
+"Page 35: Super AI\n\nTheory.",
+"Page 36: Space\n\nMars robots.",
+"Page 37: Smart Cities\n\nTraffic control.",
+"Page 38: Human life\n\nAssist humans.",
+"Page 39: Conclusion\n\nUse AI wisely.",
+"Page 40: End\n\nThank you."
+];
 
-let currentBook=[];
-let page=0;
+let current = 0;
 
-function openBook(name){
-document.getElementById("library").style.display="none";
-document.getElementById("reader").style.display="block";
-currentBook=books[name];
-page=0;
-document.getElementById("bookTitle").innerText=name.toUpperCase();
-showPage();
+function openBook(){
+  document.getElementById("shelf").style.display="none";
+  document.getElementById("reader").style.display="block";
+  document.getElementById("title").innerText="Artificial Intelligence";
+  showPage();
 }
 
 function showPage(){
-document.getElementById("pageText").innerText=currentBook[page];
+  document.getElementById("pageText").innerText=pages[current];
 }
 
 function nextPage(){
-if(page<currentBook.length-1){page++;showPage();}
+  if(current<pages.length-1){current++;showPage();}
 }
 
 function prevPage(){
-if(page>0){page--;showPage();}
+  if(current>0){current--;showPage();}
 }
 
-function back(){
-document.getElementById("reader").style.display="none";
-document.getElementById("library").style.display="grid";
+function closeBook(){
+  document.getElementById("reader").style.display="none";
+  document.getElementById("shelf").style.display="flex";
 }
 </script>
 
