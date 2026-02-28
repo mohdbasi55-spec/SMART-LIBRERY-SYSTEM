@@ -6,7 +6,7 @@
 body{
  margin:0;
  font-family:Georgia,serif;
- background:#eef2f7;
+ background:#e3e7ef;
 }
 header{
  background:#2c3e50;
@@ -23,7 +23,7 @@ header{
 .book{
  width:150px;
  height:210px;
- border-radius:10px;
+ border-radius:8px;
  color:white;
  display:flex;
  align-items:center;
@@ -31,25 +31,39 @@ header{
  text-align:center;
  font-weight:bold;
  cursor:pointer;
- box-shadow:5px 5px 12px rgba(0,0,0,0.3);
- transition:0.4s;
+ box-shadow:4px 4px 10px rgba(0,0,0,0.3);
+ transition:0.3s;
 }
-.book:hover{transform:rotateY(-12deg) scale(1.05);}
+.book:hover{transform:rotateY(-10deg) scale(1.05);}
 #reader{
  display:none;
  padding:20px;
+ text-align:center;
 }
-.page{
+.realbook{
+ width:380px;
+ margin:auto;
  background:#fffdf5;
- padding:30px;
- border-radius:10px;
- box-shadow:0 4px 10px rgba(0,0,0,0.3);
- min-height:300px;
+ padding:25px;
+ border-radius:8px;
+ box-shadow:0 5px 15px rgba(0,0,0,0.4);
+ min-height:420px;
  animation:flip 0.6s;
 }
 @keyframes flip{
  from{transform:rotateY(90deg);}
  to{transform:rotateY(0deg);}
+}
+.diagram{
+ width:100%;
+ height:120px;
+ border:2px dashed #555;
+ margin:10px 0;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ font-size:14px;
+ background:#f9f9f9;
 }
 button{
  padding:10px 20px;
@@ -60,11 +74,7 @@ button{
  cursor:pointer;
  margin:5px;
 }
-.meta{
- font-style:italic;
- color:#555;
- margin-bottom:10px;
-}
+.meta{font-style:italic;color:#444;}
 </style>
 </head>
 
@@ -79,7 +89,7 @@ button{
 <div id="reader">
 <button onclick="backToLibrary()">⬅ Back</button>
 <h3 id="bookTitle"></h3>
-<div class="page" id="page"></div>
+<div class="realbook" id="page"></div>
 <br>
 <button onclick="prevPage()">⬅ Prev</button>
 <button onclick="nextPage()">Next ➡</button>
@@ -107,17 +117,16 @@ topics.slice(0,50).forEach((t,i)=>{
  let pages=[];
  let author=authors[i%authors.length];
 
- pages.push("📘 "+t+"\n\nAuthor: "+author+"\n\nThis is the cover page of the book titled '"+t+"'.");
- pages.push("📖 Introduction\n\nThis book explains the fundamentals and advanced concepts of "+t+" in a simple and structured manner.");
+ pages.push(`<h3>${t}</h3><div class='meta'>Author: ${author}</div><p>Cover page of the book "${t}".</p>`);
+ pages.push(`<h4>Introduction</h4><p>This book explains the concepts of ${t} in a simple way.</p><div class='diagram'>Diagram: Overview of ${t}</div>`);
 
  for(let p=3;p<=39;p++){
-   pages.push("Chapter Content\n\nThis page discusses important ideas related to "+t+
-   ". It helps students understand the topic step by step with real-world examples.");
+   pages.push(`<h4>${t} - Page ${p}</h4>
+   <p>This page explains important ideas of ${t} with examples.</p>
+   <div class='diagram'>Diagram related to ${t}</div>`);
  }
 
- pages.push("📕 Conclusion\n\nThis is the final page of the book '"+t+
- "'. You have completed reading this book. The concepts of "+t+
- " are essential for modern education and technology.");
+ pages.push(`<h4>Conclusion</h4><p>You have completed the book on ${t}.</p>`);
 
  books.push({name:t,author:author,color:colors[i%colors.length],pages:pages});
 });
@@ -148,7 +157,7 @@ function openBook(book){
 }
 
 function showPage(){
- document.getElementById("page").innerText=currentBook.pages[currentPage];
+ document.getElementById("page").innerHTML=currentBook.pages[currentPage];
  document.getElementById("pageNo").innerText=
  "Page "+(currentPage+1)+" / "+currentBook.pages.length;
 }
