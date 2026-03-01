@@ -1,103 +1,104 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
 <title>Smart Library System</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
 body{
-margin:0;font-family:Arial;background:#f4f4f4;color:#000;transition:.3s;
+font-family:Arial;
+background:#f2f2f2;
+margin:0;
 }
-.dark{background:#121212;color:#fff;}
 header{
-display:flex;justify-content:space-between;align-items:center;
-padding:10px;background:#222;color:#fff;flex-wrap:wrap;
+background:#333;
+color:white;
+padding:10px;
+text-align:center;
 }
-#stats{font-size:14px;}
-#toggle{cursor:pointer;}
-#search{padding:6px;width:200px;}
 #books{
-display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
-gap:15px;padding:15px;
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
+gap:10px;
+padding:10px;
 }
 .book{
-background:linear-gradient(45deg,#ff7,#f93);
-padding:20px;border-radius:10px;
-box-shadow:0 5px 10px rgba(0,0,0,.3);
-cursor:pointer;transform-style:preserve-3d;transition:.3s;
+background:#ffcc66;
+padding:20px;
+border-radius:10px;
+text-align:center;
+cursor:pointer;
 }
-.book:hover{transform:rotateY(10deg) scale(1.05);}
 #reader{
-position:fixed;top:0;left:0;width:100%;height:100%;
-background:#fff;display:none;flex-direction:column;
+display:none;
+position:fixed;
+top:0;left:0;
+width:100%;height:100%;
+background:white;
+flex-direction:column;
 }
-.dark #reader{background:#000;color:#fff;}
-#reader header{background:#333;}
-#page{flex:1;padding:20px;overflow:auto;animation:flip .4s;}
-@keyframes flip{from{transform:rotateY(90deg)}to{transform:rotateY(0)}}
-button{padding:5px 10px;}
-progress{width:100%;}
-@media(max-width:600px){
-#search{width:100%;}
+#reader header{
+background:#444;
+color:white;
+padding:10px;
+}
+#page{
+flex:1;
+padding:20px;
+overflow:auto;
+}
+button{
+padding:5px 10px;
+margin:5px;
 }
 </style>
 </head>
+
 <body>
 
 <header>
 <h2>Smart Library System</h2>
-<div id="stats">📚50 | 👥120 | 📖35</div>
-<input id="search" placeholder="Search book...">
-<div id="toggle">🌙</div>
 </header>
 
 <div id="books"></div>
 
 <div id="reader">
 <header>
-<span id="btitle"></span>
-<button onclick="closeBook()">❌</button>
+<span id="title"></span>
+<button onclick="closeBook()">Close</button>
 </header>
 <div id="page"></div>
-<progress id="prog" value="0" max="40"></progress>
-<div>
-<button onclick="prev()">⬅</button>
-<button onclick="next()">➡</button>
-<button onclick="bookmark()">🔖</button>
-<button onclick="audio()">🔊</button>
+<div style="text-align:center">
+<button onclick="prev()">Prev</button>
+<button onclick="next()">Next</button>
 </div>
 </div>
 
 <script>
 let titles=[
-"Artificial Intelligence","Machine Learning","Deep Learning","Data Science",
-"Python Programming","Cyber Security","Blockchain","IoT","Cloud Computing",
-"Big Data","Web Development","Java Programming","C Programming","C++",
-"R Programming","Digital Image Processing","Computer Graphics",
-"Database Systems","Operating Systems","Computer Networks",
-"Software Engineering","Compiler Design","Distributed Systems",
-"Quantum Computing","Robotics","Embedded Systems","Bioinformatics",
-"AR & VR","Game Development","Ethical Hacking",
+"Artificial Intelligence","Machine Learning","Data Science","Python Programming",
+"Cyber Security","Blockchain","IoT","Cloud Computing","Big Data","Web Development",
+"Java Programming","C Programming","C++ Programming","Database Systems",
+"Operating Systems","Computer Networks","Software Engineering","Compiler Design",
+"Distributed Systems","Quantum Computing","Robotics","Embedded Systems",
+"Bioinformatics","AR & VR","Game Development","Ethical Hacking",
 "Business Analytics","Statistics","Linear Algebra","Discrete Math",
 "NLP","Pattern Recognition","Neural Networks",
 "Microprocessors","Human Computer Interaction","Mobile App Dev",
 "Network Security","Information Retrieval","Data Mining",
 "Smart Systems","AI Ethics","Automation","Simulation",
-"Digital Forensics","UX Design"
+"Digital Forensics","UX Design","Digital Marketing","Cloud Security"
 ];
 
 let books=[];
 for(let i=0;i<50;i++){
 let pages=[];
-for(let p=1;p<=40;p++){
-pages.push("Page "+p+"\n\n"+titles[i]+"\n\nThis is content of "+titles[i]+" chapter "+p+".");
+for(let p=1;p<=10;p++){
+pages.push("Page "+p+"\n\n"+titles[i]+"\n\nThis is sample content for "+titles[i]+" page "+p+".");
 }
-books.push({title:titles[i],pages:pages,read:0});
+books.push({title:titles[i],pages:pages});
 }
 
 let grid=document.getElementById("books");
-function load(){
-grid.innerHTML="";
 books.forEach((b,i)=>{
 let d=document.createElement("div");
 d.className="book";
@@ -105,52 +106,34 @@ d.innerText=b.title;
 d.onclick=()=>openBook(i);
 grid.appendChild(d);
 });
-}
-load();
 
 let current=0,page=0;
 function openBook(i){
-current=i;page=0;
+current=i;
+page=0;
 document.getElementById("reader").style.display="flex";
 show();
 }
 function closeBook(){
 document.getElementById("reader").style.display="none";
-speechSynthesis.cancel();
 }
 function show(){
-document.getElementById("btitle").innerText=books[current].title;
+document.getElementById("title").innerText=books[current].title;
 document.getElementById("page").innerText=books[current].pages[page];
-document.getElementById("prog").value=page+1;
-books[current].read++;
 }
-function next(){if(page<39){page++;show();}}
-function prev(){if(page>0){page--;show();}}
-
-function bookmark(){
-alert("Bookmarked page "+(page+1));
+function next(){
+if(page<books[current].pages.length-1){
+page++;
+show();
 }
-
-function audio(){
-let u=new SpeechSynthesisUtterance(books[current].pages[page]);
-speechSynthesis.speak(u);
 }
-
-document.getElementById("toggle").onclick=()=>{
-document.body.classList.toggle("dark");
+function prev(){
+if(page>0){
+page--;
+show();
 }
-
-document.getElementById("search").oninput=function(){
-let v=this.value.toLowerCase();
-grid.innerHTML="";
-books.filter(b=>b.title.toLowerCase().includes(v))
-.forEach((b,i)=>{
-let d=document.createElement("div");
-d.className="book";d.innerText=b.title;
-d.onclick=()=>openBook(i);
-grid.appendChild(d);
-});
 }
 </script>
+
 </body>
 </html>
