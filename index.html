@@ -3,19 +3,21 @@
 <head>
 <title>Smart Library System</title>
 <style>
-body{margin:0;font-family:Arial;background:#f4f4f4;}
-header{background:#c62828;color:white;padding:10px 20px;display:flex;justify-content:space-between;align-items:center;}
-.menu span{margin:0 10px;cursor:pointer;font-weight:bold;}
+body{margin:0;font-family:Segoe UI;background:#f4f4f4;}
+header{background:#b71c1c;color:white;padding:12px 20px;display:flex;justify-content:space-between;align-items:center;}
+.menu span{margin:0 12px;cursor:pointer;font-weight:600;}
 .container{display:flex;}
-.left{width:200px;background:#eee;padding:15px;}
-.left input{width:100%;padding:8px;}
-.main{flex:1;padding:20px;display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:20px;}
-.book{background:white;padding:10px;border-radius:8px;text-align:center;cursor:pointer;box-shadow:0 0 8px #aaa;transition:0.3s;}
+.left{width:220px;background:#eee;padding:15px;}
+.left input{width:100%;padding:8px;border-radius:5px;border:1px solid #aaa;}
+.main{flex:1;padding:20px;display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:20px;}
+.book{background:white;padding:10px;border-radius:10px;text-align:center;cursor:pointer;box-shadow:0 0 8px #aaa;transition:.3s;}
 .book:hover{transform:scale(1.05);}
-.book img{width:100%;height:200px;object-fit:cover;border-radius:5px;}
+.book img{width:100%;height:220px;object-fit:cover;border-radius:6px;}
 #reader{display:none;padding:20px;}
-.page{background:white;padding:25px;border-radius:10px;min-height:350px;line-height:1.6;box-shadow:0 0 10px #888;}
-button{padding:8px 15px;margin:10px;}
+.page{background:white;padding:25px;border-radius:12px;min-height:350px;line-height:1.7;box-shadow:0 0 10px #777;}
+button{padding:8px 18px;margin:10px;border:none;border-radius:5px;background:#c62828;color:white;font-size:15px;cursor:pointer;}
+button:hover{background:#a00;}
+.diagram{margin-top:15px;padding:10px;border:2px dashed #666;border-radius:8px;text-align:center;}
 </style>
 </head>
 
@@ -43,7 +45,6 @@ button{padding:8px 15px;margin:10px;}
 
 <div id="reader">
 <h2 id="bookTitle"></h2>
-<h4 id="bookAuthor"></h4>
 <div class="page" id="pageText"></div>
 <button onclick="prevPage()">⬅ Prev</button>
 <button onclick="nextPage()">Next ➡</button>
@@ -51,65 +52,110 @@ button{padding:8px 15px;margin:10px;}
 </div>
 
 <script>
-let bookTitles = [
-"Artificial Intelligence Fundamentals","Machine Learning Basics","Deep Learning with Neural Networks","Data Science Essentials",
-"Python for Data Analysis","Big Data Technologies","Cloud Computing Concepts","Internet of Things (IoT)",
-"Cyber Security Principles","Blockchain Technology","Web Development with HTML & CSS","JavaScript Programming",
-"Full Stack Development","Mobile App Development","Operating System Concepts","Computer Networks",
-"Database Management Systems","Software Engineering","Object Oriented Programming","Java Programming",
-"C Programming","C++ Programming","Python Programming","R Programming for Data Science",
-"Digital Image Processing","Computer Graphics","Information Retrieval","Natural Language Processing",
-"Robotics Engineering","Embedded Systems","Microprocessor and Microcontroller","Artificial Neural Networks",
-"Pattern Recognition","Data Mining Techniques","Business Analytics","Statistical Methods",
-"Linear Algebra for Computing","Discrete Mathematics","Human Computer Interaction","Compiler Design",
-"Distributed Systems","Virtual Reality","Augmented Reality","Game Development",
-"Ethical Hacking","Network Security","Quantum Computing","Bioinformatics","Smart Systems"
+let bookTitles=[
+"Artificial Intelligence","Machine Learning","Deep Learning","Data Science","Python Programming",
+"Cyber Security","Blockchain","Cloud Computing","Internet of Things","Web Development",
+"Java Programming","C Programming","C++ Programming","Database Management","Operating Systems",
+"Computer Networks","Software Engineering","Digital Image Processing","Computer Graphics",
+"Natural Language Processing","Robotics","Embedded Systems","Microprocessors","Data Mining",
+"Pattern Recognition","Compiler Design","Distributed Systems","Ethical Hacking",
+"Network Security","Game Development","Virtual Reality","Augmented Reality",
+"Human Computer Interaction","Information Retrieval","Business Analytics",
+"Statistics for Computing","Linear Algebra","Discrete Mathematics","Bioinformatics",
+"Quantum Computing","Smart Systems","Mobile App Development","AI Ethics",
+"Big Data Analytics","DevOps","Microservices","Full Stack Development",
+"UI UX Design","Neural Networks"
 ];
 
 let books={};
 for(let i=0;i<50;i++){
-books["book"+(i+1)] = {
-title: bookTitles[i],
-author:"Smart Library",
+books["book"+i]={
+title:bookTitles[i],
 pages:[
-"Page 1\n\n"+bookTitles[i]+"\n\nIntroduction to this subject.",
-"Page 2\n\nBasic concepts of "+bookTitles[i]+".",
-"Page 3\n\nApplications of "+bookTitles[i]+".",
-"Page 4\n\nAdvantages and challenges of "+bookTitles[i]+".",
-"Page 5\n\nConclusion of "+bookTitles[i]+"."
+`📘 ${bookTitles[i]} - Introduction
+
+${bookTitles[i]} is a major field of computer science that focuses on building intelligent systems.
+
+It allows machines to learn, think, and solve problems like humans.
+
+Main areas:
+• Basics
+• Applications
+• Advantages
+
+`,
+`📗 ${bookTitles[i]} - Concepts
+
+Core concepts of ${bookTitles[i]}:
+• Input Data
+• Processing
+• Output
+
+This technology is widely used in real world systems.
+
+<div class='diagram'>[ Concept Flow Diagram ]</div>
+`,
+`📙 ${bookTitles[i]} - Applications
+
+Applications of ${bookTitles[i]} include:
+• Healthcare
+• Banking
+• Education
+• Robotics
+• Smart Devices
+
+It improves efficiency and accuracy.
+
+<div class='diagram'>[ Application Diagram ]</div>
+`,
+`📕 ${bookTitles[i]} - Advantages & Challenges
+
+Advantages:
+• Automation
+• Speed
+• Accuracy
+
+Challenges:
+• High cost
+• Data dependency
+• Security issues
+
+`,
+`📓 ${bookTitles[i]} - Conclusion
+
+${bookTitles[i]} plays an important role in modern technology.
+
+Future scope is very high and growing rapidly.
+
+<div class='diagram'>[ Future Scope Diagram ]</div>
+`
 ]
 };
 }
 
 let grid=document.getElementById("bookGrid");
-let colors=["ff5722","3f51b5","4caf50","9c27b0","009688"];
+let colors=["ff7043","42a5f5","66bb6a","ab47bc","26a69a"];
 let c=0;
 for(let key in books){
 let div=document.createElement("div");
 div.className="book";
 div.onclick=()=>openBook(key);
-div.innerHTML=`<img src="https://dummyimage.com/200x300/${colors[c%5]}/ffffff&text=${encodeURIComponent(books[key].title.split(" ")[0])}">
-<b>${books[key].title}</b><br>by ${books[key].author}`;
+div.innerHTML=`<img src="https://dummyimage.com/200x300/${colors[c%5]}/ffffff&text=${encodeURIComponent(books[key].title)}">
+<b>${books[key].title}</b>`;
 grid.appendChild(div);
 c++;
 }
 
-let currentBook=null;
-let page=0;
+let currentBook=null,page=0;
 
-function openBook(name){
+function openBook(n){
 document.getElementById("libraryView").style.display="none";
 document.getElementById("reader").style.display="block";
-currentBook=books[name];
-page=0;
+currentBook=books[n];page=0;
 document.getElementById("bookTitle").innerText=currentBook.title;
-document.getElementById("bookAuthor").innerText="Author: "+currentBook.author;
 showPage();
 }
-
-function showPage(){
-document.getElementById("pageText").innerText=currentBook.pages[page];
-}
+function showPage(){document.getElementById("pageText").innerHTML=currentBook.pages[page];}
 function nextPage(){if(page<currentBook.pages.length-1){page++;showPage();}}
 function prevPage(){if(page>0){page--;showPage();}}
 function back(){
