@@ -24,7 +24,11 @@ button{padding:8px 15px;margin:10px;}
 <header>
 <h2>📚 Smart Library System</h2>
 <div class="menu">
-<span>Home</span><span>Categories</span><span>Audiobooks</span><span>New Books</span><span>Contact</span>
+<span>Home</span>
+<span>Categories</span>
+<span>Audiobooks</span>
+<span>New Books</span>
+<span>Contact</span>
 </div>
 </header>
 
@@ -47,32 +51,47 @@ button{padding:8px 15px;margin:10px;}
 </div>
 
 <script>
+let bookTitles = [
+"Artificial Intelligence Fundamentals","Machine Learning Basics","Deep Learning with Neural Networks","Data Science Essentials",
+"Python for Data Analysis","Big Data Technologies","Cloud Computing Concepts","Internet of Things (IoT)",
+"Cyber Security Principles","Blockchain Technology","Web Development with HTML & CSS","JavaScript Programming",
+"Full Stack Development","Mobile App Development","Operating System Concepts","Computer Networks",
+"Database Management Systems","Software Engineering","Object Oriented Programming","Java Programming",
+"C Programming","C++ Programming","Python Programming","R Programming for Data Science",
+"Digital Image Processing","Computer Graphics","Information Retrieval","Natural Language Processing",
+"Robotics Engineering","Embedded Systems","Microprocessor and Microcontroller","Artificial Neural Networks",
+"Pattern Recognition","Data Mining Techniques","Business Analytics","Statistical Methods",
+"Linear Algebra for Computing","Discrete Mathematics","Human Computer Interaction","Compiler Design",
+"Distributed Systems","Virtual Reality","Augmented Reality","Game Development",
+"Ethical Hacking","Network Security","Quantum Computing","Bioinformatics","Smart Systems"
+];
+
 let books={};
-for(let i=1;i<=50;i++){
-books["book"+i]={
-title:"Book "+i,
+for(let i=0;i<50;i++){
+books["book"+(i+1)] = {
+title: bookTitles[i],
 author:"Smart Library",
 pages:[
-"Page 1\n\nThis is Book "+i+" introduction.",
-"Page 2\n\nChapter 1 content of Book "+i+".",
-"Page 3\n\nChapter 2 content of Book "+i+".",
-"Page 4\n\nApplications of Book "+i+".",
-"Page 5\n\nConclusion of Book "+i+"."
+"Page 1\n\n"+bookTitles[i]+"\n\nIntroduction to this subject.",
+"Page 2\n\nBasic concepts of "+bookTitles[i]+".",
+"Page 3\n\nApplications of "+bookTitles[i]+".",
+"Page 4\n\nAdvantages and challenges of "+bookTitles[i]+".",
+"Page 5\n\nConclusion of "+bookTitles[i]+"."
 ]
 };
 }
 
 let grid=document.getElementById("bookGrid");
 let colors=["ff5722","3f51b5","4caf50","9c27b0","009688"];
-let i=1;
+let c=0;
 for(let key in books){
 let div=document.createElement("div");
 div.className="book";
 div.onclick=()=>openBook(key);
-div.innerHTML=`<img src="https://dummyimage.com/200x300/${colors[i%5]}/ffffff&text=Book+${i}">
+div.innerHTML=`<img src="https://dummyimage.com/200x300/${colors[c%5]}/ffffff&text=${encodeURIComponent(books[key].title.split(" ")[0])}">
 <b>${books[key].title}</b><br>by ${books[key].author}`;
 grid.appendChild(div);
-i++;
+c++;
 }
 
 let currentBook=null;
@@ -88,10 +107,15 @@ document.getElementById("bookAuthor").innerText="Author: "+currentBook.author;
 showPage();
 }
 
-function showPage(){document.getElementById("pageText").innerText=currentBook.pages[page];}
+function showPage(){
+document.getElementById("pageText").innerText=currentBook.pages[page];
+}
 function nextPage(){if(page<currentBook.pages.length-1){page++;showPage();}}
 function prevPage(){if(page>0){page--;showPage();}}
-function back(){document.getElementById("reader").style.display="none";document.getElementById("libraryView").style.display="flex";}
+function back(){
+document.getElementById("reader").style.display="none";
+document.getElementById("libraryView").style.display="flex";
+}
 </script>
 
 </body>
