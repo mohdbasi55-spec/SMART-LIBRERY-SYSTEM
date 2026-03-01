@@ -3,9 +3,21 @@
 <head>
 <title>Smart Library System</title>
 <style>
-body{margin:0;font-family:Segoe UI;background:#f2f4f8;}
+:root{
+--bg:#f2f4f8;
+--text:#000;
+--card:#fff;
+--header:#0d1b2a;
+}
+.dark{
+--bg:#121212;
+--text:#fff;
+--card:#1e1e1e;
+--header:#000;
+}
+body{margin:0;font-family:Segoe UI;background:var(--bg);color:var(--text);}
 header{
-background:#0d1b2a;
+background:var(--header);
 color:white;
 padding:15px 25px;
 display:flex;
@@ -18,13 +30,12 @@ align-items:center;
 
 .sidebar{
 width:240px;
-background:#ffffff;
+background:var(--card);
 padding:20px;
 box-shadow:2px 0 10px rgba(0,0,0,0.1);
 }
 
-.sidebar h3{margin-top:0;color:#0d1b2a;}
-.sidebar input{
+.sidebar input,select{
 width:100%;
 padding:10px;
 border-radius:8px;
@@ -68,7 +79,7 @@ padding:30px;
 }
 
 .page{
-background:white;
+background:var(--card);
 padding:25px;
 border-radius:15px;
 min-height:380px;
@@ -78,12 +89,12 @@ box-shadow:0 0 15px rgba(0,0,0,0.2);
 
 button{
 padding:10px 22px;
-margin:12px;
+margin:8px;
 border:none;
 border-radius:8px;
 background:#0d1b2a;
 color:white;
-font-size:16px;
+font-size:15px;
 cursor:pointer;
 }
 button:hover{background:#1b263b;}
@@ -94,7 +105,6 @@ padding:12px;
 border:2px dashed #0d1b2a;
 border-radius:10px;
 text-align:center;
-color:#0d1b2a;
 font-weight:bold;
 }
 </style>
@@ -105,11 +115,7 @@ font-weight:bold;
 <header>
 <h2>📚 Smart Library System</h2>
 <div class="menu">
-<span>Home</span>
-<span>Categories</span>
-<span>Audio</span>
-<span>New</span>
-<span>Contact</span>
+<span onclick="toggleMode()">🌙 Dark Mode</span>
 </div>
 </header>
 
@@ -117,14 +123,17 @@ font-weight:bold;
 
 <div class="sidebar">
 <h3>🔍 Search Books</h3>
-<input type="text" id="searchBox" placeholder="Type book name..." onkeyup="searchBooks()">
-<br><br>
-<h3>📂 Categories</h3>
-<p>AI</p>
-<p>Programming</p>
-<p>Design</p>
-<p>Security</p>
-<p>Data</p>
+<input type="text" id="searchBox" placeholder="Type book name..." onkeyup="filterBooks()">
+
+<h3>📂 Category</h3>
+<select id="categoryBox" onchange="filterBooks()">
+<option value="All">All</option>
+<option value="AI">AI</option>
+<option value="Programming">Programming</option>
+<option value="Design">Design</option>
+<option value="Security">Security</option>
+<option value="Data">Data</option>
+</select>
 </div>
 
 <div class="bookshelf" id="bookGrid"></div>
@@ -135,23 +144,24 @@ font-weight:bold;
 <div class="page" id="pageText"></div>
 <button onclick="prevPage()">⬅ Prev</button>
 <button onclick="nextPage()">Next ➡</button>
-<button onclick="back()">Back</button>
+<button onclick="speakPage()">🔊 Audio</button>
+<button onclick="back()">⬅ Back</button>
 </div>
 
 <script>
-let bookTitles=[
-"Artificial Intelligence","Machine Learning","Deep Learning","Data Science","Python Programming",
-"Cyber Security","Blockchain","Cloud Computing","Internet of Things","Web Development",
-"Java Programming","C Programming","C++ Programming","Database Management","Operating Systems",
-"Computer Networks","Software Engineering","Digital Image Processing","Computer Graphics",
-"Natural Language Processing","Robotics","Embedded Systems","Microprocessors","Data Mining",
-"Pattern Recognition","Compiler Design","Distributed Systems","Ethical Hacking",
-"Network Security","Game Development","Virtual Reality","Augmented Reality",
-"Human Computer Interaction","Information Retrieval","Business Analytics",
-"Statistics for Computing","Linear Algebra","Discrete Mathematics","Bioinformatics",
-"Quantum Computing","Smart Systems","Mobile App Development","AI Ethics",
-"Big Data Analytics","DevOps","Microservices","Full Stack Development",
-"UI UX Design","Neural Networks"
+let books=[
+{title:"Artificial Intelligence",cat:"AI"},
+{title:"Machine Learning",cat:"AI"},
+{title:"Deep Learning",cat:"AI"},
+{title:"Python Programming",cat:"Programming"},
+{title:"Java Programming",cat:"Programming"},
+{title:"Web Development",cat:"Programming"},
+{title:"UI UX Design",cat:"Design"},
+{title:"Computer Graphics",cat:"Design"},
+{title:"Cyber Security",cat:"Security"},
+{title:"Ethical Hacking",cat:"Security"},
+{title:"Data Science",cat:"Data"},
+{title:"Big Data Analytics",cat:"Data"}
 ];
 
 let gradients=[
@@ -159,73 +169,70 @@ let gradients=[
 "linear-gradient(135deg,#1fa2ff,#12d8fa,#a6ffcb)",
 "linear-gradient(135deg,#8360c3,#2ebf91)",
 "linear-gradient(135deg,#ffb347,#ffcc33)",
-"linear-gradient(135deg,#fc466b,#3f5efb)",
-"linear-gradient(135deg,#00c6ff,#0072ff)",
-"linear-gradient(135deg,#f7971e,#ffd200)",
-"linear-gradient(135deg,#c471f5,#fa71cd)"
+"linear-gradient(135deg,#fc466b,#3f5efb)"
 ];
 
-let books={};
-for(let i=0;i<50;i++){
-books["book"+i]={title:bookTitles[i],
-pages:[
-`${bookTitles[i]} - Introduction<br><br>${bookTitles[i]} explains fundamental principles and modern applications.`,
-`${bookTitles[i]} - Core Concepts<br><br>• Definition<br>• Models<br>• Algorithms<br><div class='diagram'>Concept Diagram</div>`,
-`${bookTitles[i]} - Applications<br><br>Used in Healthcare, Education, Industry.<div class='diagram'>Application Flow</div>`,
-`${bookTitles[i]} - Advantages & Challenges<br><br>Advantages: Speed, Accuracy<br>Challenges: Cost, Security`,
-`${bookTitles[i]} - Conclusion<br><br>Future scope is high.<div class='diagram'>Future Vision</div>`
-]};
-}
+let pages=[
+"Introduction and overview of topic.",
+"Concepts and models.",
+"Applications and examples.",
+"Advantages and challenges.",
+"Conclusion and future scope."
+];
 
 let grid=document.getElementById("bookGrid");
+let currentBookIndex=0,page=0;
 
-function loadBooks(){
+function loadBooks(list){
 grid.innerHTML="";
-let g=0;
-for(let key in books){
+list.forEach((b,i)=>{
 let div=document.createElement("div");
 div.className="book";
-div.style.background=gradients[g%gradients.length];
-div.onclick=()=>openBook(key);
-div.innerHTML=books[key].title;
+div.style.background=gradients[i%gradients.length];
+div.innerText=b.title;
+div.onclick=()=>openBook(i);
 grid.appendChild(div);
-g++;
+});
 }
-}
-loadBooks();
+loadBooks(books);
 
-function searchBooks(){
-let input=document.getElementById("searchBox").value.toLowerCase();
-grid.innerHTML="";
-let g=0;
-for(let key in books){
-if(books[key].title.toLowerCase().includes(input)){
-let div=document.createElement("div");
-div.className="book";
-div.style.background=gradients[g%gradients.length];
-div.onclick=()=>openBook(key);
-div.innerHTML=books[key].title;
-grid.appendChild(div);
-g++;
-}
-}
+function filterBooks(){
+let text=document.getElementById("searchBox").value.toLowerCase();
+let cat=document.getElementById("categoryBox").value;
+let filtered=books.filter(b=>{
+return b.title.toLowerCase().includes(text) && (cat=="All"||b.cat==cat);
+});
+loadBooks(filtered);
 }
 
-let currentBook=null,page=0;
-
-function openBook(n){
+function openBook(i){
+currentBookIndex=i;
+page=0;
 document.getElementById("libraryView").style.display="none";
 document.getElementById("reader").style.display="block";
-currentBook=books[n];page=0;
-document.getElementById("bookTitle").innerText=currentBook.title;
+document.getElementById("bookTitle").innerText=books[i].title;
 showPage();
 }
-function showPage(){document.getElementById("pageText").innerHTML=currentBook.pages[page];}
-function nextPage(){if(page<currentBook.pages.length-1){page++;showPage();}}
+
+function showPage(){
+document.getElementById("pageText").innerHTML=pages[page];
+}
+
+function nextPage(){if(page<pages.length-1){page++;showPage();}}
 function prevPage(){if(page>0){page--;showPage();}}
+
+function speakPage(){
+let msg=new SpeechSynthesisUtterance(document.getElementById("pageText").innerText);
+speechSynthesis.speak(msg);
+}
+
 function back(){
 document.getElementById("reader").style.display="none";
 document.getElementById("libraryView").style.display="flex";
+}
+
+function toggleMode(){
+document.body.classList.toggle("dark");
 }
 </script>
 
