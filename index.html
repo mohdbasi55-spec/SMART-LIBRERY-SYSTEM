@@ -10,48 +10,19 @@ body{margin:0;font-family:Segoe UI;background:var(--bg);color:var(--text);}
 header{background:var(--header);color:white;padding:10px 15px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;}
 .centerStats{font-weight:bold;margin:5px 0;}
 .layout{display:flex;height:calc(100vh - 60px);}
+
 .sidebar{width:240px;background:var(--card);padding:15px;box-shadow:2px 0 10px rgba(0,0,0,0.1);}
 .sidebar input,select{width:100%;padding:10px;border-radius:8px;border:1px solid #aaa;margin-top:10px;}
-.bookshelf{flex:1;padding:15px;display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:25px;overflow-y:auto;justify-items:center;}
 
-/* 📕 REAL BOOK COVER STYLE */
-.book{
-width:140px;
-height:220px;
-border-radius:10px;
-padding:10px;
-color:white;
-font-weight:bold;
-display:flex;
-align-items:center;
-justify-content:center;
-text-align:center;
-box-shadow:0 15px 30px rgba(0,0,0,0.35);
-cursor:pointer;
-transition:.4s;
-position:relative;
-transform-style:preserve-3d;
-}
+.dashboard{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:15px;margin-bottom:15px;}
+.dcard{background:linear-gradient(135deg,#1fa2ff,#12d8fa,#a6ffcb);color:#fff;padding:15px;border-radius:15px;box-shadow:0 8px 20px rgba(0,0,0,0.25);text-align:center;font-weight:bold;}
 
-/* spine effect */
-.book::before{
-content:"";
-position:absolute;
-left:-8px;top:0;
-width:8px;height:100%;
-background:rgba(0,0,0,0.3);
-border-radius:10px 0 0 10px;
-}
-
-.book:hover{
-transform:rotateY(-15deg) scale(1.08);
-}
-
-.mostRead{outline:4px solid gold;}
+.bookshelf{flex:1;padding:15px;display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:20px;overflow-y:auto;}
+.book{border-radius:14px;padding:10px;height:200px;color:white;font-weight:bold;display:flex;align-items:flex-end;justify-content:center;text-align:center;box-shadow:0 10px 25px rgba(0,0,0,0.35);transition:.4s;cursor:pointer;}
+.book:hover{transform:scale(1.05);}
 
 #reader{display:none;padding:15px;}
 .page{background:var(--card);padding:15px;border-radius:15px;min-height:250px;line-height:1.6;}
-progress{width:100%;height:14px;}
 button{padding:10px 18px;margin:5px;border:none;border-radius:8px;background:#0d1b2a;color:white;font-size:14px;}
 
 @media(max-width:768px){
@@ -70,7 +41,7 @@ header{flex-direction:column;text-align:center;}
 <body>
 <header>
 <h3>📚 Smart Library System</h3>
-<div class="centerStats" id="stats">📚50 | 👥120 | 📖0</div>
+<div class="centerStats">📚50 | 👥120 | 📖35</div>
 <div onclick="toggleMode()">🌙 Dark Mode</div>
 </header>
 
@@ -84,12 +55,21 @@ header{flex-direction:column;text-align:center;}
 <option>Design</option><option>Security</option><option>Data</option>
 </select>
 </div>
+
+<div style="flex:1;display:flex;flex-direction:column;">
+<div class="dashboard">
+<div class="dcard">📚 Total Books<br><span id="totalBooks"></span></div>
+<div class="dcard">📖 Reading Now<br>1</div>
+<div class="dcard">🔥 Most Read<br>AI</div>
+<div class="dcard">🆕 New Arrival<br>Quantum Computing</div>
+</div>
+
 <div class="bookshelf" id="bookGrid"></div>
+</div>
 </div>
 
 <div id="reader">
 <h2 id="bookTitle"></h2>
-<progress id="prog" value="1" max="10"></progress>
 <div class="page" id="pageText"></div>
 <button onclick="prevPage()">⬅</button>
 <button onclick="nextPage()">➡</button>
@@ -158,63 +138,40 @@ let gradients=[
 "linear-gradient(135deg,#fc466b,#3f5efb)"
 ];
 
-let bookPages={},readCount={},totalReading=0;
-books.forEach(b=>{
-readCount[b.title]=0;
-let arr=[];
-for(let i=1;i<=10;i++){
-arr.push("Chapter "+i+" of "+b.title+"\n\nThis chapter explains concepts, applications and examples of "+b.title+".");
-}
-bookPages[b.title]=arr;
-});
-
-let grid=document.getElementById("bookGrid");
-let currentBook=null,page=0,currentList=books;
+let pages=["Introduction","Concepts","Applications","Advantages","Conclusion"];
+let grid=document.getElementById("bookGrid"),page=0,currentBook=0;
 
 function loadBooks(list){
 grid.innerHTML="";
-let most=null,max=0;
-for(let k in readCount){if(readCount[k]>max){max=readCount[k];most=k;}}
-list.forEach(b=>{
+list.forEach((b,i)=>{
 let d=document.createElement("div");
 d.className="book";
-if(b.title===most && max>0)d.classList.add("mostRead");
-d.style.background=gradients[Math.floor(Math.random()*5)];
+d.style.background=gradients[i%5];
 d.innerText=b.title;
-d.onclick=()=>openBook(b);
+d.onclick=()=>openBook(i);
 grid.appendChild(d);
 });
+document.getElementById("totalBooks").innerText=list.length;
 }
 loadBooks(books);
 
 function filterBooks(){
-let t=searchBox.value.toLowerCase();
-let c=categoryBox.value;
-currentList=books.filter(b=>b.title.toLowerCase().includes(t)&&(c=="All"||b.cat==c));
-loadBooks(currentList);
+let t=searchBox.value.toLowerCase(),c=categoryBox.value;
+loadBooks(books.filter(b=>b.title.toLowerCase().includes(t)&&(c=="All"||b.cat==c)));
 }
 
-function openBook(book){
-currentBook=book;
-page=0;
+function openBook(i){
+currentBook=i;page=0;
 libraryView.style.display="none";
 reader.style.display="block";
-bookTitle.innerText=book.title;
+bookTitle.innerText=books[i].title;
 showPage();
 }
-
-function showPage(){
-pageText.innerText=bookPages[currentBook.title][page];
-prog.value=page+1;
-readCount[currentBook.title]++;
-totalReading++;
-stats.innerText="📚50 | 👥120 | 📖"+totalReading;
-}
-
-function nextPage(){if(page<9){page++;showPage();}}
+function showPage(){pageText.innerHTML=pages[page];}
+function nextPage(){if(page<4){page++;showPage();}}
 function prevPage(){if(page>0){page--;showPage();}}
 function speakPage(){speechSynthesis.speak(new SpeechSynthesisUtterance(pageText.innerText));}
-function back(){reader.style.display="none";libraryView.style.display="flex";loadBooks(currentList);}
+function back(){reader.style.display="none";libraryView.style.display="flex";}
 function toggleMode(){document.body.classList.toggle("dark");}
 </script>
 </body>
