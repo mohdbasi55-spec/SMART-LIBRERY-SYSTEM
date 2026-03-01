@@ -37,8 +37,9 @@ flex:1;
 padding:25px;
 display:grid;
 grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
-gap:25px;
+gap:30px;
 overflow-y:auto;
+perspective:1200px;
 }
 
 .book{
@@ -49,14 +50,28 @@ color:white;
 font-weight:bold;
 display:flex;
 align-items:flex-end;
-text-align:center;
 justify-content:center;
-box-shadow:0 8px 18px rgba(0,0,0,0.25);
-transition:.3s;
+text-align:center;
+box-shadow:0 15px 30px rgba(0,0,0,0.35);
+transition:.4s;
 cursor:pointer;
-background:linear-gradient(135deg,#ff512f,#dd2476);
+transform-style:preserve-3d;
 }
-.book:hover{transform:scale(1.05);}
+.book:hover{
+transform:rotateY(-15deg) rotateX(8deg) scale(1.05);
+box-shadow:0 30px 50px rgba(0,0,0,0.5);
+}
+
+.book::after{
+content:"";
+position:absolute;
+right:-12px;
+top:0;
+width:12px;
+height:100%;
+background:rgba(255,255,255,0.2);
+transform:skewY(-45deg);
+}
 
 #reader{
 display:none;
