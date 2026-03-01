@@ -62,17 +62,6 @@ transform:rotateY(-15deg) rotateX(8deg) scale(1.05);
 box-shadow:0 30px 50px rgba(0,0,0,0.5);
 }
 
-.book::after{
-content:"";
-position:absolute;
-right:-12px;
-top:0;
-width:12px;
-height:100%;
-background:rgba(255,255,255,0.2);
-transform:skewY(-45deg);
-}
-
 #reader{
 display:none;
 padding:30px;
@@ -128,7 +117,7 @@ font-weight:bold;
 
 <div class="sidebar">
 <h3>🔍 Search Books</h3>
-<input type="text" placeholder="Type book name...">
+<input type="text" id="searchBox" placeholder="Type book name..." onkeyup="searchBooks()">
 <br><br>
 <h3>📂 Categories</h3>
 <p>AI</p>
@@ -178,19 +167,20 @@ let gradients=[
 
 let books={};
 for(let i=0;i<50;i++){
-books["book"+i]={
-title:bookTitles[i],
+books["book"+i]={title:bookTitles[i],
 pages:[
 `${bookTitles[i]} - Introduction<br><br>${bookTitles[i]} explains fundamental principles and modern applications.`,
 `${bookTitles[i]} - Core Concepts<br><br>• Definition<br>• Models<br>• Algorithms<br><div class='diagram'>Concept Diagram</div>`,
 `${bookTitles[i]} - Applications<br><br>Used in Healthcare, Education, Industry.<div class='diagram'>Application Flow</div>`,
 `${bookTitles[i]} - Advantages & Challenges<br><br>Advantages: Speed, Accuracy<br>Challenges: Cost, Security`,
 `${bookTitles[i]} - Conclusion<br><br>Future scope is high.<div class='diagram'>Future Vision</div>`
-]
-};
+]};
 }
 
 let grid=document.getElementById("bookGrid");
+
+function loadBooks(){
+grid.innerHTML="";
 let g=0;
 for(let key in books){
 let div=document.createElement("div");
@@ -200,6 +190,25 @@ div.onclick=()=>openBook(key);
 div.innerHTML=books[key].title;
 grid.appendChild(div);
 g++;
+}
+}
+loadBooks();
+
+function searchBooks(){
+let input=document.getElementById("searchBox").value.toLowerCase();
+grid.innerHTML="";
+let g=0;
+for(let key in books){
+if(books[key].title.toLowerCase().includes(input)){
+let div=document.createElement("div");
+div.className="book";
+div.style.background=gradients[g%gradients.length];
+div.onclick=()=>openBook(key);
+div.innerHTML=books[key].title;
+grid.appendChild(div);
+g++;
+}
+}
 }
 
 let currentBook=null,page=0;
