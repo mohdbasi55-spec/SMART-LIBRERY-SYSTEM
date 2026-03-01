@@ -3,9 +3,9 @@
 <head>
 <title>Smart Library System</title>
 <style>
-body{margin:0;font-family:Segoe UI;background:#f3f5f9;}
+body{margin:0;font-family:Segoe UI;background:#f2f4f8;}
 header{
-background:#1a237e;
+background:#0d1b2a;
 color:white;
 padding:15px 25px;
 display:flex;
@@ -23,7 +23,7 @@ padding:20px;
 box-shadow:2px 0 10px rgba(0,0,0,0.1);
 }
 
-.sidebar h3{margin-top:0;color:#1a237e;}
+.sidebar h3{margin-top:0;color:#0d1b2a;}
 .sidebar input{
 width:100%;
 padding:10px;
@@ -42,22 +42,21 @@ overflow-y:auto;
 }
 
 .book{
-background:#fff;
-border-radius:12px;
-padding:10px;
+border-radius:14px;
+padding:15px;
+height:260px;
+color:white;
+font-weight:bold;
+display:flex;
+align-items:flex-end;
 text-align:center;
-box-shadow:0 4px 12px rgba(0,0,0,0.15);
+justify-content:center;
+box-shadow:0 8px 18px rgba(0,0,0,0.25);
 transition:.3s;
 cursor:pointer;
+background:linear-gradient(135deg,#ff512f,#dd2476);
 }
-.book:hover{transform:translateY(-8px);}
-
-.book img{
-width:100%;
-height:240px;
-border-radius:10px;
-object-fit:cover;
-}
+.book:hover{transform:scale(1.05);}
 
 #reader{
 display:none;
@@ -78,20 +77,20 @@ padding:10px 22px;
 margin:12px;
 border:none;
 border-radius:8px;
-background:#1a237e;
+background:#0d1b2a;
 color:white;
 font-size:16px;
 cursor:pointer;
 }
-button:hover{background:#0d145a;}
+button:hover{background:#1b263b;}
 
 .diagram{
 margin-top:15px;
 padding:12px;
-border:2px dashed #1a237e;
+border:2px dashed #0d1b2a;
 border-radius:10px;
 text-align:center;
-color:#1a237e;
+color:#0d1b2a;
 font-weight:bold;
 }
 </style>
@@ -104,8 +103,8 @@ font-weight:bold;
 <div class="menu">
 <span>Home</span>
 <span>Categories</span>
-<span>Audiobooks</span>
-<span>New Books</span>
+<span>Audio</span>
+<span>New</span>
 <span>Contact</span>
 </div>
 </header>
@@ -119,9 +118,9 @@ font-weight:bold;
 <h3>📂 Categories</h3>
 <p>AI</p>
 <p>Programming</p>
-<p>Networking</p>
+<p>Design</p>
 <p>Security</p>
-<p>Data Science</p>
+<p>Data</p>
 </div>
 
 <div class="bookshelf" id="bookGrid"></div>
@@ -151,57 +150,41 @@ let bookTitles=[
 "UI UX Design","Neural Networks"
 ];
 
+let gradients=[
+"linear-gradient(135deg,#ff512f,#dd2476)",
+"linear-gradient(135deg,#1fa2ff,#12d8fa,#a6ffcb)",
+"linear-gradient(135deg,#8360c3,#2ebf91)",
+"linear-gradient(135deg,#ffb347,#ffcc33)",
+"linear-gradient(135deg,#fc466b,#3f5efb)",
+"linear-gradient(135deg,#00c6ff,#0072ff)",
+"linear-gradient(135deg,#f7971e,#ffd200)",
+"linear-gradient(135deg,#c471f5,#fa71cd)"
+];
+
 let books={};
 for(let i=0;i<50;i++){
 books["book"+i]={
 title:bookTitles[i],
 pages:[
-`${bookTitles[i]} - Introduction
-
-${bookTitles[i]} is an important technical subject.
-
-It explains basic principles and real world usage.`,
-`${bookTitles[i]} - Concepts
-
-Main concepts:
-• Input
-• Process
-• Output
-
-<div class='diagram'>Concept Flow</div>`,
-`${bookTitles[i]} - Applications
-
-Used in:
-• Industry
-• Education
-• Medical
-• Research
-
-<div class='diagram'>Application Diagram</div>`,
-`${bookTitles[i]} - Advantages & Challenges
-
-Advantages: Speed, Accuracy
-Challenges: Cost, Security`,
-`${bookTitles[i]} - Conclusion
-
-Future scope is very high.
-
-<div class='diagram'>Future Diagram</div>`
+`${bookTitles[i]} - Introduction<br><br>${bookTitles[i]} explains fundamental principles and modern applications.`,
+`${bookTitles[i]} - Core Concepts<br><br>• Definition<br>• Models<br>• Algorithms<br><div class='diagram'>Concept Diagram</div>`,
+`${bookTitles[i]} - Applications<br><br>Used in Healthcare, Education, Industry.<div class='diagram'>Application Flow</div>`,
+`${bookTitles[i]} - Advantages & Challenges<br><br>Advantages: Speed, Accuracy<br>Challenges: Cost, Security`,
+`${bookTitles[i]} - Conclusion<br><br>Future scope is high.<div class='diagram'>Future Vision</div>`
 ]
 };
 }
 
 let grid=document.getElementById("bookGrid");
-let colors=["ff7043","42a5f5","66bb6a","ab47bc","26a69a"];
-let c=0;
+let g=0;
 for(let key in books){
 let div=document.createElement("div");
 div.className="book";
+div.style.background=gradients[g%gradients.length];
 div.onclick=()=>openBook(key);
-div.innerHTML=`<img src="https://dummyimage.com/300x400/${colors[c%5]}/ffffff&text=${encodeURIComponent(books[key].title)}">
-<b>${books[key].title}</b>`;
+div.innerHTML=books[key].title;
 grid.appendChild(div);
-c++;
+g++;
 }
 
 let currentBook=null,page=0;
