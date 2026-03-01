@@ -3,90 +3,19 @@
 <head>
 <title>Smart Library System</title>
 <style>
-body{
-margin:0;
-font-family:Arial;
-background:#f4f4f4;
-}
-
-header{
-background:#c62828;
-color:white;
-padding:10px 20px;
-display:flex;
-justify-content:space-between;
-align-items:center;
-}
-
-header h2{margin:0;}
-
-.menu span{
-margin:0 10px;
-cursor:pointer;
-font-weight:bold;
-}
-
-.container{
-display:flex;
-}
-
-/* LEFT SEARCH */
-.left{
-width:200px;
-background:#eee;
-padding:15px;
-}
-.left input{
-width:100%;
-padding:8px;
-}
-
-/* BOOK GRID */
-.main{
-flex:1;
-padding:20px;
-display:grid;
-grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
-gap:20px;
-}
-
-.book{
-background:white;
-padding:10px;
-border-radius:8px;
-text-align:center;
-cursor:pointer;
-box-shadow:0 0 8px #aaa;
-transition:0.3s;
-}
-.book:hover{
-transform:scale(1.05);
-}
-.book img{
-width:100%;
-height:200px;
-object-fit:cover;
-border-radius:5px;
-}
-
-/* READER */
-#reader{
-display:none;
-padding:20px;
-}
-.page{
-background:white;
-padding:25px;
-border-radius:10px;
-min-height:350px;
-line-height:1.6;
-box-shadow:0 0 10px #888;
-}
-
-button{
-padding:8px 15px;
-margin:10px;
-}
+body{margin:0;font-family:Arial;background:#f4f4f4;}
+header{background:#c62828;color:white;padding:10px 20px;display:flex;justify-content:space-between;align-items:center;}
+.menu span{margin:0 10px;cursor:pointer;font-weight:bold;}
+.container{display:flex;}
+.left{width:200px;background:#eee;padding:15px;}
+.left input{width:100%;padding:8px;}
+.main{flex:1;padding:20px;display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:20px;}
+.book{background:white;padding:10px;border-radius:8px;text-align:center;cursor:pointer;box-shadow:0 0 8px #aaa;transition:0.3s;}
+.book:hover{transform:scale(1.05);}
+.book img{width:100%;height:200px;object-fit:cover;border-radius:5px;}
+#reader{display:none;padding:20px;}
+.page{background:white;padding:25px;border-radius:10px;min-height:350px;line-height:1.6;box-shadow:0 0 10px #888;}
+button{padding:8px 15px;margin:10px;}
 </style>
 </head>
 
@@ -95,38 +24,17 @@ margin:10px;
 <header>
 <h2>📚 Smart Library System</h2>
 <div class="menu">
-<span>Home</span>
-<span>Categories</span>
-<span>Audiobooks</span>
-<span>New Books</span>
-<span>Contact</span>
+<span>Home</span><span>Categories</span><span>Audiobooks</span><span>New Books</span><span>Contact</span>
 </div>
 </header>
 
 <div class="container" id="libraryView">
-
 <div class="left">
 <h3>Search</h3>
 <input type="text" placeholder="Search book...">
 </div>
 
-<div class="main">
-<div class="book" onclick="openBook('ai')">
-<img src="https://dummyimage.com/200x300/ff5722/ffffff&text=AI">
-<b>Artificial Intelligence</b><br>by Smart Library
-</div>
-
-<div class="book" onclick="openBook('ml')">
-<img src="https://dummyimage.com/200x300/3f51b5/ffffff&text=ML">
-<b>Machine Learning</b><br>by Smart Library
-</div>
-
-<div class="book" onclick="openBook('ds')">
-<img src="https://dummyimage.com/200x300/4caf50/ffffff&text=DS">
-<b>Data Science</b><br>by Smart Library
-</div>
-</div>
-
+<div class="main" id="bookGrid"></div>
 </div>
 
 <div id="reader">
@@ -139,41 +47,33 @@ margin:10px;
 </div>
 
 <script>
-let books={
-ai:{
-title:"Artificial Intelligence",
+let books={};
+for(let i=1;i<=50;i++){
+books["book"+i]={
+title:"Book "+i,
 author:"Smart Library",
 pages:[
-"Page 1\n\nArtificial Intelligence is the science of making machines intelligent.",
-"Page 2\n\nHistory of AI started with Alan Turing.",
-"Page 3\n\nTypes of AI: Narrow, General, Super.",
-"Page 4\n\nAI is used in healthcare and education.",
-"Page 5\n\nFuture of AI is very bright."
+"Page 1\n\nThis is Book "+i+" introduction.",
+"Page 2\n\nChapter 1 content of Book "+i+".",
+"Page 3\n\nChapter 2 content of Book "+i+".",
+"Page 4\n\nApplications of Book "+i+".",
+"Page 5\n\nConclusion of Book "+i+"."
 ]
-},
-ml:{
-title:"Machine Learning",
-author:"Smart Library",
-pages:[
-"Page 1\n\nMachine Learning allows systems to learn from data.",
-"Page 2\n\nSupervised learning uses labeled data.",
-"Page 3\n\nUnsupervised learning finds patterns.",
-"Page 4\n\nDeep learning uses neural networks.",
-"Page 5\n\nML powers modern AI."
-]
-},
-ds:{
-title:"Data Science",
-author:"Smart Library",
-pages:[
-"Page 1\n\nData Science deals with data analysis.",
-"Page 2\n\nData collected from sensors and web.",
-"Page 3\n\nPython is used for analysis.",
-"Page 4\n\nVisualization shows patterns.",
-"Page 5\n\nData is new oil."
-]
-}
 };
+}
+
+let grid=document.getElementById("bookGrid");
+let colors=["ff5722","3f51b5","4caf50","9c27b0","009688"];
+let i=1;
+for(let key in books){
+let div=document.createElement("div");
+div.className="book";
+div.onclick=()=>openBook(key);
+div.innerHTML=`<img src="https://dummyimage.com/200x300/${colors[i%5]}/ffffff&text=Book+${i}">
+<b>${books[key].title}</b><br>by ${books[key].author}`;
+grid.appendChild(div);
+i++;
+}
 
 let currentBook=null;
 let page=0;
@@ -188,22 +88,10 @@ document.getElementById("bookAuthor").innerText="Author: "+currentBook.author;
 showPage();
 }
 
-function showPage(){
-document.getElementById("pageText").innerText=currentBook.pages[page];
-}
-
-function nextPage(){
-if(page<currentBook.pages.length-1){page++;showPage();}
-}
-
-function prevPage(){
-if(page>0){page--;showPage();}
-}
-
-function back(){
-document.getElementById("reader").style.display="none";
-document.getElementById("libraryView").style.display="flex";
-}
+function showPage(){document.getElementById("pageText").innerText=currentBook.pages[page];}
+function nextPage(){if(page<currentBook.pages.length-1){page++;showPage();}}
+function prevPage(){if(page>0){page--;showPage();}}
+function back(){document.getElementById("reader").style.display="none";document.getElementById("libraryView").style.display="flex";}
 </script>
 
 </body>
