@@ -4,136 +4,143 @@
 <title>Smart Library System</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-body{
-font-family:Arial;
-background:#f2f2f2;
-margin:0;
+:root{--bg:#f2f4f8;--text:#000;--card:#fff;--header:#0d1b2a;}
+.dark{--bg:#121212;--text:#fff;--card:#1e1e1e;--header:#000;}
+body{margin:0;font-family:Segoe UI;background:var(--bg);color:var(--text);}
+header{background:var(--header);color:white;padding:10px 15px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;}
+.centerStats{font-weight:bold;margin:5px 0;}
+.layout{display:flex;height:calc(100vh - 60px);}
+.sidebar{width:240px;background:var(--card);padding:15px;box-shadow:2px 0 10px rgba(0,0,0,0.1);}
+.sidebar input,select{width:100%;padding:10px;border-radius:8px;border:1px solid #aaa;margin-top:10px;}
+.bookshelf{flex:1;padding:15px;display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:20px;overflow-y:auto;}
+.book{border-radius:14px;padding:10px;height:220px;color:white;font-weight:bold;display:flex;align-items:flex-end;justify-content:center;text-align:center;box-shadow:0 10px 25px rgba(0,0,0,0.35);transition:.4s;cursor:pointer;}
+.book:hover{transform:scale(1.05);}
+#reader{display:none;padding:15px;}
+.page{background:var(--card);padding:15px;border-radius:15px;min-height:250px;line-height:1.6;}
+button{padding:10px 18px;margin:5px;border:none;border-radius:8px;background:#0d1b2a;color:white;font-size:14px;}
+
+@media(max-width:768px){
+.layout{flex-direction:column;}
+.sidebar{width:100%;display:flex;gap:10px;flex-wrap:wrap;}
+.sidebar h3{width:100%;}
+.bookshelf{grid-template-columns:repeat(2,1fr);}
 }
-header{
-background:#333;
-color:white;
-padding:10px;
-text-align:center;
-}
-#books{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
-gap:10px;
-padding:10px;
-}
-.book{
-background:#ffcc66;
-padding:20px;
-border-radius:10px;
-text-align:center;
-cursor:pointer;
-}
-#reader{
-display:none;
-position:fixed;
-top:0;left:0;
-width:100%;height:100%;
-background:white;
-flex-direction:column;
-}
-#reader header{
-background:#444;
-color:white;
-padding:10px;
-}
-#page{
-flex:1;
-padding:20px;
-overflow:auto;
-}
-button{
-padding:5px 10px;
-margin:5px;
+
+@media(max-width:480px){
+.bookshelf{grid-template-columns:repeat(1,1fr);}
+header{flex-direction:column;text-align:center;}
 }
 </style>
 </head>
 
 <body>
-
 <header>
-<h2>Smart Library System</h2>
+<h3>📚 Smart Library System</h3>
+<div class="centerStats">📚50 | 👥120 | 📖35</div>
+<div onclick="toggleMode()">🌙 Dark Mode</div>
 </header>
 
-<div id="books"></div>
+<div class="layout" id="libraryView">
+<div class="sidebar">
+<h3>🔍 Search</h3>
+<input type="text" id="searchBox" onkeyup="filterBooks()" placeholder="Book name">
+<h3>📂 Category</h3>
+<select id="categoryBox" onchange="filterBooks()">
+<option>All</option><option>AI</option><option>Programming</option>
+<option>Design</option><option>Security</option><option>Data</option>
+</select>
+</div>
+<div class="bookshelf" id="bookGrid"></div>
+</div>
 
 <div id="reader">
-<header>
-<span id="title"></span>
-<button onclick="closeBook()">Close</button>
-</header>
-<div id="page"></div>
-<div style="text-align:center">
-<button onclick="prev()">Prev</button>
-<button onclick="next()">Next</button>
-</div>
+<h2 id="bookTitle"></h2>
+<div class="page" id="pageText"></div>
+<button onclick="prevPage()">⬅</button>
+<button onclick="nextPage()">➡</button>
+<button onclick="speakPage()">🔊</button>
+<button onclick="back()">⬅ Back</button>
 </div>
 
 <script>
-let titles=[
-"Artificial Intelligence","Machine Learning","Data Science","Python Programming",
-"Cyber Security","Blockchain","IoT","Cloud Computing","Big Data","Web Development",
-"Java Programming","C Programming","C++ Programming","Database Systems",
-"Operating Systems","Computer Networks","Software Engineering","Compiler Design",
-"Distributed Systems","Quantum Computing","Robotics","Embedded Systems",
-"Bioinformatics","AR & VR","Game Development","Ethical Hacking",
-"Business Analytics","Statistics","Linear Algebra","Discrete Math",
-"NLP","Pattern Recognition","Neural Networks",
-"Microprocessors","Human Computer Interaction","Mobile App Dev",
-"Network Security","Information Retrieval","Data Mining",
-"Smart Systems","AI Ethics","Automation","Simulation",
-"Digital Forensics","UX Design","Digital Marketing","Cloud Security"
+let books=[
+{title:"Artificial Intelligence",cat:"AI"},
+{title:"Machine Learning",cat:"AI"},
+{title:"Deep Learning",cat:"AI"},
+{title:"Neural Networks",cat:"AI"},
+{title:"AI Ethics",cat:"AI"},
+{title:"Python Programming",cat:"Programming"},
+{title:"Java Programming",cat:"Programming"},
+{title:"C Programming",cat:"Programming"},
+{title:"C++ Programming",cat:"Programming"},
+{title:"Web Development",cat:"Programming"},
+{title:"Mobile App Development",cat:"Programming"},
+{title:"Full Stack Development",cat:"Programming"},
+{title:"UI UX Design",cat:"Design"},
+{title:"Computer Graphics",cat:"Design"},
+{title:"Digital Image Processing",cat:"Design"},
+{title:"Game Design",cat:"Design"},
+{title:"Cyber Security",cat:"Security"},
+{title:"Ethical Hacking",cat:"Security"},
+{title:"Network Security",cat:"Security"},
+{title:"Blockchain Security",cat:"Security"},
+{title:"Data Science",cat:"Data"},
+{title:"Big Data Analytics",cat:"Data"},
+{title:"Data Mining",cat:"Data"},
+{title:"Business Analytics",cat:"Data"},
+{title:"Statistics for Computing",cat:"Data"},
+{title:"Cloud Computing",cat:"Programming"},
+{title:"Internet of Things",cat:"AI"},
+{title:"Robotics",cat:"AI"},
+{title:"Natural Language Processing",cat:"AI"},
+{title:"Computer Networks",cat:"Programming"},
+{title:"Operating Systems",cat:"Programming"},
+{title:"Database Management",cat:"Programming"},
+{title:"Software Engineering",cat:"Programming"},
+{title:"Compiler Design",cat:"Programming"},
+{title:"Distributed Systems",cat:"Programming"},
+{title:"Augmented Reality",cat:"Design"},
+{title:"Virtual Reality",cat:"Design"},
+{title:"Human Computer Interaction",cat:"Design"},
+{title:"Embedded Systems",cat:"Programming"},
+{title:"Microprocessors",cat:"Programming"},
+{title:"DevOps",cat:"Programming"},
+{title:"Microservices",cat:"Programming"},
+{title:"Quantum Computing",cat:"AI"},
+{title:"Bioinformatics",cat:"Data"},
+{title:"Information Retrieval",cat:"Data"},
+{title:"Pattern Recognition",cat:"AI"},
+{title:"Smart Systems",cat:"AI"},
+{title:"Digital Forensics",cat:"Security"},
+{title:"Information Security",cat:"Security"}
 ];
 
-let books=[];
-for(let i=0;i<50;i++){
-let pages=[];
-for(let p=1;p<=10;p++){
-pages.push("Page "+p+"\n\n"+titles[i]+"\n\nThis is sample content for "+titles[i]+" page "+p+".");
-}
-books.push({title:titles[i],pages:pages});
-}
+let gradients=["linear-gradient(135deg,#ff512f,#dd2476)","linear-gradient(135deg,#1fa2ff,#12d8fa,#a6ffcb)","linear-gradient(135deg,#8360c3,#2ebf91)","linear-gradient(135deg,#ffb347,#ffcc33)","linear-gradient(135deg,#fc466b,#3f5efb)"];
+let pages=["Introduction","Concepts","Applications","Advantages","Conclusion"];
+let grid=document.getElementById("bookGrid"),page=0,currentBook=0;
 
-let grid=document.getElementById("books");
-books.forEach((b,i)=>{
+function loadBooks(list){
+grid.innerHTML="";
+list.forEach((b,i)=>{
 let d=document.createElement("div");
-d.className="book";
-d.innerText=b.title;
-d.onclick=()=>openBook(i);
+d.className="book";d.style.background=gradients[i%5];
+d.innerText=b.title;d.onclick=()=>openBook(i);
 grid.appendChild(d);
 });
+}
+loadBooks(books);
 
-let current=0,page=0;
-function openBook(i){
-current=i;
-page=0;
-document.getElementById("reader").style.display="flex";
-show();
+function filterBooks(){
+let t=searchBox.value.toLowerCase(),c=categoryBox.value;
+loadBooks(books.filter(b=>b.title.toLowerCase().includes(t)&&(c=="All"||b.cat==c)));
 }
-function closeBook(){
-document.getElementById("reader").style.display="none";
-}
-function show(){
-document.getElementById("title").innerText=books[current].title;
-document.getElementById("page").innerText=books[current].pages[page];
-}
-function next(){
-if(page<books[current].pages.length-1){
-page++;
-show();
-}
-}
-function prev(){
-if(page>0){
-page--;
-show();
-}
-}
+function openBook(i){currentBook=i;page=0;libraryView.style.display="none";reader.style.display="block";bookTitle.innerText=books[i].title;showPage();}
+function showPage(){pageText.innerHTML=pages[page];}
+function nextPage(){if(page<4){page++;showPage();}}
+function prevPage(){if(page>0){page--;showPage();}}
+function speakPage(){speechSynthesis.speak(new SpeechSynthesisUtterance(pageText.innerText));}
+function back(){reader.style.display="none";libraryView.style.display="flex";}
+function toggleMode(){document.body.classList.toggle("dark");}
 </script>
-
 </body>
 </html>
