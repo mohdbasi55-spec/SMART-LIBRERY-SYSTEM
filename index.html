@@ -3,21 +3,97 @@
 <head>
 <title>Smart Library System</title>
 <style>
-body{margin:0;font-family:Segoe UI;background:#f4f4f4;}
-header{background:#b71c1c;color:white;padding:12px 20px;display:flex;justify-content:space-between;align-items:center;}
-.menu span{margin:0 12px;cursor:pointer;font-weight:600;}
-.container{display:flex;}
-.left{width:220px;background:#eee;padding:15px;}
-.left input{width:100%;padding:8px;border-radius:5px;border:1px solid #aaa;}
-.main{flex:1;padding:20px;display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:20px;}
-.book{background:white;padding:10px;border-radius:10px;text-align:center;cursor:pointer;box-shadow:0 0 8px #aaa;transition:.3s;}
-.book:hover{transform:scale(1.05);}
-.book img{width:100%;height:220px;object-fit:cover;border-radius:6px;}
-#reader{display:none;padding:20px;}
-.page{background:white;padding:25px;border-radius:12px;min-height:350px;line-height:1.7;box-shadow:0 0 10px #777;}
-button{padding:8px 18px;margin:10px;border:none;border-radius:5px;background:#c62828;color:white;font-size:15px;cursor:pointer;}
-button:hover{background:#a00;}
-.diagram{margin-top:15px;padding:10px;border:2px dashed #666;border-radius:8px;text-align:center;}
+body{margin:0;font-family:Segoe UI;background:#f3f5f9;}
+header{
+background:#1a237e;
+color:white;
+padding:15px 25px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+.menu span{margin:0 15px;cursor:pointer;font-weight:600;}
+
+.layout{display:flex;height:100vh;}
+
+.sidebar{
+width:240px;
+background:#ffffff;
+padding:20px;
+box-shadow:2px 0 10px rgba(0,0,0,0.1);
+}
+
+.sidebar h3{margin-top:0;color:#1a237e;}
+.sidebar input{
+width:100%;
+padding:10px;
+border-radius:8px;
+border:1px solid #aaa;
+margin-top:10px;
+}
+
+.bookshelf{
+flex:1;
+padding:25px;
+display:grid;
+grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
+gap:25px;
+overflow-y:auto;
+}
+
+.book{
+background:#fff;
+border-radius:12px;
+padding:10px;
+text-align:center;
+box-shadow:0 4px 12px rgba(0,0,0,0.15);
+transition:.3s;
+cursor:pointer;
+}
+.book:hover{transform:translateY(-8px);}
+
+.book img{
+width:100%;
+height:240px;
+border-radius:10px;
+object-fit:cover;
+}
+
+#reader{
+display:none;
+padding:30px;
+}
+
+.page{
+background:white;
+padding:25px;
+border-radius:15px;
+min-height:380px;
+line-height:1.7;
+box-shadow:0 0 15px rgba(0,0,0,0.2);
+}
+
+button{
+padding:10px 22px;
+margin:12px;
+border:none;
+border-radius:8px;
+background:#1a237e;
+color:white;
+font-size:16px;
+cursor:pointer;
+}
+button:hover{background:#0d145a;}
+
+.diagram{
+margin-top:15px;
+padding:12px;
+border:2px dashed #1a237e;
+border-radius:10px;
+text-align:center;
+color:#1a237e;
+font-weight:bold;
+}
 </style>
 </head>
 
@@ -34,13 +110,21 @@ button:hover{background:#a00;}
 </div>
 </header>
 
-<div class="container" id="libraryView">
-<div class="left">
-<h3>Search</h3>
-<input type="text" placeholder="Search book...">
+<div class="layout" id="libraryView">
+
+<div class="sidebar">
+<h3>🔍 Search Books</h3>
+<input type="text" placeholder="Type book name...">
+<br><br>
+<h3>📂 Categories</h3>
+<p>AI</p>
+<p>Programming</p>
+<p>Networking</p>
+<p>Security</p>
+<p>Data Science</p>
 </div>
 
-<div class="main" id="bookGrid"></div>
+<div class="bookshelf" id="bookGrid"></div>
 </div>
 
 <div id="reader">
@@ -72,63 +156,37 @@ for(let i=0;i<50;i++){
 books["book"+i]={
 title:bookTitles[i],
 pages:[
-`📘 ${bookTitles[i]} - Introduction
+`${bookTitles[i]} - Introduction
 
-${bookTitles[i]} is a major field of computer science that focuses on building intelligent systems.
+${bookTitles[i]} is an important technical subject.
 
-It allows machines to learn, think, and solve problems like humans.
+It explains basic principles and real world usage.`,
+`${bookTitles[i]} - Concepts
 
-Main areas:
-• Basics
-• Applications
-• Advantages
-
-`,
-`📗 ${bookTitles[i]} - Concepts
-
-Core concepts of ${bookTitles[i]}:
-• Input Data
-• Processing
+Main concepts:
+• Input
+• Process
 • Output
 
-This technology is widely used in real world systems.
+<div class='diagram'>Concept Flow</div>`,
+`${bookTitles[i]} - Applications
 
-<div class='diagram'>[ Concept Flow Diagram ]</div>
-`,
-`📙 ${bookTitles[i]} - Applications
-
-Applications of ${bookTitles[i]} include:
-• Healthcare
-• Banking
+Used in:
+• Industry
 • Education
-• Robotics
-• Smart Devices
+• Medical
+• Research
 
-It improves efficiency and accuracy.
+<div class='diagram'>Application Diagram</div>`,
+`${bookTitles[i]} - Advantages & Challenges
 
-<div class='diagram'>[ Application Diagram ]</div>
-`,
-`📕 ${bookTitles[i]} - Advantages & Challenges
+Advantages: Speed, Accuracy
+Challenges: Cost, Security`,
+`${bookTitles[i]} - Conclusion
 
-Advantages:
-• Automation
-• Speed
-• Accuracy
+Future scope is very high.
 
-Challenges:
-• High cost
-• Data dependency
-• Security issues
-
-`,
-`📓 ${bookTitles[i]} - Conclusion
-
-${bookTitles[i]} plays an important role in modern technology.
-
-Future scope is very high and growing rapidly.
-
-<div class='diagram'>[ Future Scope Diagram ]</div>
-`
+<div class='diagram'>Future Diagram</div>`
 ]
 };
 }
@@ -140,7 +198,7 @@ for(let key in books){
 let div=document.createElement("div");
 div.className="book";
 div.onclick=()=>openBook(key);
-div.innerHTML=`<img src="https://dummyimage.com/200x300/${colors[c%5]}/ffffff&text=${encodeURIComponent(books[key].title)}">
+div.innerHTML=`<img src="https://dummyimage.com/300x400/${colors[c%5]}/ffffff&text=${encodeURIComponent(books[key].title)}">
 <b>${books[key].title}</b>`;
 grid.appendChild(div);
 c++;
