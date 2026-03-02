@@ -10,7 +10,7 @@
 .ambience{--bg:#0b132b;--text:#eaeaea;--card:#1c2541;--header:#000;}
 body{margin:0;font-family:Segoe UI;background:var(--bg);color:var(--text);}
 
-header{background:var(--header);color:white;padding:10px 15px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;}
+header{background:var(--header);color:white;padding:10px 15px;display:flex;justify-content:space-between;align-items:center;}
 .centerStats{font-weight:bold;}
 
 .layout{display:flex;height:calc(100vh - 60px);}
@@ -20,22 +20,8 @@ header{background:var(--header);color:white;padding:10px 15px;display:flex;justi
 .dashboard{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:10px;}
 .dcard{background:linear-gradient(135deg,#1fa2ff,#12d8fa,#a6ffcb);color:#fff;padding:10px;border-radius:12px;text-align:center;font-size:14px;}
 
-.bookshelf{
-flex:1;
-padding:15px;
-display:grid;
-grid-template-columns:repeat(auto-fill,minmax(140px,1fr));
-gap:20px;
-overflow-y:auto;
-}
-
-.book{
-height:210px;border-radius:12px;
-display:flex;align-items:flex-end;justify-content:center;
-color:#fff;font-weight:bold;text-align:center;padding:10px;
-cursor:pointer;transition:.4s;
-box-shadow:0 10px 25px rgba(0,0,0,0.4);
-}
+.bookshelf{flex:1;padding:15px;display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:20px;overflow-y:auto;}
+.book{height:220px;width:150px;border-radius:10px;display:flex;align-items:flex-end;justify-content:center;color:#fff;font-weight:bold;text-align:center;padding:10px;cursor:pointer;transition:.4s;box-shadow:10px 10px 25px rgba(0,0,0,0.4);}
 .book:hover{transform:scale(1.08);}
 
 #reader{display:none;padding:15px;}
@@ -43,10 +29,7 @@ box-shadow:0 10px 25px rgba(0,0,0,0.4);
 .progress{height:10px;background:#ccc;border-radius:10px;overflow:hidden;margin:10px 0;}
 .progress span{display:block;height:100%;background:#0d1b2a;width:0;}
 
-@media(max-width:768px){
-.layout{flex-direction:column;}
-.sidebar{width:100%;display:flex;flex-wrap:wrap;gap:5px;}
-}
+@media(max-width:768px){.layout{flex-direction:column;}.sidebar{width:100%;}.bookshelf{grid-template-columns:repeat(2,1fr);}}
 </style>
 </head>
 
@@ -61,6 +44,13 @@ box-shadow:0 10px 25px rgba(0,0,0,0.4);
 <h3>🔍 Search</h3>
 <input type="text" id="searchBox" onkeyup="filterBooks()" placeholder="Search book">
 
+<h3>📂 Category</h3>
+<select id="catBox" onchange="filterBooks()">
+<option value="All">All</option>
+<option value="Technical">Technical</option>
+<option value="NonTechnical">Non-Technical</option>
+</select>
+
 <h3>🎛 Modes</h3>
 <button onclick="setMode('')">Normal</button>
 <button onclick="setMode('dark')">Dark</button>
@@ -68,18 +58,14 @@ box-shadow:0 10px 25px rgba(0,0,0,0.4);
 
 <h3>🤖 AI Recommend</h3>
 <div id="recommend">---</div>
-
-<h3>🛠 Admin Panel</h3>
-<button onclick="alert('Admin: Users=120, Books=100, Active=35')">View Stats</button>
-<button onclick="alert('Admin: New book added (simulation)')">Add Book</button>
 </div>
 
 <div style="flex:1;display:flex;flex-direction:column;">
 <div class="dashboard">
-<div class="dcard">Total Books<br>100</div>
+<div class="dcard">Technical<br>50</div>
+<div class="dcard">Non-Technical<br>50</div>
 <div class="dcard">Active Readers<br>35</div>
 <div class="dcard">Most Read<br>Life Lessons</div>
-<div class="dcard">New Arrival<br>Positive Thinking</div>
 </div>
 
 <div class="bookshelf" id="bookGrid"></div>
@@ -88,6 +74,7 @@ box-shadow:0 10px 25px rgba(0,0,0,0.4);
 
 <div id="reader">
 <h2 id="bookTitle"></h2>
+<p id="author"></p>
 <div class="progress"><span id="bar"></span></div>
 <div class="page" id="pageText"></div>
 <button onclick="prevPage()">⬅</button>
@@ -97,6 +84,19 @@ box-shadow:0 10px 25px rgba(0,0,0,0.4);
 
 <script>
 let books=[
+/* ===== 50 TECHNICAL ===== */
+"Artificial Intelligence","Machine Learning","Deep Learning","Neural Networks","Python Programming",
+"Java Programming","C Programming","C++ Programming","Web Development","Mobile App Development",
+"Full Stack Development","UI UX Design","Computer Graphics","Cyber Security","Ethical Hacking",
+"Network Security","Blockchain Technology","Data Science","Big Data Analytics","Cloud Computing",
+"Internet of Things","Robotics","Natural Language Processing","Computer Networks","Operating Systems",
+"Database Management","Software Engineering","Compiler Design","Distributed Systems","Augmented Reality",
+"Virtual Reality","Human Computer Interaction","Embedded Systems","Microprocessors","DevOps",
+"Microservices","Quantum Computing","Bioinformatics","Information Retrieval","Pattern Recognition",
+"Digital Forensics","Information Security","Smart Systems","Game Development","Image Processing",
+"Computer Vision","Data Mining","Business Analytics","Statistics for Computing",
+
+/* ===== 50 NON-TECHNICAL ===== */
 "Life Lessons","Positive Thinking","Self Discipline","Motivational Stories","Time Management",
 "Leadership Skills","Public Speaking","Personality Development","Mind Power","Emotional Intelligence",
 "Success Habits","Confidence Building","Stress Management","Creative Thinking","Decision Making",
@@ -106,22 +106,18 @@ let books=[
 "Story Writing","Poetry Collection","Short Stories","Moral Tales","Historical Stories",
 "Travel Stories","Inspirational Biographies","Young Achievers","Life of Scientists","Freedom Fighters",
 "Environmental Awareness","Health & Fitness","Yoga for Life","Healthy Food","Mental Wellness",
-"Human Values","Social Responsibility","Personal Growth","Future Vision",
-"Life Skills","Creative Mind","Peaceful Living","Positive Habits","Smart Thinking"
-];
+"Human Values","Social Responsibility","Personal Growth","Future Vision"
+].map((t,i)=>({
+title:t,
+author:"Author "+(i+1),
+cat:(i<50?"Technical":"NonTechnical")
+}));
 
-let gradients=[
-"linear-gradient(135deg,#ff512f,#dd2476)",
-"linear-gradient(135deg,#1fa2ff,#12d8fa,#a6ffcb)",
-"linear-gradient(135deg,#8360c3,#2ebf91)",
-"linear-gradient(135deg,#ffb347,#ffcc33)",
-"linear-gradient(135deg,#fc466b,#3f5efb)"
-];
+let gradients=["linear-gradient(135deg,#ff512f,#dd2476)","linear-gradient(135deg,#1fa2ff,#12d8fa,#a6ffcb)","linear-gradient(135deg,#8360c3,#2ebf91)","linear-gradient(135deg,#ffb347,#ffcc33)","linear-gradient(135deg,#fc466b,#3f5efb)"];
 
-let pages=[];for(let i=1;i<=40;i++){pages.push("Page "+i+" content: This book explains the topic with real-life examples and stories.");}
+let pages=[];for(let i=1;i<=40;i++){pages.push("Page "+i+": This chapter explains the topic with examples and easy explanation for students.");}
 
-let grid=document.getElementById("bookGrid");
-let readCount=0,page=0,currentBook=0;
+let grid=document.getElementById("bookGrid"),readCount=0,page=0,currentBook=0;
 
 function loadBooks(list){
 grid.innerHTML="";
@@ -129,31 +125,32 @@ list.forEach((b,i)=>{
 let d=document.createElement("div");
 d.className="book";
 d.style.background=gradients[i%5];
-d.innerText=b;
+d.innerText=b.title;
 d.onclick=()=>openBook(i);
 grid.appendChild(d);
 });
-recommend.innerText=list[Math.floor(Math.random()*list.length)];
+recommend.innerText=list[Math.floor(Math.random()*list.length)].title;
 }
 loadBooks(books);
 
 function filterBooks(){
-let t=searchBox.value.toLowerCase();
-loadBooks(books.filter(b=>b.toLowerCase().includes(t)));
+let t=searchBox.value.toLowerCase(),c=catBox.value;
+loadBooks(books.filter(b=>b.title.toLowerCase().includes(t)&&(c=="All"||b.cat==c)));
 }
 
 function openBook(i){
 currentBook=i;page=0;
-libraryView.style.display="none";
-reader.style.display="block";
-bookTitle.innerText=books[i];
-showPage();readCount++;document.getElementById("readCount").innerText=readCount;
+libraryView.style.display="none";reader.style.display="block";
+bookTitle.innerText=books[i].title;
+author.innerText="Author: "+books[i].author;
+showPage();readCount++;readCountSpan.innerText=readCount;
 }
 function showPage(){pageText.innerText=pages[page];bar.style.width=((page+1)/pages.length*100)+"%";}
 function nextPage(){if(page<pages.length-1){page++;showPage();}}
 function prevPage(){if(page>0){page--;showPage();}}
 function back(){reader.style.display="none";libraryView.style.display="flex";}
 function setMode(m){document.body.className=m;}
+let readCountSpan=document.getElementById("readCount");
 </script>
 </body>
 </html>
