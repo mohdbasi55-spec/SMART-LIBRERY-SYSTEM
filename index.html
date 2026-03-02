@@ -20,17 +20,23 @@ header{background:var(--header);color:white;padding:10px 15px;display:flex;justi
 .dashboard{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:10px;}
 .dcard{background:linear-gradient(135deg,#1fa2ff,#12d8fa,#a6ffcb);color:#fff;padding:10px;border-radius:12px;text-align:center;font-size:14px;}
 
-.bookshelf{flex:1;padding:15px;display:flex;flex-direction:column;gap:20px;overflow-y:auto;}
-.row{display:flex;gap:15px;overflow-x:auto;padding-bottom:10px;}
+.bookshelf{
+flex:1;
+padding:15px;
+display:grid;
+grid-template-columns:repeat(auto-fill,minmax(140px,1fr));
+gap:20px;
+overflow-y:auto;
+}
 
 .book{
-min-width:140px;height:210px;border-radius:10px;
+height:210px;border-radius:12px;
 display:flex;align-items:flex-end;justify-content:center;
 color:#fff;font-weight:bold;text-align:center;padding:10px;
 cursor:pointer;transition:.4s;
 box-shadow:0 10px 25px rgba(0,0,0,0.4);
 }
-.book:hover{transform:scale(1.08) rotateY(-10deg);}
+.book:hover{transform:scale(1.08);}
 
 #reader{display:none;padding:15px;}
 .page{background:var(--card);padding:20px;border-radius:15px;min-height:300px;line-height:1.7;}
@@ -76,10 +82,7 @@ box-shadow:0 10px 25px rgba(0,0,0,0.4);
 <div class="dcard">New Arrival<br>Positive Thinking</div>
 </div>
 
-<div class="bookshelf">
-<div class="row" id="row1"></div>
-<div class="row" id="row2"></div>
-</div>
+<div class="bookshelf" id="bookGrid"></div>
 </div>
 </div>
 
@@ -103,44 +106,40 @@ let books=[
 "Story Writing","Poetry Collection","Short Stories","Moral Tales","Historical Stories",
 "Travel Stories","Inspirational Biographies","Young Achievers","Life of Scientists","Freedom Fighters",
 "Environmental Awareness","Health & Fitness","Yoga for Life","Healthy Food","Mental Wellness",
-"Human Values","Social Responsibility","Personal Growth","Future Vision"
+"Human Values","Social Responsibility","Personal Growth","Future Vision",
+"Life Skills","Creative Mind","Peaceful Living","Positive Habits","Smart Thinking"
 ];
 
-let gradients=["linear-gradient(135deg,#ff512f,#dd2476)","linear-gradient(135deg,#1fa2ff,#12d8fa,#a6ffcb)",
-"linear-gradient(135deg,#8360c3,#2ebf91)","linear-gradient(135deg,#ffb347,#ffcc33)",
-"linear-gradient(135deg,#fc466b,#3f5efb)"];
+let gradients=[
+"linear-gradient(135deg,#ff512f,#dd2476)",
+"linear-gradient(135deg,#1fa2ff,#12d8fa,#a6ffcb)",
+"linear-gradient(135deg,#8360c3,#2ebf91)",
+"linear-gradient(135deg,#ffb347,#ffcc33)",
+"linear-gradient(135deg,#fc466b,#3f5efb)"
+];
 
-let pages=[];for(let i=1;i<=40;i++){pages.push("Page "+i+" content: This book explains the topic with real-life examples and stories for easy understanding.");}
+let pages=[];for(let i=1;i<=40;i++){pages.push("Page "+i+" content: This book explains the topic with real-life examples and stories.");}
 
-let row1=document.getElementById("row1"),row2=document.getElementById("row2");
+let grid=document.getElementById("bookGrid");
 let readCount=0,page=0,currentBook=0;
 
-function loadBooks(){
-row1.innerHTML="";row2.innerHTML="";
-books.forEach((b,i)=>{
+function loadBooks(list){
+grid.innerHTML="";
+list.forEach((b,i)=>{
 let d=document.createElement("div");
 d.className="book";
 d.style.background=gradients[i%5];
 d.innerText=b;
 d.onclick=()=>openBook(i);
-if(i<25) row1.appendChild(d); else row2.appendChild(d);
+grid.appendChild(d);
 });
-recommend.innerText=books[Math.floor(Math.random()*books.length)];
+recommend.innerText=list[Math.floor(Math.random()*list.length)];
 }
-loadBooks();
+loadBooks(books);
 
 function filterBooks(){
 let t=searchBox.value.toLowerCase();
-let filtered=books.filter(b=>b.toLowerCase().includes(t));
-row1.innerHTML="";row2.innerHTML="";
-filtered.forEach((b,i)=>{
-let d=document.createElement("div");
-d.className="book";
-d.style.background=gradients[i%5];
-d.innerText=b;
-d.onclick=()=>openBook(i);
-if(i<25) row1.appendChild(d); else row2.appendChild(d);
-});
+loadBooks(books.filter(b=>b.toLowerCase().includes(t)));
 }
 
 function openBook(i){
