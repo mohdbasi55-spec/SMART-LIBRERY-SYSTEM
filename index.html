@@ -3,31 +3,49 @@
 <head>
 <title>Smart Library System</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <style>
-:root{--bg:#f2f4f8;--text:#000;--card:#fff;--header:#0d1b2a;}
+:root{--bg:#eef2f7;--text:#000;--card:#fff;--header:#0d1b2a;}
 .dark{--bg:#121212;--text:#fff;--card:#1e1e1e;--header:#000;}
+.ambience{--bg:#0b132b;--text:#eaeaea;--card:#1c2541;--header:#000;}
 body{margin:0;font-family:Segoe UI;background:var(--bg);color:var(--text);}
+
 header{background:var(--header);color:white;padding:10px 15px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;}
-.centerStats{font-weight:bold;margin:5px 0;}
+.centerStats{font-weight:bold;}
+
 .layout{display:flex;height:calc(100vh - 60px);}
 .sidebar{width:240px;background:var(--card);padding:15px;box-shadow:2px 0 10px rgba(0,0,0,0.1);}
-.sidebar input,select{width:100%;padding:10px;border-radius:8px;border:1px solid #aaa;margin-top:10px;}
-.bookshelf{flex:1;padding:15px;display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:20px;overflow-y:auto;}
-.book{border-radius:14px;padding:10px;height:200px;color:white;font-weight:bold;display:flex;align-items:flex-end;justify-content:center;text-align:center;box-shadow:0 10px 25px rgba(0,0,0,0.35);transition:.4s;cursor:pointer;}
-.book:hover{transform:scale(1.05);}
+.sidebar input,select,button{width:100%;padding:10px;border-radius:8px;border:1px solid #aaa;margin-top:8px;}
+
+.dashboard{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:10px;}
+.dcard{background:linear-gradient(135deg,#1fa2ff,#12d8fa,#a6ffcb);color:#fff;padding:10px;border-radius:12px;text-align:center;font-size:14px;}
+
+.bookshelf{
+flex:1;
+padding:15px;
+display:grid;
+grid-template-columns:repeat(auto-fill,minmax(140px,1fr));
+gap:20px;
+overflow-y:auto;
+}
+
+.book{
+height:210px;border-radius:12px;
+display:flex;align-items:flex-end;justify-content:center;
+color:#fff;font-weight:bold;text-align:center;padding:10px;
+cursor:pointer;transition:.4s;
+box-shadow:0 10px 25px rgba(0,0,0,0.4);
+}
+.book:hover{transform:scale(1.08);}
+
 #reader{display:none;padding:15px;}
-.page{background:var(--card);padding:15px;border-radius:15px;min-height:250px;line-height:1.6;}
-button{padding:10px 18px;margin:5px;border:none;border-radius:8px;background:#0d1b2a;color:white;font-size:14px;}
+.page{background:var(--card);padding:20px;border-radius:15px;min-height:300px;line-height:1.7;}
+.progress{height:10px;background:#ccc;border-radius:10px;overflow:hidden;margin:10px 0;}
+.progress span{display:block;height:100%;background:#0d1b2a;width:0;}
 
 @media(max-width:768px){
 .layout{flex-direction:column;}
-.sidebar{width:100%;display:flex;gap:10px;flex-wrap:wrap;}
-.sidebar h3{width:100%;}
-.bookshelf{grid-template-columns:repeat(2,1fr);}
-}
-@media(max-width:480px){
-.bookshelf{grid-template-columns:repeat(1,1fr);}
-header{flex-direction:column;text-align:center;}
+.sidebar{width:100%;display:flex;flex-wrap:wrap;gap:5px;}
 }
 </style>
 </head>
@@ -35,44 +53,61 @@ header{flex-direction:column;text-align:center;}
 <body>
 <header>
 <h3>📚 Smart Library System</h3>
-<div class="centerStats">📚50 | 👥120 | 📖35</div>
-<div onclick="toggleMode()">🌙 Dark Mode</div>
+<div class="centerStats">📚100 | 👥120 | 📖 <span id="readCount">0</span></div>
 </header>
 
 <div class="layout" id="libraryView">
 <div class="sidebar">
 <h3>🔍 Search</h3>
-<input type="text" id="searchBox" onkeyup="filterBooks()" placeholder="Book name">
-<h3>📂 Category</h3>
-<select id="categoryBox" onchange="filterBooks()">
-<option>All</option><option>AI</option><option>Programming</option>
-<option>Design</option><option>Security</option><option>Data</option>
-</select>
+<input type="text" id="searchBox" onkeyup="filterBooks()" placeholder="Search book">
+
+<h3>🎛 Modes</h3>
+<button onclick="setMode('')">Normal</button>
+<button onclick="setMode('dark')">Dark</button>
+<button onclick="setMode('ambience')">Library Ambience</button>
+
+<h3>🤖 AI Recommend</h3>
+<div id="recommend">---</div>
+
+<h3>🛠 Admin Panel</h3>
+<button onclick="alert('Admin: Users=120, Books=100, Active=35')">View Stats</button>
+<button onclick="alert('Admin: New book added (simulation)')">Add Book</button>
 </div>
+
+<div style="flex:1;display:flex;flex-direction:column;">
+<div class="dashboard">
+<div class="dcard">Total Books<br>100</div>
+<div class="dcard">Active Readers<br>35</div>
+<div class="dcard">Most Read<br>Life Lessons</div>
+<div class="dcard">New Arrival<br>Positive Thinking</div>
+</div>
+
 <div class="bookshelf" id="bookGrid"></div>
+</div>
 </div>
 
 <div id="reader">
 <h2 id="bookTitle"></h2>
+<div class="progress"><span id="bar"></span></div>
 <div class="page" id="pageText"></div>
 <button onclick="prevPage()">⬅</button>
 <button onclick="nextPage()">➡</button>
-<button onclick="speakPage()">🔊</button>
 <button onclick="back()">⬅ Back</button>
 </div>
 
 <script>
 let books=[
-{title:"Artificial Intelligence",cat:"AI"},
-{title:"Machine Learning",cat:"AI"},
-{title:"Deep Learning",cat:"AI"},
-{title:"Python Programming",cat:"Programming"},
-{title:"Web Development",cat:"Programming"},
-{title:"UI UX Design",cat:"Design"},
-{title:"Cyber Security",cat:"Security"},
-{title:"Data Science",cat:"Data"},
-{title:"Cloud Computing",cat:"Programming"},
-{title:"Internet of Things",cat:"AI"}
+"Life Lessons","Positive Thinking","Self Discipline","Motivational Stories","Time Management",
+"Leadership Skills","Public Speaking","Personality Development","Mind Power","Emotional Intelligence",
+"Success Habits","Confidence Building","Stress Management","Creative Thinking","Decision Making",
+"Goal Setting","Communication Skills","Team Work","Critical Thinking","Adaptability",
+"Happiness Guide","Focus Training","Memory Power","Meditation Basics","Inner Peace",
+"Career Guidance","Study Techniques","Exam Success","Reading Skills","Writing Skills",
+"Story Writing","Poetry Collection","Short Stories","Moral Tales","Historical Stories",
+"Travel Stories","Inspirational Biographies","Young Achievers","Life of Scientists","Freedom Fighters",
+"Environmental Awareness","Health & Fitness","Yoga for Life","Healthy Food","Mental Wellness",
+"Human Values","Social Responsibility","Personal Growth","Future Vision",
+"Life Skills","Creative Mind","Peaceful Living","Positive Habits","Smart Thinking"
 ];
 
 let gradients=[
@@ -83,81 +118,10 @@ let gradients=[
 "linear-gradient(135deg,#fc466b,#3f5efb)"
 ];
 
-let content={
-"Artificial Intelligence":[
-"Artificial Intelligence (AI) is the simulation of human intelligence in machines.",
-"AI enables machines to learn from data and perform tasks like humans.",
-"Applications of AI include healthcare, robotics, and smart assistants.",
-"Benefits of AI include speed, accuracy, and automation.",
-"AI helps in decision making and problem solving."
-],
-"Machine Learning":[
-"Machine Learning is a subset of AI that learns from data.",
-"It uses algorithms to identify patterns.",
-"Used in recommendation systems and predictions.",
-"Reduces human effort and improves accuracy.",
-"It is widely used in modern technology."
-],
-"Deep Learning":[
-"Deep Learning uses neural networks with many layers.",
-"It processes complex data like images and speech.",
-"Used in self-driving cars and face recognition.",
-"It improves performance with large data.",
-"It is a powerful AI technique."
-],
-"Python Programming":[
-"Python is a high-level programming language.",
-"It is easy to learn and use.",
-"Used in web, AI and data science.",
-"Python improves productivity.",
-"It is popular among students."
-],
-"Web Development":[
-"Web development creates websites and applications.",
-"It includes frontend and backend.",
-"Uses HTML, CSS and JavaScript.",
-"Helps in online services.",
-"It is important for digital business."
-],
-"UI UX Design":[
-"UI means User Interface.",
-"UX means User Experience.",
-"It focuses on user-friendly design.",
-"Used in apps and websites.",
-"It improves customer satisfaction."
-],
-"Cyber Security":[
-"Cyber security protects systems from attacks.",
-"It prevents data theft.",
-"Used in banks and networks.",
-"It ensures safe communication.",
-"It is essential in digital world."
-],
-"Data Science":[
-"Data science analyzes data to get knowledge.",
-"It uses statistics and programming.",
-"Used in business and research.",
-"It improves decision making.",
-"It helps predict future trends."
-],
-"Cloud Computing":[
-"Cloud computing stores data online.",
-"It provides services via internet.",
-"It reduces hardware cost.",
-"It allows global access.",
-"It supports modern applications."
-],
-"Internet of Things":[
-"IoT connects devices to internet.",
-"It collects and shares data.",
-"Used in smart homes and cities.",
-"It improves automation.",
-"It supports future technology."
-]
-};
+let pages=[];for(let i=1;i<=40;i++){pages.push("Page "+i+" content: This book explains the topic with real-life examples and stories.");}
 
 let grid=document.getElementById("bookGrid");
-let page=0,currentBook="";
+let readCount=0,page=0,currentBook=0;
 
 function loadBooks(list){
 grid.innerHTML="";
@@ -165,31 +129,31 @@ list.forEach((b,i)=>{
 let d=document.createElement("div");
 d.className="book";
 d.style.background=gradients[i%5];
-d.innerText=b.title;
-d.onclick=()=>openBook(b.title);
+d.innerText=b;
+d.onclick=()=>openBook(i);
 grid.appendChild(d);
 });
+recommend.innerText=list[Math.floor(Math.random()*list.length)];
 }
 loadBooks(books);
 
 function filterBooks(){
-let t=searchBox.value.toLowerCase(),c=categoryBox.value;
-loadBooks(books.filter(b=>b.title.toLowerCase().includes(t)&&(c=="All"||b.cat==c)));
+let t=searchBox.value.toLowerCase();
+loadBooks(books.filter(b=>b.toLowerCase().includes(t)));
 }
 
-function openBook(title){
-currentBook=title;page=0;
+function openBook(i){
+currentBook=i;page=0;
 libraryView.style.display="none";
 reader.style.display="block";
-bookTitle.innerText=title;
-showPage();
+bookTitle.innerText=books[i];
+showPage();readCount++;document.getElementById("readCount").innerText=readCount;
 }
-function showPage(){pageText.innerHTML=content[currentBook][page];}
-function nextPage(){if(page<4){page++;showPage();}}
+function showPage(){pageText.innerText=pages[page];bar.style.width=((page+1)/pages.length*100)+"%";}
+function nextPage(){if(page<pages.length-1){page++;showPage();}}
 function prevPage(){if(page>0){page--;showPage();}}
-function speakPage(){speechSynthesis.speak(new SpeechSynthesisUtterance(pageText.innerText));}
 function back(){reader.style.display="none";libraryView.style.display="flex";}
-function toggleMode(){document.body.classList.toggle("dark");}
+function setMode(m){document.body.className=m;}
 </script>
 </body>
 </html>
