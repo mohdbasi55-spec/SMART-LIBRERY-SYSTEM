@@ -5,178 +5,156 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-:root{--bg:#f2f4f8;--text:#000;--card:#fff;--header:#0d1b2a;}
+:root{--bg:#eef2f7;--text:#000;--card:#fff;--header:#0d1b2a;}
 .dark{--bg:#121212;--text:#fff;--card:#1e1e1e;--header:#000;}
-body{margin:0;font-family:Segoe UI;background:var(--bg);color:var(--text);user-select:none;}
+.ambience{--bg:#0b132b;--text:#eaeaea;--card:#1c2541;--header:#000;}
+body{margin:0;font-family:Segoe UI;background:var(--bg);color:var(--text);}
 
 header{background:var(--header);color:white;padding:10px 15px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;}
 .centerStats{font-weight:bold;}
 
 .layout{display:flex;height:calc(100vh - 60px);}
-.sidebar{width:230px;background:var(--card);padding:15px;box-shadow:2px 0 10px rgba(0,0,0,0.1);}
-.sidebar input,select{width:100%;padding:10px;border-radius:8px;border:1px solid #aaa;margin-top:10px;}
+.sidebar{width:240px;background:var(--card);padding:15px;box-shadow:2px 0 10px rgba(0,0,0,0.1);}
+.sidebar input,select,button{width:100%;padding:10px;border-radius:8px;border:1px solid #aaa;margin-top:8px;}
 
-.bookshelf{flex:1;padding:15px;display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:20px;overflow-y:auto;}
+.dashboard{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:10px;}
+.dcard{background:linear-gradient(135deg,#1fa2ff,#12d8fa,#a6ffcb);color:#fff;padding:10px;border-radius:12px;text-align:center;font-size:14px;}
+
+.bookshelf{flex:1;padding:15px;display:flex;flex-direction:column;gap:20px;overflow-y:auto;}
+.row{display:flex;gap:15px;overflow-x:auto;padding-bottom:10px;}
 
 .book{
-height:230px;border-radius:10px;
+min-width:140px;height:210px;border-radius:10px;
 display:flex;align-items:flex-end;justify-content:center;
 color:#fff;font-weight:bold;text-align:center;padding:10px;
 cursor:pointer;transition:.4s;
-transform-style:preserve-3d;
 box-shadow:0 10px 25px rgba(0,0,0,0.4);
 }
-.book:hover{transform:rotateY(-15deg) scale(1.05);}
+.book:hover{transform:scale(1.08) rotateY(-10deg);}
 
 #reader{display:none;padding:15px;}
-.bookContainer{max-width:600px;margin:auto;}
-.page{
-background:var(--card);padding:20px;border-radius:15px;
-min-height:300px;line-height:1.8;
-box-shadow:0 10px 25px rgba(0,0,0,.3);
-animation:flip .6s;
-}
-@keyframes flip{from{transform:rotateY(90deg);}to{transform:rotateY(0);}}
-
+.page{background:var(--card);padding:20px;border-radius:15px;min-height:300px;line-height:1.7;}
 .progress{height:10px;background:#ccc;border-radius:10px;overflow:hidden;margin:10px 0;}
 .progress span{display:block;height:100%;background:#0d1b2a;width:0;}
 
-button{padding:10px 18px;margin:5px;border:none;border-radius:8px;background:#0d1b2a;color:white;}
-
-#recent,#most{font-size:13px;margin-top:10px;}
-
 @media(max-width:768px){
 .layout{flex-direction:column;}
-.sidebar{width:100%;display:flex;gap:10px;flex-wrap:wrap;}
-.bookshelf{grid-template-columns:repeat(2,1fr);}
-}
-@media(max-width:480px){
-.bookshelf{grid-template-columns:1fr;}
-header{flex-direction:column;}
+.sidebar{width:100%;display:flex;flex-wrap:wrap;gap:5px;}
 }
 </style>
 </head>
 
-<body oncontextmenu="return false">
-
+<body>
 <header>
 <h3>📚 Smart Library System</h3>
-<div class="centerStats">📚50 | 👥120 | 📖 <span id="streak">0</span></div>
-<div onclick="toggleMode()">🌙 Dark Mode</div>
+<div class="centerStats">📚100 | 👥120 | 📖 <span id="readCount">0</span></div>
 </header>
 
 <div class="layout" id="libraryView">
 <div class="sidebar">
 <h3>🔍 Search</h3>
-<input type="text" id="searchBox" onkeyup="filterBooks()" placeholder="Book name">
+<input type="text" id="searchBox" onkeyup="filterBooks()" placeholder="Search book">
 
-<h3>📂 Category</h3>
-<select id="categoryBox" onchange="filterBooks()">
-<option>All</option><option>AI</option><option>Programming</option>
-<option>Design</option><option>Security</option><option>Data</option>
-</select>
+<h3>🎛 Modes</h3>
+<button onclick="setMode('')">Normal</button>
+<button onclick="setMode('dark')">Dark</button>
+<button onclick="setMode('ambience')">Library Ambience</button>
 
-<div id="recent">📌 Recent: None</div>
-<div id="most">🔥 Most Read: AI</div>
+<h3>🤖 AI Recommend</h3>
+<div id="recommend">---</div>
+
+<h3>🛠 Admin Panel</h3>
+<button onclick="alert('Admin: Users=120, Books=100, Active=35')">View Stats</button>
+<button onclick="alert('Admin: New book added (simulation)')">Add Book</button>
 </div>
 
-<div class="bookshelf" id="bookGrid"></div>
+<div style="flex:1;display:flex;flex-direction:column;">
+<div class="dashboard">
+<div class="dcard">Total Books<br>100</div>
+<div class="dcard">Active Readers<br>35</div>
+<div class="dcard">Most Read<br>Life Lessons</div>
+<div class="dcard">New Arrival<br>Positive Thinking</div>
+</div>
+
+<div class="bookshelf">
+<div class="row" id="row1"></div>
+<div class="row" id="row2"></div>
+</div>
+</div>
 </div>
 
 <div id="reader">
-<div class="bookContainer">
 <h2 id="bookTitle"></h2>
-
 <div class="progress"><span id="bar"></span></div>
-
 <div class="page" id="pageText"></div>
-
 <button onclick="prevPage()">⬅</button>
 <button onclick="nextPage()">➡</button>
-<button onclick="bookmark()">🔖 Bookmark</button>
-<button onclick="speakPage()">🔊</button>
 <button onclick="back()">⬅ Back</button>
-</div>
 </div>
 
 <script>
 let books=[
-{title:"Artificial Intelligence",cat:"AI"},
-{title:"Machine Learning",cat:"AI"},
-{title:"Deep Learning",cat:"AI"},
-{title:"Neural Networks",cat:"AI"},
-{title:"Python Programming",cat:"Programming"},
-{title:"Java Programming",cat:"Programming"},
-{title:"Web Development",cat:"Programming"},
-{title:"UI UX Design",cat:"Design"},
-{title:"Game Design",cat:"Design"},
-{title:"Cyber Security",cat:"Security"},
-{title:"Ethical Hacking",cat:"Security"},
-{title:"Data Science",cat:"Data"},
-{title:"Big Data Analytics",cat:"Data"},
-{title:"Cloud Computing",cat:"Programming"},
-{title:"Robotics",cat:"AI"},
-{title:"Computer Networks",cat:"Programming"},
-{title:"Database Management",cat:"Programming"},
-{title:"Software Engineering",cat:"Programming"},
-{title:"DevOps",cat:"Programming"},
-{title:"Quantum Computing",cat:"AI"}
+"Life Lessons","Positive Thinking","Self Discipline","Motivational Stories","Time Management",
+"Leadership Skills","Public Speaking","Personality Development","Mind Power","Emotional Intelligence",
+"Success Habits","Confidence Building","Stress Management","Creative Thinking","Decision Making",
+"Goal Setting","Communication Skills","Team Work","Critical Thinking","Adaptability",
+"Happiness Guide","Focus Training","Memory Power","Meditation Basics","Inner Peace",
+"Career Guidance","Study Techniques","Exam Success","Reading Skills","Writing Skills",
+"Story Writing","Poetry Collection","Short Stories","Moral Tales","Historical Stories",
+"Travel Stories","Inspirational Biographies","Young Achievers","Life of Scientists","Freedom Fighters",
+"Environmental Awareness","Health & Fitness","Yoga for Life","Healthy Food","Mental Wellness",
+"Human Values","Social Responsibility","Personal Growth","Future Vision"
 ];
 
-let gradients=[
-"linear-gradient(135deg,#ff512f,#dd2476)",
-"linear-gradient(135deg,#1fa2ff,#12d8fa,#a6ffcb)",
-"linear-gradient(135deg,#8360c3,#2ebf91)",
-"linear-gradient(135deg,#ffb347,#ffcc33)",
-"linear-gradient(135deg,#fc466b,#3f5efb)"
-];
+let gradients=["linear-gradient(135deg,#ff512f,#dd2476)","linear-gradient(135deg,#1fa2ff,#12d8fa,#a6ffcb)",
+"linear-gradient(135deg,#8360c3,#2ebf91)","linear-gradient(135deg,#ffb347,#ffcc33)",
+"linear-gradient(135deg,#fc466b,#3f5efb)"];
 
-let pages=[];
-for(let i=1;i<=40;i++){
-pages.push("Page "+i+" : This is sample content for Smart Library System book. It explains the topic with examples and concepts so user feels like real book reading experience.");
-}
+let pages=[];for(let i=1;i<=40;i++){pages.push("Page "+i+" content: This book explains the topic with real-life examples and stories for easy understanding.");}
 
-let grid=document.getElementById("bookGrid"),page=0,currentBook=0,streak=0,bookmarkPage=0;
+let row1=document.getElementById("row1"),row2=document.getElementById("row2");
+let readCount=0,page=0,currentBook=0;
 
-function loadBooks(list){
-grid.innerHTML="";
-list.forEach((b,i)=>{
+function loadBooks(){
+row1.innerHTML="";row2.innerHTML="";
+books.forEach((b,i)=>{
 let d=document.createElement("div");
 d.className="book";
 d.style.background=gradients[i%5];
-d.innerText=b.title;
+d.innerText=b;
 d.onclick=()=>openBook(i);
-grid.appendChild(d);
+if(i<25) row1.appendChild(d); else row2.appendChild(d);
 });
+recommend.innerText=books[Math.floor(Math.random()*books.length)];
 }
-loadBooks(books);
+loadBooks();
 
 function filterBooks(){
-let t=searchBox.value.toLowerCase(),c=categoryBox.value;
-loadBooks(books.filter(b=>b.title.toLowerCase().includes(t)&&(c=="All"||b.cat==c)));
+let t=searchBox.value.toLowerCase();
+let filtered=books.filter(b=>b.toLowerCase().includes(t));
+row1.innerHTML="";row2.innerHTML="";
+filtered.forEach((b,i)=>{
+let d=document.createElement("div");
+d.className="book";
+d.style.background=gradients[i%5];
+d.innerText=b;
+d.onclick=()=>openBook(i);
+if(i<25) row1.appendChild(d); else row2.appendChild(d);
+});
 }
 
 function openBook(i){
 currentBook=i;page=0;
 libraryView.style.display="none";
 reader.style.display="block";
-bookTitle.innerText=books[i].title;
-recent.innerText="📌 Recent: "+books[i].title;
-showPage();
-streak++;document.getElementById("streak").innerText=streak;
+bookTitle.innerText=books[i];
+showPage();readCount++;document.getElementById("readCount").innerText=readCount;
 }
-
-function showPage(){
-pageText.innerHTML=pages[page];
-bar.style.width=((page+1)/pages.length*100)+"%";
-}
-
+function showPage(){pageText.innerText=pages[page];bar.style.width=((page+1)/pages.length*100)+"%";}
 function nextPage(){if(page<pages.length-1){page++;showPage();}}
 function prevPage(){if(page>0){page--;showPage();}}
-function bookmark(){bookmarkPage=page;alert("Bookmarked page "+(page+1));}
-function speakPage(){speechSynthesis.speak(new SpeechSynthesisUtterance(pageText.innerText));}
 function back(){reader.style.display="none";libraryView.style.display="flex";}
-function toggleMode(){document.body.classList.toggle("dark");}
+function setMode(m){document.body.className=m;}
 </script>
 </body>
 </html>
