@@ -16,7 +16,7 @@ header{background:var(--header);color:white;padding:10px 15px;display:flex;justi
 .book{border-radius:14px;padding:10px;height:200px;color:white;font-weight:bold;display:flex;align-items:flex-end;justify-content:center;text-align:center;box-shadow:0 10px 25px rgba(0,0,0,0.35);transition:.4s;cursor:pointer;}
 .book:hover{transform:scale(1.05);}
 #reader{display:none;padding:15px;}
-.page{background:var(--card);padding:15px;border-radius:15px;min-height:250px;line-height:1.8;font-size:16px;}
+.page{background:var(--card);padding:15px;border-radius:15px;min-height:250px;line-height:1.6;}
 button{padding:10px 18px;margin:5px;border:none;border-radius:8px;background:#0d1b2a;color:white;font-size:14px;}
 
 @media(max-width:768px){
@@ -55,8 +55,8 @@ header{flex-direction:column;text-align:center;}
 <div id="reader">
 <h2 id="bookTitle"></h2>
 <div class="page" id="pageText"></div>
-<button onclick="prevPage()">⬅ Prev</button>
-<button onclick="nextPage()">Next ➡</button>
+<button onclick="prevPage()">⬅</button>
+<button onclick="nextPage()">➡</button>
 <button onclick="speakPage()">🔊</button>
 <button onclick="back()">⬅ Back</button>
 </div>
@@ -65,14 +65,14 @@ header{flex-direction:column;text-align:center;}
 let books=[
 {title:"Artificial Intelligence",cat:"AI"},
 {title:"Machine Learning",cat:"AI"},
+{title:"Deep Learning",cat:"AI"},
 {title:"Python Programming",cat:"Programming"},
 {title:"Web Development",cat:"Programming"},
 {title:"UI UX Design",cat:"Design"},
 {title:"Cyber Security",cat:"Security"},
 {title:"Data Science",cat:"Data"},
 {title:"Cloud Computing",cat:"Programming"},
-{title:"Internet of Things",cat:"AI"},
-{title:"Game Design",cat:"Design"}
+{title:"Internet of Things",cat:"AI"}
 ];
 
 let gradients=[
@@ -83,76 +83,76 @@ let gradients=[
 "linear-gradient(135deg,#fc466b,#3f5efb)"
 ];
 
-let storyContent={
+let content={
 "Artificial Intelligence":[
-"Ravi oru engineering student. Avan first time AI pathi kekkuran. AI na computer human maari yosikka try pannum nu avan purinjukittan.",
-"College project la Ravi chatbot create pannaan. Athu students doubts answer pannum. Athula AI use pannaan.",
-"AI healthcare la patients disease predict pannuthu nu avan padichaan.",
-"AI use pannina time save aagum, work easy aagum nu avan experience pannaan.",
-"Future la AI ellaa field layum use aagum nu Ravi confident aa irundhaan."
+"Artificial Intelligence (AI) is the simulation of human intelligence in machines.",
+"AI enables machines to learn from data and perform tasks like humans.",
+"Applications of AI include healthcare, robotics, and smart assistants.",
+"Benefits of AI include speed, accuracy, and automation.",
+"AI helps in decision making and problem solving."
 ],
 "Machine Learning":[
-"Anu data science padikkara student. Ava machine learning pathi learn panninaa.",
-"Ava movie recommendation system create panninaa using ML.",
-"Machine learning data pathi learn pannitu prediction kudukkum.",
-"Ava project la accuracy improve aaguthu nu paathaa.",
-"Machine learning future job opportunities open pannuthu."
+"Machine Learning is a subset of AI that learns from data.",
+"It uses algorithms to identify patterns.",
+"Used in recommendation systems and predictions.",
+"Reduces human effort and improves accuracy.",
+"It is widely used in modern technology."
+],
+"Deep Learning":[
+"Deep Learning uses neural networks with many layers.",
+"It processes complex data like images and speech.",
+"Used in self-driving cars and face recognition.",
+"It improves performance with large data.",
+"It is a powerful AI technique."
 ],
 "Python Programming":[
-"Kumar programming start panna Python choose pannaan.",
-"Simple syntax nala avan easy aa programs write pannaan.",
-"Ava first calculator app create pannaan.",
-"Python AI and web la use aaguthu nu avan learn pannaan.",
-"Python avan career ku strong base kuduthuchu."
+"Python is a high-level programming language.",
+"It is easy to learn and use.",
+"Used in web, AI and data science.",
+"Python improves productivity.",
+"It is popular among students."
 ],
 "Web Development":[
-"Meena website create panna aasai pattaa.",
-"Ava HTML, CSS learn panninaa.",
-"JavaScript use panni interactive website panninaa.",
-"Ava site la online shop create panninaa.",
-"Web development avala freelancer aakkuchu."
+"Web development creates websites and applications.",
+"It includes frontend and backend.",
+"Uses HTML, CSS and JavaScript.",
+"Helps in online services.",
+"It is important for digital business."
 ],
 "UI UX Design":[
-"Suresh designer aaganum nu dream pannaan.",
-"Ava app design pannumbothu user comfort mukkiyam nu purinjukittaan.",
-"Colors, buttons, layout ellam plan pannaan.",
-"User happy na design success nu avan kathukittaan.",
-"UI UX field romba demand irukku."
+"UI means User Interface.",
+"UX means User Experience.",
+"It focuses on user-friendly design.",
+"Used in apps and websites.",
+"It improves customer satisfaction."
 ],
 "Cyber Security":[
-"Rahul hacker attacks pathi kettan.",
-"Ava security learn panna start pannaan.",
-"Passwords strong ah use panna kathukittaan.",
-"Bank systems la security mukkiyam nu purinjukittaan.",
-"Cyber security future la romba important."
+"Cyber security protects systems from attacks.",
+"It prevents data theft.",
+"Used in banks and networks.",
+"It ensures safe communication.",
+"It is essential in digital world."
 ],
 "Data Science":[
-"Priya data analyse panna interest irundhuchu.",
-"Ava charts and graphs use panninaa.",
-"Company sales data analyse panninaa.",
-"Decisions better aaguthu nu paathaa.",
-"Data science business la mukkiyam."
+"Data science analyzes data to get knowledge.",
+"It uses statistics and programming.",
+"Used in business and research.",
+"It improves decision making.",
+"It helps predict future trends."
 ],
 "Cloud Computing":[
-"Arun server manage panna kashtam nu purinjukittaan.",
-"Ava cloud use panninaa.",
-"Online la files store pannaan.",
-"Office team ellarum access panninaanga.",
-"Cloud computing work easy pannuthu."
+"Cloud computing stores data online.",
+"It provides services via internet.",
+"It reduces hardware cost.",
+"It allows global access.",
+"It supports modern applications."
 ],
 "Internet of Things":[
-"Smart home pathi Bala padichaan.",
-"Lights phone la control pannaan.",
-"Temperature sensor use pannaan.",
-"IoT life easy pannuthu.",
-"Future cities smart aagum."
-],
-"Game Design":[
-"Vijay game create panna aasai pattaan.",
-"Characters draw pannaan.",
-"Story write pannaan.",
-"Players enjoy panninaanga.",
-"Game design creative field."
+"IoT connects devices to internet.",
+"It collects and shares data.",
+"Used in smart homes and cities.",
+"It improves automation.",
+"It supports future technology."
 ]
 };
 
@@ -184,7 +184,7 @@ reader.style.display="block";
 bookTitle.innerText=title;
 showPage();
 }
-function showPage(){pageText.innerHTML=storyContent[currentBook][page];}
+function showPage(){pageText.innerHTML=content[currentBook][page];}
 function nextPage(){if(page<4){page++;showPage();}}
 function prevPage(){if(page>0){page--;showPage();}}
 function speakPage(){speechSynthesis.speak(new SpeechSynthesisUtterance(pageText.innerText));}
