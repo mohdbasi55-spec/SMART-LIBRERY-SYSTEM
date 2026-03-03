@@ -6,153 +6,191 @@
 
 <style>
 :root{--bg:#eef2f7;--text:#000;--card:#fff;--header:#0d1b2a;}
-.dark{--bg:#121212;--text:#fff;--card:#1e1e1e;}
-.sepia{--bg:#f4ecd8;--text:#5b4636;--card:#fff2cc;}
-.contrast{--bg:#000;--text:#ff0;--card:#000;}
+.dark{--bg:#121212;--text:#fff;--card:#1e1e1e;--header:#000;}
+.ambience{--bg:#0b132b;--text:#eaeaea;--card:#1c2541;--header:#000;}
 body{margin:0;font-family:Segoe UI;background:var(--bg);color:var(--text);}
 
-header{background:#0d1b2a;color:white;padding:10px;display:flex;justify-content:space-between;align-items:center;}
-.layout{display:flex;height:calc(100vh - 50px);}
+header{background:var(--header);color:white;padding:10px 15px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;}
+.centerStats{font-weight:bold;}
 
-.sidebar{width:230px;background:var(--card);padding:10px;box-shadow:2px 0 10px rgba(0,0,0,.2);}
-.sidebar input,select,button{width:100%;padding:8px;margin:5px 0;border-radius:6px;}
+.layout{display:flex;height:calc(100vh - 60px);}
+.sidebar{width:240px;background:var(--card);padding:15px;box-shadow:2px 0 10px rgba(0,0,0,0.1);}
+.sidebar input,select,button{width:100%;padding:10px;border-radius:8px;border:1px solid #aaa;margin-top:8px;}
 
-.bookshelf{flex:1;display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:20px;padding:15px;overflow-y:auto;}
-.book{
-height:200px;border-radius:10px;
-background:linear-gradient(135deg,#ff512f,#dd2476);
-display:flex;align-items:flex-end;justify-content:center;
-color:white;font-weight:bold;text-align:center;padding:10px;
-cursor:pointer;transition:.5s;
-transform-style:preserve-3d;
-box-shadow:0 10px 20px rgba(0,0,0,.4);
+.dashboard{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:10px;}
+.dcard{background:linear-gradient(135deg,#1fa2ff,#12d8fa,#a6ffcb);color:#fff;padding:10px;border-radius:12px;text-align:center;font-size:14px;}
+
+.bookshelf{
+flex:1;
+padding:15px;
+display:grid;
+grid-template-columns:repeat(auto-fill,minmax(140px,1fr));
+gap:20px;
+overflow-y:auto;
 }
-.book:hover{transform:rotateY(20deg) scale(1.1);box-shadow:0 0 20px cyan;}
 
-#reader{display:none;padding:15px;animation:openBook .6s;}
-@keyframes openBook{from{transform:scale(.5);}to{transform:scale(1);}}
+.book{
+height:210px;border-radius:12px;
+display:flex;align-items:flex-end;justify-content:center;
+color:#fff;font-weight:bold;text-align:center;padding:10px;
+cursor:pointer;transition:.4s;
+box-shadow:0 10px 25px rgba(0,0,0,0.4);
+transform:perspective(600px) rotateY(-8deg);
+}
+.book:hover{
+transform:perspective(600px) rotateY(0deg) scale(1.05);
+}
 
-.page{background:var(--card);padding:20px;border-radius:15px;min-height:250px;}
-.progress{height:8px;background:#ccc;border-radius:10px;overflow:hidden;margin:8px 0;}
+#reader{display:none;padding:15px;}
+.page{
+background:var(--card);
+padding:15px;
+border-radius:15px;
+min-height:180px;
+max-width:500px;
+margin:auto;
+line-height:1.6;
+font-size:15px;
+}
+.progress{height:8px;background:#ccc;border-radius:10px;overflow:hidden;margin:10px 0;}
 .progress span{display:block;height:100%;background:#0d1b2a;width:0;}
 
-.quiz{display:none;background:var(--card);padding:15px;border-radius:10px;}
-
-.noteBox{width:100%;height:60px;}
-
-.floatingBooks::before{
-content:"📚 📖 📘 📕";
-position:fixed;bottom:10px;right:10px;
-animation:float 3s infinite alternate;
+@media(max-width:768px){
+.layout{flex-direction:column;}
+.sidebar{width:100%;display:flex;flex-wrap:wrap;gap:5px;}
 }
-@keyframes float{from{transform:translateY(0);}to{transform:translateY(-20px);}}
-
-@media(max-width:768px){.layout{flex-direction:column;}.sidebar{width:100%;}}
 </style>
 </head>
 
-<body class="floatingBooks">
+<body>
 <header>
 <h3>📚 Smart Library System</h3>
-<div>📚100 | 👥120 | 📖 <span id="readCount">0</span></div>
+<div class="centerStats">📚100 | 👥120 | 📖 <span id="readCount">0</span></div>
 </header>
 
 <div class="layout" id="libraryView">
 <div class="sidebar">
-<input id="searchBox" onkeyup="filterBooks()" placeholder="Search book">
+<h3>🔍 Search</h3>
+<input type="text" id="searchBox" onkeyup="filterBooks()" placeholder="Search book">
 
-<select id="catBox" onchange="filterBooks()">
-<option value="All">All</option>
-<option value="Technical">Technical</option>
-<option value="NonTechnical">Non-Technical</option>
-</select>
-
-<h4>Modes</h4>
+<h3>🎛 Modes</h3>
 <button onclick="setMode('')">Normal</button>
 <button onclick="setMode('dark')">Dark</button>
-<button onclick="setMode('sepia')">Sepia</button>
-<button onclick="setMode('contrast')">High Contrast</button>
+<button onclick="setMode('ambience')">Library Ambience</button>
 
-<h4>Admin</h4>
-<button onclick="alert('Users:120\nBooks:100\nActive:35')">View Stats</button>
-<button onclick="alert('Book Added (Simulation)')">Add Book</button>
+<h3>🤖 AI Recommend</h3>
+<div id="recommend">---</div>
+
+<h3>🛠 Admin Panel</h3>
+<button onclick="alert('Admin: Users=120, Books=100, Active=35')">View Stats</button>
+<button onclick="alert('Admin: New book added (simulation)')">Add Book</button>
+</div>
+
+<div style="flex:1;display:flex;flex-direction:column;">
+<div class="dashboard">
+<div class="dcard">Total Books<br>100</div>
+<div class="dcard">Active Readers<br>35</div>
+<div class="dcard">AI Picks<br>Smart Thinking</div>
+<div class="dcard">New Arrival<br>Quantum Tech</div>
 </div>
 
 <div class="bookshelf" id="bookGrid"></div>
 </div>
+</div>
 
 <div id="reader">
 <h2 id="bookTitle"></h2>
-<p id="author"></p>
 <div class="progress"><span id="bar"></span></div>
 <div class="page" id="pageText"></div>
-
 <button onclick="prevPage()">⬅</button>
 <button onclick="nextPage()">➡</button>
-<button onclick="bookmark()">🔖 Bookmark</button>
-<button onclick="showNotes()">📝 Notes</button>
 <button onclick="back()">⬅ Back</button>
-
-<div id="notes" style="display:none">
-<textarea class="noteBox" placeholder="Write your notes..."></textarea>
-</div>
-
-<div class="quiz" id="quiz">
-<h3>Quiz</h3>
-<p>1. Did you enjoy this book?</p>
-<button onclick="alert('Correct!')">Yes</button>
-<button onclick="alert('Try again')">No</button>
-</div>
 </div>
 
 <script>
-let tech=[..."Artificial Intelligence,Machine Learning,Deep Learning,Neural Networks,Python Programming,Java Programming,C Programming,C++ Programming,Web Development,Mobile App Development,Full Stack Development,UI UX Design,Computer Graphics,Cyber Security,Ethical Hacking,Network Security,Blockchain Technology,Data Science,Big Data Analytics,Cloud Computing,Internet of Things,Robotics,Natural Language Processing,Computer Networks,Operating Systems,Database Management,Software Engineering,Compiler Design,Distributed Systems,Augmented Reality,Virtual Reality,Human Computer Interaction,Embedded Systems,Microprocessors,DevOps,Microservices,Quantum Computing,Bioinformatics,Information Retrieval,Pattern Recognition,Digital Forensics,Information Security,Smart Systems,Game Development,Image Processing,Computer Vision,Data Mining,Business Analytics,Statistics for Computing".split(",")];
+// 50 TECH + 50 NON TECH
+let techBooks=[
+"Artificial Intelligence","Machine Learning","Deep Learning","Python Programming","Java Programming",
+"C Programming","C++ Programming","Web Development","Mobile App Development","Data Science",
+"Cloud Computing","Cyber Security","Ethical Hacking","Blockchain","Internet of Things",
+"Robotics","Computer Networks","Operating Systems","Database Management","Software Engineering",
+"Compiler Design","DevOps","Microservices","Quantum Computing","Bioinformatics",
+"Natural Language Processing","Big Data Analytics","Data Mining","UI UX Design","Game Development",
+"Computer Graphics","Virtual Reality","Augmented Reality","Human Computer Interaction","Embedded Systems",
+"Microprocessors","Digital Image Processing","Information Security","Distributed Systems","Pattern Recognition",
+"Neural Networks","AI Ethics","Smart Systems","Information Retrieval","Digital Forensics",
+"Computer Vision","Automation","Edge Computing","5G Technology"
+];
 
-let non=[..."Life Lessons,Positive Thinking,Self Discipline,Motivational Stories,Time Management,Leadership Skills,Public Speaking,Personality Development,Mind Power,Emotional Intelligence,Success Habits,Confidence Building,Stress Management,Creative Thinking,Decision Making,Goal Setting,Communication Skills,Team Work,Critical Thinking,Adaptability,Happiness Guide,Focus Training,Memory Power,Meditation Basics,Inner Peace,Career Guidance,Study Techniques,Exam Success,Reading Skills,Writing Skills,Story Writing,Poetry Collection,Short Stories,Moral Tales,Historical Stories,Travel Stories,Inspirational Biographies,Young Achievers,Life of Scientists,Freedom Fighters,Environmental Awareness,Health & Fitness,Yoga for Life,Healthy Food,Mental Wellness,Human Values,Social Responsibility,Personal Growth,Future Vision".split(",")];
+let nonTechBooks=[
+"Life Lessons","Positive Thinking","Self Discipline","Motivational Stories","Time Management",
+"Leadership Skills","Public Speaking","Personality Development","Mind Power","Emotional Intelligence",
+"Success Habits","Confidence Building","Stress Management","Creative Thinking","Decision Making",
+"Goal Setting","Communication Skills","Team Work","Critical Thinking","Adaptability",
+"Happiness Guide","Focus Training","Memory Power","Meditation Basics","Inner Peace",
+"Career Guidance","Study Techniques","Exam Success","Reading Skills","Writing Skills",
+"Story Writing","Poetry Collection","Short Stories","Moral Tales","Historical Stories",
+"Travel Stories","Inspirational Biographies","Young Achievers","Freedom Fighters","Environmental Awareness",
+"Health & Fitness","Yoga for Life","Healthy Food","Mental Wellness","Human Values",
+"Social Responsibility","Personal Growth","Future Vision","Peaceful Living"
+];
 
-let books=[...tech.map(t=>({title:t,cat:"Technical"})),...non.map(t=>({title:t,cat:"NonTechnical"}))];
+let books=[...techBooks,...nonTechBooks];
+
+let gradients=[
+"linear-gradient(135deg,#ff512f,#dd2476)",
+"linear-gradient(135deg,#1fa2ff,#12d8fa,#a6ffcb)",
+"linear-gradient(135deg,#8360c3,#2ebf91)",
+"linear-gradient(135deg,#ffb347,#ffcc33)",
+"linear-gradient(135deg,#fc466b,#3f5efb)"
+];
+
+let pages=[];
+for(let i=1;i<=40;i++){
+pages.push("Chapter "+i+": This chapter explains the topic with simple examples, short stories and practical ideas so that students can easily understand and apply in real life.");
+}
+
 let grid=document.getElementById("bookGrid");
-let pages=[...Array(40)].map((_,i)=>"Page "+(i+1)+" content with explanation and examples.");
-let page=0,readCount=0;
+let readCount=0,page=0,currentBook=0;
 
 function loadBooks(list){
 grid.innerHTML="";
 list.forEach((b,i)=>{
 let d=document.createElement("div");
 d.className="book";
-d.innerText=b.title;
+d.style.background=gradients[i%5];
+d.innerText=b;
 d.onclick=()=>openBook(i);
 grid.appendChild(d);
 });
+recommend.innerText=list[Math.floor(Math.random()*list.length)];
 }
 loadBooks(books);
 
 function filterBooks(){
-let t=searchBox.value.toLowerCase(),c=catBox.value;
-loadBooks(books.filter(b=>b.title.toLowerCase().includes(t)&&(c=="All"||b.cat==c)));
+let t=searchBox.value.toLowerCase();
+loadBooks(books.filter(b=>b.toLowerCase().includes(t) || pages.join(" ").toLowerCase().includes(t)));
 }
 
 function openBook(i){
+currentBook=i;page=0;
+alert("📖 Opening Book: "+books[i]+"\nContains 40 pages with easy explanations.");
 libraryView.style.display="none";
 reader.style.display="block";
-bookTitle.innerText=books[i].title;
-author.innerText="Category: "+books[i].cat;
-page=0;showPage();readCount++;readCountSpan.innerText=readCount;
+bookTitle.innerText="📘 "+books[i];
+showPage();readCount++;
+document.getElementById("readCount").innerText=readCount;
 }
 
 function showPage(){
 pageText.innerText=pages[page];
 bar.style.width=((page+1)/pages.length*100)+"%";
-if(page==pages.length-1)quiz.style.display="block";
 }
 
 function nextPage(){if(page<pages.length-1){page++;showPage();}}
 function prevPage(){if(page>0){page--;showPage();}}
 function back(){reader.style.display="none";libraryView.style.display="flex";}
-function setMode(m){document.body.className=m+" floatingBooks";}
-function bookmark(){alert("Bookmarked page "+(page+1));}
-function showNotes(){notes.style.display=notes.style.display=="none"?"block":"none";}
-let readCountSpan=document.getElementById("readCount");
+function setMode(m){document.body.className=m;}
 </script>
 </body>
 </html>
