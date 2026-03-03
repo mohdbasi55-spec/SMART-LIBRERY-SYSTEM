@@ -3,55 +3,26 @@
 <head>
 <title>Smart Library System</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <style>
 :root{--bg:#eef2f7;--text:#000;--card:#fff;--header:#0d1b2a;}
 .dark{--bg:#121212;--text:#fff;--card:#1e1e1e;}
-.sepia{--bg:#f4ecd8;--text:#5b4636;--card:#fff2cc;}
-.contrast{--bg:#000;--text:#ff0;--card:#000;}
 body{margin:0;font-family:Segoe UI;background:var(--bg);color:var(--text);}
-
-header{background:#0d1b2a;color:white;padding:10px;display:flex;justify-content:space-between;align-items:center;}
+header{background:#0d1b2a;color:white;padding:10px;display:flex;justify-content:space-between;}
 .layout{display:flex;height:calc(100vh - 50px);}
-
 .sidebar{width:230px;background:var(--card);padding:10px;box-shadow:2px 0 10px rgba(0,0,0,.2);}
 .sidebar input,select,button{width:100%;padding:8px;margin:5px 0;border-radius:6px;}
-
-.bookshelf{flex:1;display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:20px;padding:15px;overflow-y:auto;}
-.book{
-height:200px;border-radius:10px;
-background:linear-gradient(135deg,#ff512f,#dd2476);
-display:flex;align-items:flex-end;justify-content:center;
-color:white;font-weight:bold;text-align:center;padding:10px;
-cursor:pointer;transition:.5s;
-transform-style:preserve-3d;
-box-shadow:0 10px 20px rgba(0,0,0,.4);
-}
-.book:hover{transform:rotateY(20deg) scale(1.1);box-shadow:0 0 20px cyan;}
-
-#reader{display:none;padding:15px;animation:openBook .6s;}
-@keyframes openBook{from{transform:scale(.5);}to{transform:scale(1);}}
-
-.page{background:var(--card);padding:20px;border-radius:15px;min-height:250px;}
+.bookshelf{flex:1;display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:15px;padding:15px;overflow-y:auto;}
+.book{height:170px;border-radius:8px;display:flex;align-items:flex-end;justify-content:center;color:white;font-weight:bold;text-align:center;padding:8px;cursor:pointer;transition:.4s;box-shadow:0 5px 15px rgba(0,0,0,.4);background:linear-gradient(135deg,#1fa2ff,#12d8fa);}
+.book:hover{transform:scale(1.08);}
+#detail,#reader{display:none;padding:15px;}
+.page{background:var(--card);padding:15px;border-radius:10px;min-height:200px;line-height:1.6;max-width:500px;margin:auto;}
+mark{background:yellow;}
 .progress{height:8px;background:#ccc;border-radius:10px;overflow:hidden;margin:8px 0;}
 .progress span{display:block;height:100%;background:#0d1b2a;width:0;}
-
-.quiz{display:none;background:var(--card);padding:15px;border-radius:10px;}
-
-.noteBox{width:100%;height:60px;}
-
-.floatingBooks::before{
-content:"📚 📖 📘 📕";
-position:fixed;bottom:10px;right:10px;
-animation:float 3s infinite alternate;
-}
-@keyframes float{from{transform:translateY(0);}to{transform:translateY(-20px);}}
-
-@media(max-width:768px){.layout{flex-direction:column;}.sidebar{width:100%;}}
 </style>
 </head>
 
-<body class="floatingBooks">
+<body>
 <header>
 <h3>📚 Smart Library System</h3>
 <div>📚100 | 👥120 | 📖 <span id="readCount">0</span></div>
@@ -59,50 +30,39 @@ animation:float 3s infinite alternate;
 
 <div class="layout" id="libraryView">
 <div class="sidebar">
-<input id="searchBox" onkeyup="filterBooks()" placeholder="Search book">
-
+<input id="searchBox" onkeyup="filterBooks()" placeholder="Search book / keyword">
 <select id="catBox" onchange="filterBooks()">
 <option value="All">All</option>
 <option value="Technical">Technical</option>
 <option value="NonTechnical">Non-Technical</option>
 </select>
-
-<h4>Modes</h4>
 <button onclick="setMode('')">Normal</button>
 <button onclick="setMode('dark')">Dark</button>
-<button onclick="setMode('sepia')">Sepia</button>
-<button onclick="setMode('contrast')">High Contrast</button>
-
-<h4>Admin</h4>
-<button onclick="alert('Users:120\nBooks:100\nActive:35')">View Stats</button>
-<button onclick="alert('Book Added (Simulation)')">Add Book</button>
 </div>
-
 <div class="bookshelf" id="bookGrid"></div>
 </div>
 
+<!-- BOOK DETAIL PAGE -->
+<div id="detail">
+<h2 id="dTitle"></h2>
+<p id="dAuthor"></p>
+<p id="dCat"></p>
+<p id="dPages"></p>
+<button onclick="openReader()">📖 Read Book</button>
+<button onclick="backHome()">⬅ Back</button>
+</div>
+
+<!-- READER -->
 <div id="reader">
 <h2 id="bookTitle"></h2>
-<p id="author"></p>
+<div>
+<select id="chapterBox" onchange="changeChapter()"></select>
+</div>
 <div class="progress"><span id="bar"></span></div>
-<div class="page" id="pageText"></div>
-
+<div class="page" id="pageText" onclick="highlightText(event)"></div>
 <button onclick="prevPage()">⬅</button>
 <button onclick="nextPage()">➡</button>
-<button onclick="bookmark()">🔖 Bookmark</button>
-<button onclick="showNotes()">📝 Notes</button>
-<button onclick="back()">⬅ Back</button>
-
-<div id="notes" style="display:none">
-<textarea class="noteBox" placeholder="Write your notes..."></textarea>
-</div>
-
-<div class="quiz" id="quiz">
-<h3>Quiz</h3>
-<p>1. Did you enjoy this book?</p>
-<button onclick="alert('Correct!')">Yes</button>
-<button onclick="alert('Try again')">No</button>
-</div>
+<button onclick="backHome()">⬅ Back</button>
 </div>
 
 <script>
@@ -110,10 +70,12 @@ let tech=[..."Artificial Intelligence,Machine Learning,Deep Learning,Neural Netw
 
 let non=[..."Life Lessons,Positive Thinking,Self Discipline,Motivational Stories,Time Management,Leadership Skills,Public Speaking,Personality Development,Mind Power,Emotional Intelligence,Success Habits,Confidence Building,Stress Management,Creative Thinking,Decision Making,Goal Setting,Communication Skills,Team Work,Critical Thinking,Adaptability,Happiness Guide,Focus Training,Memory Power,Meditation Basics,Inner Peace,Career Guidance,Study Techniques,Exam Success,Reading Skills,Writing Skills,Story Writing,Poetry Collection,Short Stories,Moral Tales,Historical Stories,Travel Stories,Inspirational Biographies,Young Achievers,Life of Scientists,Freedom Fighters,Environmental Awareness,Health & Fitness,Yoga for Life,Healthy Food,Mental Wellness,Human Values,Social Responsibility,Personal Growth,Future Vision".split(",")];
 
-let books=[...tech.map(t=>({title:t,cat:"Technical"})),...non.map(t=>({title:t,cat:"NonTechnical"}))];
+let books=[...tech.map(t=>({title:t,author:"Author "+t,cat:"Technical"})),...non.map(t=>({title:t,author:"Author "+t,cat:"NonTechnical"}))];
+
+let chapters=["Chapter 1","Chapter 2","Chapter 3","Chapter 4"];
+let pages=[...Array(40)].map((_,i)=>"Page "+(i+1)+" content with explanation and examples related to the topic.");
 let grid=document.getElementById("bookGrid");
-let pages=[...Array(40)].map((_,i)=>"Page "+(i+1)+" content with explanation and examples.");
-let page=0,readCount=0;
+let page=0,readCount=0,currentBook=0;
 
 function loadBooks(list){
 grid.innerHTML="";
@@ -121,7 +83,7 @@ list.forEach((b,i)=>{
 let d=document.createElement("div");
 d.className="book";
 d.innerText=b.title;
-d.onclick=()=>openBook(i);
+d.onclick=()=>openDetail(i);
 grid.appendChild(d);
 });
 }
@@ -129,29 +91,57 @@ loadBooks(books);
 
 function filterBooks(){
 let t=searchBox.value.toLowerCase(),c=catBox.value;
-loadBooks(books.filter(b=>b.title.toLowerCase().includes(t)&&(c=="All"||b.cat==c)));
+loadBooks(books.filter(b=>
+(b.title.toLowerCase().includes(t)||
+b.author.toLowerCase().includes(t)||
+pages.join(" ").toLowerCase().includes(t))
+&&(c=="All"||b.cat==c)
+));
 }
 
-function openBook(i){
+function openDetail(i){
+currentBook=i;
 libraryView.style.display="none";
-reader.style.display="block";
-bookTitle.innerText=books[i].title;
-author.innerText="Category: "+books[i].cat;
-page=0;showPage();readCount++;readCountSpan.innerText=readCount;
+detail.style.display="block";
+dTitle.innerText=books[i].title;
+dAuthor.innerText="Author: "+books[i].author;
+dCat.innerText="Category: "+books[i].cat;
+dPages.innerText="Total Pages: 40";
 }
 
+function openReader(){
+detail.style.display="none";
+reader.style.display="block";
+bookTitle.innerText=books[currentBook].title;
+chapterBox.innerHTML="";
+chapters.forEach(c=>{
+let o=document.createElement("option");
+o.text=c;chapterBox.add(o);
+});
+page=localStorage.getItem(books[currentBook].title)||0;
+showPage();readCount++;readCountSpan.innerText=readCount;
+}
+
+function changeChapter(){page=0;showPage();}
 function showPage(){
 pageText.innerText=pages[page];
 bar.style.width=((page+1)/pages.length*100)+"%";
-if(page==pages.length-1)quiz.style.display="block";
+localStorage.setItem(books[currentBook].title,page);
 }
-
 function nextPage(){if(page<pages.length-1){page++;showPage();}}
 function prevPage(){if(page>0){page--;showPage();}}
-function back(){reader.style.display="none";libraryView.style.display="flex";}
-function setMode(m){document.body.className=m+" floatingBooks";}
-function bookmark(){alert("Bookmarked page "+(page+1));}
-function showNotes(){notes.style.display=notes.style.display=="none"?"block":"none";}
+
+function highlightText(e){
+let sel=window.getSelection().toString();
+if(sel){pageText.innerHTML=pageText.innerHTML.replace(sel,"<mark>"+sel+"</mark>");}
+}
+
+function backHome(){
+reader.style.display="none";
+detail.style.display="none";
+libraryView.style.display="flex";
+}
+function setMode(m){document.body.className=m;}
 let readCountSpan=document.getElementById("readCount");
 </script>
 </body>
