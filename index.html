@@ -36,7 +36,22 @@ font-size:14px;
 .timer{font-weight:bold;font-size:14px;}
 .centerStats{font-weight:bold;}
 
-.layout{display:flex;height:calc(100vh - 100px);}
+.quoteBar{
+background:rgba(255,255,255,0.12);
+padding:6px 12px;
+border-radius:10px;
+font-size:14px;
+text-align:center;
+}
+
+.currentRead{
+background:rgba(255,255,255,0.12);
+padding:6px 12px;
+border-radius:10px;
+font-size:14px;
+}
+
+.layout{display:flex;height:calc(100vh - 140px);}
 .sidebar{width:240px;background:var(--card);padding:15px;box-shadow:2px 0 10px rgba(0,0,0,0.1);}
 .sidebar input,button{width:100%;padding:10px;border-radius:8px;border:1px solid #aaa;margin-top:8px;}
 
@@ -90,7 +105,12 @@ font-size:16px;
 
   <div class="topRow">
     <div class="statusBar">🟢 Open | 👤 Active: 35 | 📖 Reading: 12</div>
-    <div class="timer">⏳ Study Time: <span id="timer">00:00:00</span></div>
+    <div class="timer">🕒 <span id="clock">--:--</span> | 📅 <span id="date">--/--/----</span></div>
+  </div>
+
+  <div class="topRow">
+    <div class="quoteBar">💡 Today’s Thought: Small steps lead to big success.</div>
+    <div class="currentRead">📖 You are reading: <span id="currentBook">None</span></div>
   </div>
 </header>
 
@@ -107,10 +127,7 @@ font-size:16px;
 <h3>🤖 AI Recommend</h3>
 <div style="display:flex;gap:6px;align-items:center;">
   <div id="recommend" style="flex:1;padding:6px;border-radius:6px;background:#eee;">---</div>
-  <div onclick="changeRecommend()" 
-       style="padding:6px 10px;border-radius:6px;background:#0d1b2a;color:white;cursor:pointer;font-size:12px;">
-    AI
-  </div>
+  <div onclick="changeRecommend()" style="padding:6px 10px;border-radius:6px;background:#0d1b2a;color:white;cursor:pointer;font-size:12px;">AI</div>
 </div>
 
 <h3>🛠 Admin Panel</h3>
@@ -140,29 +157,7 @@ font-size:16px;
 </div>
 
 <script>
-let books=[
-"Life Lessons","Positive Thinking","Self Discipline","Motivational Stories","Time Management",
-"Leadership Skills","Public Speaking","Personality Development","Mind Power","Emotional Intelligence",
-"Success Habits","Confidence Building","Stress Management","Creative Thinking","Decision Making",
-"Goal Setting","Communication Skills","Team Work","Critical Thinking","Adaptability",
-"Happiness Guide","Focus Training","Memory Power","Meditation Basics","Inner Peace",
-"Career Guidance","Study Techniques","Exam Success","Reading Skills","Writing Skills",
-"Story Writing","Poetry Collection","Short Stories","Moral Tales","Historical Stories",
-"Travel Stories","Inspirational Biographies","Young Achievers","Life of Scientists","Freedom Fighters",
-"Environmental Awareness","Health & Fitness","Yoga for Life","Healthy Food","Mental Wellness",
-"Human Values","Social Responsibility","Personal Growth","Future Vision",
-
-"Artificial Intelligence","Machine Learning","Deep Learning","Neural Networks","Natural Language Processing",
-"Python Programming","Java Programming","C Programming","C++ Programming","Web Development",
-"Mobile App Development","Data Science","Big Data Analytics","Cloud Computing","Cyber Security",
-"Ethical Hacking","Blockchain Technology","Internet of Things","Robotics","Computer Networks",
-"Operating Systems","Database Management Systems","Software Engineering","Compiler Design","Distributed Systems",
-"DevOps","Microservices","UI UX Design","Computer Graphics","Digital Image Processing",
-"Game Development","Augmented Reality","Virtual Reality","Human Computer Interaction","Embedded Systems",
-"Microprocessors","Quantum Computing","Bioinformatics","Information Retrieval","Pattern Recognition",
-"AI Ethics","Data Mining","Business Analytics","Statistics for Computing","Information Security",
-"Digital Forensics","Smart Systems","Future Computing"
-];
+let books=["Life Lessons","Positive Thinking","Self Discipline","Motivational Stories","Time Management","Artificial Intelligence","Machine Learning","Python Programming","Web Development","Cyber Security"];
 
 let gradients=[
 "linear-gradient(135deg,#ff512f,#dd2476)",
@@ -173,7 +168,7 @@ let gradients=[
 ];
 
 let pages=[];
-for(let i=1;i<=40;i++){
+for(let i=1;i<=30;i++){
 pages.push("Page "+i+" content: This book explains the topic with examples and clear explanations.");
 }
 
@@ -204,6 +199,7 @@ currentBook=i;page=0;
 libraryView.style.display="none";
 reader.style.display="block";
 bookTitle.innerText=books[i];
+document.getElementById("currentBook").innerText=books[i];
 showPage();
 readCount++;
 document.getElementById("readCount").innerText=readCount;
@@ -219,18 +215,19 @@ function back(){reader.style.display="none";libraryView.style.display="flex";}
 function setMode(m){document.body.className=m;}
 
 function changeRecommend(){
-  let r = books[Math.floor(Math.random()*books.length)];
-  document.getElementById("recommend").innerText = r;
+let r = books[Math.floor(Math.random()*books.length)];
+document.getElementById("recommend").innerText = r;
 }
 
-let seconds=0;
-setInterval(()=>{
-seconds++;
-let h=String(Math.floor(seconds/3600)).padStart(2,"0");
-let m=String(Math.floor((seconds%3600)/60)).padStart(2,"0");
-let s=String(seconds%60).padStart(2,"0");
-document.getElementById("timer").innerText=`${h}:${m}:${s}`;
-},1000);
+function updateClock(){
+let d=new Date();
+let h=d.getHours().toString().padStart(2,"0");
+let m=d.getMinutes().toString().padStart(2,"0");
+document.getElementById("clock").innerText=h+":"+m;
+document.getElementById("date").innerText=d.toLocaleDateString();
+}
+setInterval(updateClock,1000);
+updateClock();
 </script>
 </body>
 </html>
