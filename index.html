@@ -17,13 +17,9 @@ header{background:var(--header);color:white;padding:10px 15px;display:flex;flex-
 
 .layout{display:flex;height:calc(100vh - 140px);}
 .sidebar{width:240px;background:var(--card);padding:15px;box-shadow:2px 0 10px rgba(0,0,0,0.1);}
-.sidebar input,button{width:100%;padding:10px;border-radius:8px;border:1px solid #aaa;margin-top:8px;}
-
-.dashboard{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:10px;}
-.dcard{background:linear-gradient(135deg,#1fa2ff,#12d8fa,#a6ffcb);color:#fff;padding:10px;border-radius:12px;text-align:center;font-size:14px;}
+.sidebar input,.sidebar button{width:100%;padding:10px;border-radius:8px;border:1px solid #aaa;margin-top:8px;}
 
 .bookshelf{flex:1;padding:15px;display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:22px;overflow-y:auto;}
-
 .book{height:260px;border-radius:16px;display:flex;align-items:flex-end;justify-content:center;color:#fff;font-weight:bold;text-align:center;padding:12px;cursor:pointer;transition:.4s;box-shadow:0 10px 25px rgba(0,0,0,0.4);font-size:16px;}
 .book:hover{transform:scale(1.08);}
 
@@ -65,15 +61,13 @@ header{background:var(--header);color:white;padding:10px 15px;display:flex;flex-
 <div id="recommend" style="flex:1;padding:6px;border-radius:6px;background:#eee;">---</div>
 <div onclick="changeRecommend()" style="padding:6px 10px;border-radius:6px;background:#0d1b2a;color:white;cursor:pointer;">AI</div>
 </div>
+
+<!-- ✅ ADMIN PANEL VISIBLE -->
+<h3>🛠 Admin Panel</h3>
+<button onclick="openAdmin()">Login as Admin</button>
 </div>
 
 <div style="flex:1;display:flex;flex-direction:column;">
-<div class="dashboard">
-<div class="dcard">Total Books<br>100</div>
-<div class="dcard">Active Readers<br>35</div>
-<div class="dcard">Most Read<br>Life Lessons</div>
-<div class="dcard">New Arrival<br>Python Programming</div>
-</div>
 <div class="bookshelf" id="bookGrid"></div>
 </div>
 </div>
@@ -126,7 +120,7 @@ let gradients=[
 let pages=[];for(let i=1;i<=30;i++){pages.push("Page "+i+" content with explanation and examples.");}
 
 let grid=document.getElementById("bookGrid");
-let readCount=0,page=0;
+let page=0,readCount=0;
 
 function loadBooks(list){
 grid.innerHTML="";
@@ -153,7 +147,7 @@ reader.style.display="block";
 bookTitle.innerText=books[i];
 currentBook.innerText=books[i];
 page=0;showPage();
-readCount++;readCountSpan.innerText=readCount;
+readCount++;document.getElementById("readCount").innerText=readCount;
 }
 function showPage(){pageText.innerText=pages[page];bar.style.width=((page+1)/pages.length*100)+"%";}
 function nextPage(){if(page<pages.length-1){page++;showPage();}}
@@ -161,6 +155,20 @@ function prevPage(){if(page>0){page--;showPage();}}
 function back(){reader.style.display="none";libraryView.style.display="flex";}
 function setMode(m){document.body.className=m;}
 function changeRecommend(){recommend.innerText=books[Math.floor(Math.random()*books.length)];}
+
+function openAdmin(){
+let pass=prompt("Enter Admin Password:");
+if(pass==="1234"){
+let name=prompt("Enter new book name:");
+if(name){
+books.push(name);
+loadBooks(books);
+alert("Book Added Successfully!");
+}
+}else{
+alert("Wrong Password");
+}
+}
 
 function updateClock(){
 let d=new Date();
