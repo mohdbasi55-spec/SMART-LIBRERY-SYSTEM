@@ -14,7 +14,7 @@
 body{margin:0;font-family:Segoe UI;background:var(--bg);color:var(--text);}
 
 header{
-background:linear-gradient(135deg,#0d1b2a,#1b3a4b);
+background:var(--header);
 color:white;padding:12px 15px;
 display:flex;justify-content:space-between;align-items:center;
 }
@@ -54,7 +54,7 @@ display:grid;
 grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
 gap:25px;
 overflow-y:auto;
-background:linear-gradient(#ddd,#bbb);
+background:var(--bg); /* 🔥 FULL PAGE MODE FIX */
 }
 
 .book{
@@ -121,7 +121,7 @@ button.main{background:#0d1b2a;color:white;border:none;}
 <button onclick="setMode('dark')">Dark</button>
 <button onclick="setMode('ambience')">Library Ambience</button>
 <button onclick="setMode('sepia')">Sepia</button>
-<button onclick="setMode('focus')">Focus Mode</button>
+<button onclick="setMode('focus')">Focus</button>
 </section>
 
 <section id="adminLock">
@@ -155,7 +155,7 @@ button.main{background:#0d1b2a;color:white;border:none;}
 <script>
 let adminPassword="1234";
 
-/* ===== OLD BOOK NAMES (UNCHANGED) ===== */
+/* OLD BOOK NAMES */
 let techBooks=[
 "Artificial Intelligence","Machine Learning","Python Programming","Java Programming","Web Development",
 "Cyber Security","Cloud Computing","Data Science","Robotics","Blockchain",
