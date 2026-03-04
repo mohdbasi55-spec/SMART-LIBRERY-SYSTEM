@@ -13,18 +13,27 @@ header{
 background:linear-gradient(135deg,#0d1b2a,#1b3a4b);
 color:white;padding:12px 15px;
 display:flex;justify-content:space-between;align-items:center;
-flex-wrap:wrap;
 }
-.centerStats{font-weight:bold;}
 
 .layout{display:flex;height:calc(100vh - 60px);}
 
 .sidebar{
-width:240px;
+width:260px;
 background:var(--card);
 padding:15px;
 box-shadow:2px 0 12px rgba(0,0,0,0.2);
+display:flex;
+flex-direction:column;
+gap:15px;
 }
+
+.sidebar section{
+background:#f0f2f5;
+padding:12px;
+border-radius:12px;
+}
+
+.sidebar h3{margin:5px 0;}
 
 .sidebar input,.sidebar button{
 width:100%;
@@ -90,20 +99,37 @@ button.main{background:#0d1b2a;color:white;border:none;}
 <body>
 <header>
 <h3>📚 Smart Library System</h3>
-<div class="centerStats">📚 <span id="total">100</span> | 👥120 | 📖 <span id="readCount">0</span></div>
+<div>📚 <span id="total">100</span> | 👥120 | 📖 <span id="readCount">0</span></div>
 </header>
 
 <div class="layout" id="libraryView">
+
 <div class="sidebar">
+
+<section>
 <h3>🔍 Search</h3>
 <input type="text" id="searchBox" onkeyup="filterBooks()" placeholder="Search book">
+</section>
 
+<section>
 <h3>🌙 Mode</h3>
 <button onclick="toggleMode()">Dark Mode</button>
+</section>
 
+<section id="adminLock">
+<h3>🔐 Admin Login</h3>
+<input type="password" id="adminPass" placeholder="Enter password">
+<button onclick="unlockAdmin()">Login</button>
+</section>
+
+<section id="adminPanel" style="display:none;">
 <h3>🛠 Admin Panel</h3>
 <input type="text" id="newBook" placeholder="New book name">
 <button onclick="addBook()">Add Book</button>
+<input type="text" id="removeBook" placeholder="Remove book name">
+<button onclick="removeBook()">Remove Book</button>
+</section>
+
 </div>
 
 <div class="bookshelf" id="bookGrid"></div>
@@ -119,6 +145,8 @@ button.main{background:#0d1b2a;color:white;border:none;}
 </div>
 
 <script>
+let adminPassword="1234"; // CHANGE THIS
+
 let techBooks=[
 "Artificial Intelligence","Machine Learning","Python Programming","Java Programming","Web Development",
 "Cyber Security","Cloud Computing","Data Science","Robotics","Blockchain",
@@ -156,7 +184,7 @@ let gradients=[
 
 let pages=[];
 for(let i=1;i<=40;i++){
-pages.push("Chapter "+i+": This page explains the topic clearly with examples, simple language and key points like a real book.");
+pages.push("Chapter "+i+": This page explains the topic clearly with examples and key points like a real book.");
 }
 
 let grid=document.getElementById("bookGrid");
@@ -204,13 +232,30 @@ function toggleMode(){
 document.body.classList.toggle("dark");
 }
 
+function unlockAdmin(){
+let p=document.getElementById("adminPass").value;
+if(p===adminPassword){
+document.getElementById("adminLock").style.display="none";
+document.getElementById("adminPanel").style.display="block";
+alert("Admin unlocked");
+}else{
+alert("Wrong password");
+}
+}
+
 function addBook(){
 let name=document.getElementById("newBook").value;
 if(name.trim()==""){alert("Enter book name");return;}
 books.push(name);
 loadBooks(books);
 document.getElementById("newBook").value="";
-alert("Book Added Successfully!");
+}
+
+function removeBook(){
+let name=document.getElementById("removeBook").value.toLowerCase();
+books=books.filter(b=>b.toLowerCase()!=name);
+loadBooks(books);
+document.getElementById("removeBook").value="";
 }
 </script>
 </body>
