@@ -7,6 +7,10 @@
 <style>
 :root{--bg:#eef2f7;--text:#000;--card:#fff;--header:#0d1b2a;}
 .dark{--bg:#121212;--text:#fff;--card:#1e1e1e;--header:#000;}
+.ambience{--bg:#0b132b;--text:#eaeaea;--card:#1c2541;--header:#000;}
+.sepia{--bg:#f4ecd8;--text:#5b4636;--card:#fff3d6;--header:#7a5c3e;}
+.focus{--bg:#111;--text:#fff;--card:#1b1b1b;--header:#000;}
+
 body{margin:0;font-family:Segoe UI;background:var(--bg);color:var(--text);}
 
 header{
@@ -112,8 +116,17 @@ button.main{background:#0d1b2a;color:white;border:none;}
 </section>
 
 <section>
-<h3>🌙 Mode</h3>
-<button onclick="toggleMode()">Dark Mode</button>
+<h3>🎨 Modes</h3>
+<button onclick="setMode('')">Light</button>
+<button onclick="setMode('dark')">Dark</button>
+<button onclick="setMode('ambience')">Library Ambience</button>
+<button onclick="setMode('sepia')">Sepia</button>
+<button onclick="setMode('focus')">Focus Mode</button>
+</section>
+
+<section>
+<h3>💡 Quote</h3>
+<div>"Reading is to the mind what exercise is to the body."</div>
 </section>
 
 <section id="adminLock">
@@ -145,34 +158,10 @@ button.main{background:#0d1b2a;color:white;border:none;}
 </div>
 
 <script>
-let adminPassword="1234"; // CHANGE THIS
+let adminPassword="1234"; // ADMIN PASSWORD
 
-let techBooks=[
-"Artificial Intelligence","Machine Learning","Python Programming","Java Programming","Web Development",
-"Cyber Security","Cloud Computing","Data Science","Robotics","Blockchain",
-"IoT","Computer Networks","Operating Systems","Database Systems","Software Engineering",
-"DevOps","Microservices","Quantum Computing","AI Ethics","Computer Vision",
-"Neural Networks","Big Data","UI UX Design","Game Development","Digital Forensics",
-"Automation","Edge Computing","5G Technology","Compiler Design","Distributed Systems",
-"Bioinformatics","NLP","Information Retrieval","Smart Systems","Virtual Reality",
-"Augmented Reality","Embedded Systems","Microprocessors","Pattern Recognition","HCI",
-"Digital Image Processing","Information Security","Data Mining","Data Analytics","Computer Graphics"
-];
-
-let nonTechBooks=[
-"Life Lessons","Positive Thinking","Self Discipline","Motivational Stories","Time Management",
-"Leadership Skills","Public Speaking","Personality Development","Mind Power","Emotional Intelligence",
-"Success Habits","Confidence Building","Stress Management","Creative Thinking","Decision Making",
-"Goal Setting","Communication Skills","Team Work","Critical Thinking","Adaptability",
-"Happiness Guide","Focus Training","Memory Power","Meditation Basics","Inner Peace",
-"Career Guidance","Study Techniques","Exam Success","Reading Skills","Writing Skills",
-"Story Writing","Poetry Collection","Short Stories","Moral Tales","Historical Stories",
-"Travel Stories","Inspirational Biographies","Young Achievers","Freedom Fighters","Environmental Awareness",
-"Health & Fitness","Yoga for Life","Healthy Food","Mental Wellness","Human Values",
-"Social Responsibility","Personal Growth","Future Vision","Peaceful Living"
-];
-
-let books=[...techBooks,...nonTechBooks];
+let books=[];
+for(let i=1;i<=100;i++){books.push("Book "+i);}
 
 let gradients=[
 "linear-gradient(135deg,#ff512f,#dd2476)",
@@ -228,9 +217,7 @@ function nextPage(){if(page<pages.length-1){page++;showPage();}}
 function prevPage(){if(page>0){page--;showPage();}}
 function back(){reader.style.display="none";libraryView.style.display="flex";}
 
-function toggleMode(){
-document.body.classList.toggle("dark");
-}
+function setMode(m){document.body.className=m;}
 
 function unlockAdmin(){
 let p=document.getElementById("adminPass").value;
@@ -238,9 +225,7 @@ if(p===adminPassword){
 document.getElementById("adminLock").style.display="none";
 document.getElementById("adminPanel").style.display="block";
 alert("Admin unlocked");
-}else{
-alert("Wrong password");
-}
+}else{alert("Wrong password");}
 }
 
 function addBook(){
