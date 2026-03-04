@@ -13,34 +13,48 @@ header{
 background:linear-gradient(135deg,#0d1b2a,#1b3a4b);
 color:white;padding:12px 15px;
 display:flex;justify-content:space-between;align-items:center;
+flex-wrap:wrap;
 }
+.centerStats{font-weight:bold;}
 
 .layout{display:flex;height:calc(100vh - 60px);}
+
 .sidebar{
-width:260px;background:rgba(255,255,255,0.8);
-backdrop-filter:blur(10px);
-padding:15px;box-shadow:2px 0 15px rgba(0,0,0,.2);
+width:240px;
+background:var(--card);
+padding:15px;
+box-shadow:2px 0 12px rgba(0,0,0,0.2);
 }
 
-.sidebar input,button{
-width:100%;padding:10px;margin-top:8px;
-border-radius:10px;border:1px solid #aaa;
+.sidebar input,.sidebar button{
+width:100%;
+padding:10px;
+border-radius:8px;
+border:1px solid #aaa;
+margin-top:8px;
 }
 
 .bookshelf{
-flex:1;padding:20px;
+flex:1;
+padding:20px;
 display:grid;
 grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
-gap:25px;overflow-y:auto;
+gap:25px;
+overflow-y:auto;
 background:linear-gradient(#ddd,#bbb);
 }
 
 .book{
-height:220px;width:150px;
+height:220px;
+width:150px;
 border-radius:8px;
-display:flex;align-items:flex-end;justify-content:center;
-padding:8px;text-align:center;
-font-weight:bold;color:#fff;
+display:flex;
+align-items:flex-end;
+justify-content:center;
+padding:8px;
+text-align:center;
+font-weight:bold;
+color:#fff;
 cursor:pointer;
 box-shadow:8px 8px 20px rgba(0,0,0,0.4);
 transform:perspective(600px) rotateY(-12deg);
@@ -53,11 +67,11 @@ transform:perspective(600px) rotateY(0deg) scale(1.05);
 #reader{display:none;padding:20px;text-align:center;}
 .page{
 background:var(--card);
-max-width:500px;
+max-width:450px;
 margin:auto;
 padding:15px;
 border-radius:12px;
-min-height:180px;
+min-height:200px;
 box-shadow:0 0 20px rgba(0,0,0,.2);
 }
 
@@ -65,13 +79,6 @@ box-shadow:0 0 20px rgba(0,0,0,.2);
 .progress span{display:block;height:100%;background:#0d1b2a;width:0;}
 
 button.main{background:#0d1b2a;color:white;border:none;}
-
-.adminBox{
-background:#f3f3f3;
-padding:10px;
-border-radius:12px;
-margin-top:15px;
-}
 
 @media(max-width:768px){
 .layout{flex-direction:column;}
@@ -83,7 +90,7 @@ margin-top:15px;
 <body>
 <header>
 <h3>📚 Smart Library System</h3>
-<div>📚 <span id="total">100</span> | 👥120 | 📖 <span id="readCount">0</span></div>
+<div class="centerStats">📚 <span id="total">100</span> | 👥120 | 📖 <span id="readCount">0</span></div>
 </header>
 
 <div class="layout" id="libraryView">
@@ -94,11 +101,9 @@ margin-top:15px;
 <h3>🌙 Mode</h3>
 <button onclick="toggleMode()">Dark Mode</button>
 
-<h3>🛠 Admin Add Book</h3>
-<div class="adminBox">
-<input type="text" id="newBook" placeholder="Book name">
+<h3>🛠 Admin Panel</h3>
+<input type="text" id="newBook" placeholder="New book name">
 <button onclick="addBook()">Add Book</button>
-</div>
 </div>
 
 <div class="bookshelf" id="bookGrid"></div>
@@ -123,8 +128,7 @@ let techBooks=[
 "Automation","Edge Computing","5G Technology","Compiler Design","Distributed Systems",
 "Bioinformatics","NLP","Information Retrieval","Smart Systems","Virtual Reality",
 "Augmented Reality","Embedded Systems","Microprocessors","Pattern Recognition","HCI",
-"Digital Image Processing","Information Security","Data Mining","Data Analytics","Computer Graphics",
-"Mobile App Development","Full Stack Development","API Design"
+"Digital Image Processing","Information Security","Data Mining","Data Analytics","Computer Graphics"
 ];
 
 let nonTechBooks=[
@@ -152,7 +156,7 @@ let gradients=[
 
 let pages=[];
 for(let i=1;i<=40;i++){
-pages.push("Chapter "+i+": This page contains structured explanation with examples, diagrams and simple language for easy learning.");
+pages.push("Chapter "+i+": This page explains the topic clearly with examples, simple language and key points like a real book.");
 }
 
 let grid=document.getElementById("bookGrid");
