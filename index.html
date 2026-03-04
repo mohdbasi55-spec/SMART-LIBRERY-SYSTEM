@@ -108,8 +108,7 @@ let technicalBooks=[
 "Quantum Computing","Bioinformatics","Digital Forensics","UI UX Design","Game Development",
 "AR VR","Embedded Systems","Microprocessors","Network Security","Information Security",
 "Pattern Recognition","Smart Systems","Distributed Systems","Human Computer Interaction","Digital Image Processing",
-"Computer Vision","Data Structures","Algorithms","Linux Administration","Shell Scripting",
-"Computer Architecture","Parallel Computing","Mobile Security","Web Security","Software Architecture"
+"Computer Vision","Data Structures","Algorithms","Linux Administration","Shell Scripting"
 ];
 
 let nonTechnicalBooks=[
@@ -131,8 +130,9 @@ let pages=[];for(let i=1;i<=30;i++){pages.push("Page "+i+" content with explanat
 let grid=document.getElementById("bookGrid");
 let page=0,readCount=0;
 
+/* ✅ IMAGE FIX */
 function getBookImage(title){
-  return "https://source.unsplash.com/400x600/?"+encodeURIComponent(title+",book");
+  return "https://picsum.photos/seed/"+encodeURIComponent(title)+"/400/600";
 }
 
 function loadBooks(list){
@@ -140,7 +140,7 @@ grid.innerHTML="";
 list.forEach((b,i)=>{
 let d=document.createElement("div");
 d.className="book";
-d.style.backgroundImage=`url('${getBookImage(b)}')`;
+d.style.backgroundImage="url('"+getBookImage(b)+"')";
 d.innerHTML="<span>"+b+"</span>";
 d.onclick=()=>openBook(i);
 grid.appendChild(d);
