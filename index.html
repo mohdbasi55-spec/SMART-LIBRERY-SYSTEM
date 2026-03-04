@@ -124,11 +124,6 @@ button.main{background:#0d1b2a;color:white;border:none;}
 <button onclick="setMode('focus')">Focus Mode</button>
 </section>
 
-<section>
-<h3>💡 Quote</h3>
-<div>"Reading is to the mind what exercise is to the body."</div>
-</section>
-
 <section id="adminLock">
 <h3>🔐 Admin Login</h3>
 <input type="password" id="adminPass" placeholder="Enter password">
@@ -158,10 +153,35 @@ button.main{background:#0d1b2a;color:white;border:none;}
 </div>
 
 <script>
-let adminPassword="1234"; // ADMIN PASSWORD
+let adminPassword="1234";
 
-let books=[];
-for(let i=1;i<=100;i++){books.push("Book "+i);}
+/* ===== OLD BOOK NAMES (UNCHANGED) ===== */
+let techBooks=[
+"Artificial Intelligence","Machine Learning","Python Programming","Java Programming","Web Development",
+"Cyber Security","Cloud Computing","Data Science","Robotics","Blockchain",
+"IoT","Computer Networks","Operating Systems","Database Systems","Software Engineering",
+"DevOps","Microservices","Quantum Computing","AI Ethics","Computer Vision",
+"Neural Networks","Big Data","UI UX Design","Game Development","Digital Forensics",
+"Automation","Edge Computing","5G Technology","Compiler Design","Distributed Systems",
+"Bioinformatics","NLP","Information Retrieval","Smart Systems","Virtual Reality",
+"Augmented Reality","Embedded Systems","Microprocessors","Pattern Recognition","HCI",
+"Digital Image Processing","Information Security","Data Mining","Data Analytics","Computer Graphics"
+];
+
+let nonTechBooks=[
+"Life Lessons","Positive Thinking","Self Discipline","Motivational Stories","Time Management",
+"Leadership Skills","Public Speaking","Personality Development","Mind Power","Emotional Intelligence",
+"Success Habits","Confidence Building","Stress Management","Creative Thinking","Decision Making",
+"Goal Setting","Communication Skills","Team Work","Critical Thinking","Adaptability",
+"Happiness Guide","Focus Training","Memory Power","Meditation Basics","Inner Peace",
+"Career Guidance","Study Techniques","Exam Success","Reading Skills","Writing Skills",
+"Story Writing","Poetry Collection","Short Stories","Moral Tales","Historical Stories",
+"Travel Stories","Inspirational Biographies","Young Achievers","Freedom Fighters","Environmental Awareness",
+"Health & Fitness","Yoga for Life","Healthy Food","Mental Wellness","Human Values",
+"Social Responsibility","Personal Growth","Future Vision","Peaceful Living"
+];
+
+let books=[...techBooks,...nonTechBooks];
 
 let gradients=[
 "linear-gradient(135deg,#ff512f,#dd2476)",
