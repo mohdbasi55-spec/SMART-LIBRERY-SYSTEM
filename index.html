@@ -126,18 +126,21 @@ let nonTechnicalBooks=[
 ];
 
 let books=[...technicalBooks,...nonTechnicalBooks];
-
 let pages=[];for(let i=1;i<=30;i++){pages.push("Page "+i+" content with explanation and examples.");}
 
 let grid=document.getElementById("bookGrid");
 let page=0,readCount=0;
+
+function getBookImage(title){
+  return "https://source.unsplash.com/400x600/?"+encodeURIComponent(title+",book");
+}
 
 function loadBooks(list){
 grid.innerHTML="";
 list.forEach((b,i)=>{
 let d=document.createElement("div");
 d.className="book";
-d.style.backgroundImage=`url('https://picsum.photos/300/400?random=${i+1}')`;
+d.style.backgroundImage=`url('${getBookImage(b)}')`;
 d.innerHTML="<span>"+b+"</span>";
 d.onclick=()=>openBook(i);
 grid.appendChild(d);
