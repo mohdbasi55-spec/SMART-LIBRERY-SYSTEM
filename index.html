@@ -39,7 +39,7 @@ border-radius:12px;
 
 .sidebar h3{margin:5px 0;}
 
-.sidebar input,.sidebar button{
+.sidebar input,.sidebar button,select{
 width:100%;
 padding:10px;
 border-radius:8px;
@@ -54,7 +54,7 @@ display:grid;
 grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
 gap:25px;
 overflow-y:auto;
-background:var(--bg); /* 🔥 FULL PAGE MODE FIX */
+background:var(--bg);
 }
 
 .book{
@@ -73,9 +73,7 @@ box-shadow:8px 8px 20px rgba(0,0,0,0.4);
 transform:perspective(600px) rotateY(-12deg);
 transition:.4s;
 }
-.book:hover{
-transform:perspective(600px) rotateY(0deg) scale(1.05);
-}
+.book:hover{transform:perspective(600px) rotateY(0deg) scale(1.05);}
 
 #reader{display:none;padding:20px;text-align:center;}
 .page{
@@ -117,11 +115,19 @@ button.main{background:#0d1b2a;color:white;border:none;}
 
 <section>
 <h3>🎨 Modes</h3>
-<button onclick="setMode('')">Light</button>
-<button onclick="setMode('dark')">Dark</button>
-<button onclick="setMode('ambience')">Library Ambience</button>
-<button onclick="setMode('sepia')">Sepia</button>
-<button onclick="setMode('focus')">Focus</button>
+<select onchange="setMode(this.value)">
+<option value="">Light Mode</option>
+<option value="dark">Dark Mode</option>
+<option value="ambience">Library Ambience</option>
+<option value="sepia">Sepia Reading</option>
+<option value="focus">Focus Mode</option>
+</select>
+</section>
+
+<section>
+<h3>🤖 AI Recommendation</h3>
+<button onclick="recommend()">Recommend Book</button>
+<p id="aiText">Click to get suggestion</p>
 </section>
 
 <section id="adminLock">
@@ -155,31 +161,22 @@ button.main{background:#0d1b2a;color:white;border:none;}
 <script>
 let adminPassword="1234";
 
-/* OLD BOOK NAMES */
-let techBooks=[
-"Artificial Intelligence","Machine Learning","Python Programming","Java Programming","Web Development",
-"Cyber Security","Cloud Computing","Data Science","Robotics","Blockchain",
-"IoT","Computer Networks","Operating Systems","Database Systems","Software Engineering",
-"DevOps","Microservices","Quantum Computing","AI Ethics","Computer Vision",
-"Neural Networks","Big Data","UI UX Design","Game Development","Digital Forensics",
-"Automation","Edge Computing","5G Technology","Compiler Design","Distributed Systems",
-"Bioinformatics","NLP","Information Retrieval","Smart Systems","Virtual Reality",
-"Augmented Reality","Embedded Systems","Microprocessors","Pattern Recognition","HCI",
-"Digital Image Processing","Information Security","Data Mining","Data Analytics","Computer Graphics"
-];
+let techBooks=["Artificial Intelligence","Machine Learning","Python Programming","Java Programming","Web Development",
+"Cyber Security","Cloud Computing","Data Science","Robotics","Blockchain","IoT","Computer Networks","Operating Systems",
+"Database Systems","Software Engineering","DevOps","Microservices","Quantum Computing","AI Ethics","Computer Vision",
+"Neural Networks","Big Data","UI UX Design","Game Development","Digital Forensics","Automation","Edge Computing",
+"5G Technology","Compiler Design","Distributed Systems","Bioinformatics","NLP","Information Retrieval","Smart Systems",
+"Virtual Reality","Augmented Reality","Embedded Systems","Microprocessors","Pattern Recognition","HCI",
+"Digital Image Processing","Information Security","Data Mining","Data Analytics","Computer Graphics"];
 
-let nonTechBooks=[
-"Life Lessons","Positive Thinking","Self Discipline","Motivational Stories","Time Management",
-"Leadership Skills","Public Speaking","Personality Development","Mind Power","Emotional Intelligence",
-"Success Habits","Confidence Building","Stress Management","Creative Thinking","Decision Making",
-"Goal Setting","Communication Skills","Team Work","Critical Thinking","Adaptability",
-"Happiness Guide","Focus Training","Memory Power","Meditation Basics","Inner Peace",
-"Career Guidance","Study Techniques","Exam Success","Reading Skills","Writing Skills",
-"Story Writing","Poetry Collection","Short Stories","Moral Tales","Historical Stories",
-"Travel Stories","Inspirational Biographies","Young Achievers","Freedom Fighters","Environmental Awareness",
-"Health & Fitness","Yoga for Life","Healthy Food","Mental Wellness","Human Values",
-"Social Responsibility","Personal Growth","Future Vision","Peaceful Living"
-];
+let nonTechBooks=["Life Lessons","Positive Thinking","Self Discipline","Motivational Stories","Time Management",
+"Leadership Skills","Public Speaking","Personality Development","Mind Power","Emotional Intelligence","Success Habits",
+"Confidence Building","Stress Management","Creative Thinking","Decision Making","Goal Setting","Communication Skills",
+"Team Work","Critical Thinking","Adaptability","Happiness Guide","Focus Training","Memory Power","Meditation Basics",
+"Inner Peace","Career Guidance","Study Techniques","Exam Success","Reading Skills","Writing Skills","Story Writing",
+"Poetry Collection","Short Stories","Moral Tales","Historical Stories","Travel Stories","Inspirational Biographies",
+"Young Achievers","Freedom Fighters","Environmental Awareness","Health & Fitness","Yoga for Life","Healthy Food",
+"Mental Wellness","Human Values","Social Responsibility","Personal Growth","Future Vision","Peaceful Living"];
 
 let books=[...techBooks,...nonTechBooks];
 
@@ -192,9 +189,7 @@ let gradients=[
 ];
 
 let pages=[];
-for(let i=1;i<=40;i++){
-pages.push("Chapter "+i+": This page explains the topic clearly with examples and key points like a real book.");
-}
+for(let i=1;i<=40;i++){pages.push("Chapter "+i+": This page explains the topic clearly with examples.");}
 
 let grid=document.getElementById("bookGrid");
 let readCount=0,page=0,currentBook=0;
@@ -239,28 +234,33 @@ function back(){reader.style.display="none";libraryView.style.display="flex";}
 
 function setMode(m){document.body.className=m;}
 
+function recommend(){
+let random=books[Math.floor(Math.random()*books.length)];
+document.getElementById("aiText").innerText="📖 Suggested: "+random;
+}
+
 function unlockAdmin(){
 let p=document.getElementById("adminPass").value;
 if(p===adminPassword){
-document.getElementById("adminLock").style.display="none";
-document.getElementById("adminPanel").style.display="block";
+adminLock.style.display="none";
+adminPanel.style.display="block";
 alert("Admin unlocked");
-}else{alert("Wrong password");}
+}else alert("Wrong password");
 }
 
 function addBook(){
-let name=document.getElementById("newBook").value;
-if(name.trim()==""){alert("Enter book name");return;}
+let name=newBook.value;
+if(name.trim()=="")return;
 books.push(name);
 loadBooks(books);
-document.getElementById("newBook").value="";
+newBook.value="";
 }
 
 function removeBook(){
-let name=document.getElementById("removeBook").value.toLowerCase();
+let name=removeBook.value.toLowerCase();
 books=books.filter(b=>b.toLowerCase()!=name);
 loadBooks(books);
-document.getElementById("removeBook").value="";
+removeBook.value="";
 }
 </script>
 </body>
