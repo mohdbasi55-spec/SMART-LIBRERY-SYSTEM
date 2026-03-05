@@ -240,7 +240,10 @@ let books=[
 "Cyber Security","Cloud Computing","Robotics","Data Science",
 "Blockchain","Deep Learning","Computer Networks","Operating Systems",
 "Algorithms","Life Lessons","Positive Thinking","Time Management",
-"Leadership Skills","Public Speaking","Mind Power","Emotional Intelligence"
+"Leadership Skills","Public Speaking","Mind Power","Emotional Intelligence",
+"Neural Networks","AI Ethics","Big Data","Natural Language Processing",
+"Computer Vision","Software Engineering","Digital Transformation",
+"Motivation","Success Habits","Critical Thinking","Innovation"
 ];
 
 let images=[
@@ -254,6 +257,7 @@ let images=[
 let grid=document.getElementById("bookGrid");
 
 function loadBooks(list){
+
 grid.innerHTML="";
 
 list.forEach((b,i)=>{
@@ -277,13 +281,57 @@ recommend.innerText=list[Math.floor(Math.random()*list.length)];
 
 loadBooks(books);
 
+
 function filterBooks(){
 
 let t=searchBox.value.toLowerCase();
 
-loadBooks(books.filter(b=>b.toLowerCase().includes(t)));
+if(t===""){
+loadBooks(books);
+return;
+}
+
+let result=[];
+
+/* exact match */
+books.forEach(b=>{
+if(b.toLowerCase().includes(t)){
+result.push(b);
+}
+});
+
+/* related books */
+books.forEach(b=>{
+
+if(!result.includes(b)){
+
+let words=b.toLowerCase().split(" ");
+
+words.forEach(w=>{
+if(t.includes(w) || w.includes(t)){
+result.push(b);
+}
+});
 
 }
+
+});
+
+/* minimum books show */
+if(result.length<8){
+
+books.forEach(b=>{
+if(!result.includes(b)){
+result.push(b);
+}
+});
+
+}
+
+loadBooks(result);
+
+}
+
 
 function openBook(i){
 
