@@ -5,51 +5,23 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-
 :root{--bg:#eef2f7;--text:#000;--card:#fff;--header:#0d1b2a;}
 .dark{--bg:#121212;--text:#fff;--card:#1e1e1e;--header:#000;}
 .ambience{--bg:#0b132b;--text:#eaeaea;--card:#1c2541;--header:#000;}
 
-body{
-margin:0;
-font-family:Segoe UI;
-background:var(--bg);
-color:var(--text);
-}
+body{margin:0;font-family:Segoe UI;background:var(--bg);color:var(--text);}
 
-header{
-background:var(--header);
-color:white;
-padding:10px;
-text-align:center;
-}
+header{background:var(--header);color:white;padding:12px;text-align:center}
+header h2{margin:4px}
 
-.topMenu{
-display:flex;
-flex-wrap:wrap;
-justify-content:center;
-gap:10px;
-margin-top:8px;
-}
-
-.topMenu button{
-padding:6px 12px;
-border:none;
-border-radius:6px;
-cursor:pointer;
-}
-
-.layout{
-display:flex;
-height:calc(100vh - 120px);
-}
+.layout{display:flex;height:calc(100vh - 80px);}
 
 .sidebar{
 width:260px;
 background:var(--card);
 padding:15px;
 overflow:auto;
-box-shadow:2px 0 10px rgba(0,0,0,0.1);
+box-shadow:2px 0 10px rgba(0,0,0,0.1)
 }
 
 .sidebar input,.sidebar button{
@@ -57,7 +29,7 @@ width:100%;
 padding:8px;
 margin-top:6px;
 border-radius:6px;
-border:1px solid #aaa;
+border:1px solid #aaa
 }
 
 .bookshelf{
@@ -66,7 +38,7 @@ padding:15px;
 display:grid;
 grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
 gap:18px;
-overflow-y:auto;
+overflow-y:auto
 }
 
 .book{
@@ -82,49 +54,42 @@ font-weight:bold;
 padding:10px;
 text-shadow:0 2px 6px black;
 cursor:pointer;
-transition:.3s;
+transition:.3s
 }
 
 .book:hover{transform:scale(1.06)}
 
-.modulePanel{
-display:none;
-padding:20px;
-}
-
-.panelBox{
-background:var(--card);
-padding:15px;
-border-radius:10px;
-margin-bottom:10px;
-}
-
 #reader{display:none;padding:20px}
-.page{background:white;padding:20px;border-radius:10px}
 
+.page{
+background:white;
+padding:20px;
+border-radius:10px;
+margin-bottom:20px
+}
+
+.recommendBox{
+margin-top:20px;
+}
+
+.recBook{
+display:inline-block;
+background:#0d1b2a;
+color:white;
+padding:6px 10px;
+border-radius:6px;
+margin:4px;
+cursor:pointer;
+font-size:14px
+}
 </style>
 </head>
 
 <body>
 
 <header>
-
 <h2>📚 Smart Library System</h2>
-
-<div class="topMenu">
-
-<button onclick="showLibrary()">Library</button>
-<button onclick="showPanel('teachPanel')">Teaching Mode</button>
-<button onclick="showPanel('lessonPanel')">Lesson Planner</button>
-<button onclick="showPanel('notesPanel')">Notes Share</button>
-<button onclick="showPanel('collabPanel')">Faculty Collaboration</button>
-<button onclick="showPanel('doubtPanel')">Doubt Board</button>
-<button onclick="showPanel('quizPanel')">Quiz Generator</button>
-<button onclick="showPanel('studentPanel')">Student Panel</button>
-<button onclick="showPanel('analyticsPanel')">Reading Analytics</button>
-
-</div>
-
+<div>Staff Digital Teaching Library</div>
 </header>
 
 <div class="layout" id="libraryView">
@@ -142,16 +107,6 @@ margin-bottom:10px;
 <h3>🤖 AI Recommend</h3>
 <div id="recommend">---</div>
 
-<hr>
-
-<h3>👨‍🏫 Faculty Login</h3>
-
-<input id="fid" placeholder="Faculty ID">
-<input id="fpass" type="password" placeholder="Password">
-<button onclick="facultyLogin()">Login</button>
-
-<div id="facultyStatus"></div>
-
 </div>
 
 <div class="bookshelf" id="bookGrid"></div>
@@ -159,88 +114,36 @@ margin-bottom:10px;
 </div>
 
 <div id="reader">
+
 <h2 id="bookTitle"></h2>
+
 <div class="page" id="pageText"></div>
-<button onclick="bookmarkPage()">⭐ Bookmark</button>
+
+<h3>📚 Recommended Books</h3>
+<div class="recommendBox" id="recommendBooks"></div>
+
 <button onclick="back()">⬅ Back</button>
-</div>
 
-
-<!-- MODULE PANELS -->
-
-<div id="teachPanel" class="modulePanel">
-<div class="panelBox">
-<h3>👨‍🏫 Teaching Mode</h3>
-<button onclick="alert('Teaching Mode Activated')">Start Teaching</button>
 </div>
-</div>
-
-<div id="lessonPanel" class="modulePanel">
-<div class="panelBox">
-<h3>📅 Lesson Planner</h3>
-<input id="lessonTopic" placeholder="Lesson topic">
-<button onclick="saveLesson()">Save</button>
-<div id="lessonList"></div>
-</div>
-</div>
-
-<div id="notesPanel" class="modulePanel">
-<div class="panelBox">
-<h3>📝 Notes Share</h3>
-<input id="noteText" placeholder="Write note">
-<button onclick="addNote()">Share</button>
-<div id="notes"></div>
-</div>
-</div>
-
-<div id="collabPanel" class="modulePanel">
-<div class="panelBox">
-<h3>👥 Faculty Collaboration</h3>
-<button onclick="collab()">Share Idea</button>
-<div id="collabBox"></div>
-</div>
-</div>
-
-<div id="doubtPanel" class="modulePanel">
-<div class="panelBox">
-<h3>❓ Student Doubt Board</h3>
-<input id="doubtText" placeholder="Ask doubt">
-<button onclick="addDoubt()">Post</button>
-<div id="doubts"></div>
-</div>
-</div>
-
-<div id="quizPanel" class="modulePanel">
-<div class="panelBox">
-<h3>🧠 Quiz Generator</h3>
-<button onclick="generateQuiz()">Generate Quiz</button>
-<div id="quiz"></div>
-</div>
-</div>
-
-<div id="studentPanel" class="modulePanel">
-<div class="panelBox">
-<h3>👨‍🎓 Student Reading</h3>
-<div id="studentProgress"></div>
-</div>
-</div>
-
-<div id="analyticsPanel" class="modulePanel">
-<div class="panelBox">
-<h3>📊 Reading Analytics</h3>
-<div id="analytics"></div>
-</div>
-</div>
-
 
 <script>
 
 let books=[
-"Artificial Intelligence","Machine Learning","Python Programming",
-"Cyber Security","Cloud Computing","Robotics","Data Science",
-"Blockchain","Deep Learning","Computer Networks","Operating Systems",
-"Algorithms","Life Lessons","Positive Thinking","Time Management",
-"Leadership Skills","Public Speaking","Mind Power","Emotional Intelligence"
+"Artificial Intelligence","AI Algorithms","Machine Learning","ML Projects",
+"Deep Learning","Advanced Deep Learning","Neural Networks","AI Applications",
+"Python Programming","Python for AI","Python Projects",
+"Cyber Security","Network Security","Ethical Hacking","Digital Forensics",
+"Cloud Computing","AWS Cloud","Azure Cloud",
+"Robotics","Industrial Robotics",
+"Data Science","Data Analytics","Big Data",
+"Blockchain","Cryptocurrency Technology",
+"Operating Systems","Linux Administration",
+"Algorithms","Data Structures",
+"Life Lessons","Positive Thinking","Time Management",
+"Leadership Skills","Public Speaking","Mind Power",
+"Emotional Intelligence","Stress Management",
+"Creative Thinking","Decision Making",
+"Success Habits","Motivational Stories"
 ];
 
 let images=[
@@ -254,6 +157,7 @@ let images=[
 let grid=document.getElementById("bookGrid");
 
 function loadBooks(list){
+
 grid.innerHTML="";
 
 list.forEach((b,i)=>{
@@ -265,7 +169,7 @@ d.style.backgroundImage="url("+images[i%images.length]+")";
 
 d.innerText=b;
 
-d.onclick=()=>openBook(i);
+d.onclick=()=>openBook(b);
 
 grid.appendChild(d);
 
@@ -281,24 +185,55 @@ function filterBooks(){
 
 let t=searchBox.value.toLowerCase();
 
-loadBooks(books.filter(b=>b.toLowerCase().includes(t)));
+let filtered=books.filter(b=>b.toLowerCase().includes(t));
+
+loadBooks(filtered);
 
 }
 
-function openBook(i){
+function openBook(name){
 
 libraryView.style.display="none";
 reader.style.display="block";
 
-bookTitle.innerText=books[i];
+bookTitle.innerText=name;
 
-pageText.innerText="Teaching content of "+books[i];
+pageText.innerText="Teaching content of "+name+" with explanation and examples.";
+
+showRecommendations(name);
+
+}
+
+function showRecommendations(name){
+
+let key=name.split(" ")[0].toLowerCase();
+
+let rec=books.filter(b=>b.toLowerCase().includes(key) && b!==name);
+
+let box=document.getElementById("recommendBooks");
+
+box.innerHTML="";
+
+rec.slice(0,6).forEach(b=>{
+
+let d=document.createElement("div");
+
+d.className="recBook";
+
+d.innerText=b;
+
+d.onclick=()=>openBook(b);
+
+box.appendChild(d);
+
+});
 
 }
 
 function back(){
 
 reader.style.display="none";
+
 libraryView.style.display="flex";
 
 }
@@ -306,97 +241,6 @@ libraryView.style.display="flex";
 function setMode(m){
 
 document.body.className=m;
-
-}
-
-function facultyLogin(){
-
-let pass=document.getElementById("fpass").value;
-
-if(pass=="1234"){
-
-facultyStatus.innerHTML="✅ Faculty Logged In";
-
-}else{
-
-facultyStatus.innerHTML="❌ Wrong Password";
-
-}
-
-}
-
-function saveLesson(){
-
-let topic=document.getElementById("lessonTopic").value;
-
-let d=document.createElement("div");
-
-d.innerText=topic;
-
-lessonList.appendChild(d);
-
-}
-
-function addNote(){
-
-let txt=document.getElementById("noteText").value;
-
-let d=document.createElement("div");
-
-d.innerText=txt;
-
-notes.appendChild(d);
-
-}
-
-function collab(){
-
-let idea=prompt("Share teaching idea");
-
-let d=document.createElement("div");
-
-d.innerText=idea;
-
-collabBox.appendChild(d);
-
-}
-
-function addDoubt(){
-
-let txt=document.getElementById("doubtText").value;
-
-let d=document.createElement("div");
-
-d.innerText=txt;
-
-doubts.appendChild(d);
-
-}
-
-function generateQuiz(){
-
-quiz.innerHTML=
-"Q1: What is Artificial Intelligence?<br>"+
-"Q2: What is Machine Learning?<br>"+
-"Q3: Define Data Science.";
-
-}
-
-function showPanel(id){
-
-document.getElementById("libraryView").style.display="none";
-
-document.querySelectorAll(".modulePanel").forEach(p=>p.style.display="none");
-
-document.getElementById(id).style.display="block";
-
-}
-
-function showLibrary(){
-
-document.getElementById("libraryView").style.display="flex";
-
-document.querySelectorAll(".modulePanel").forEach(p=>p.style.display="none");
 
 }
 
