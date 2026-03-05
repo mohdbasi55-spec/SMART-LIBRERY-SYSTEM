@@ -166,8 +166,6 @@ margin-bottom:10px;
 </div>
 
 
-<!-- MODULE PANELS -->
-
 <div id="teachPanel" class="modulePanel">
 <div class="panelBox">
 <h3>👨‍🏫 Teaching Mode</h3>
@@ -240,10 +238,7 @@ let books=[
 "Cyber Security","Cloud Computing","Robotics","Data Science",
 "Blockchain","Deep Learning","Computer Networks","Operating Systems",
 "Algorithms","Life Lessons","Positive Thinking","Time Management",
-"Leadership Skills","Public Speaking","Mind Power","Emotional Intelligence",
-"Neural Networks","AI Ethics","Big Data","Natural Language Processing",
-"Computer Vision","Software Engineering","Digital Transformation",
-"Motivation","Success Habits","Critical Thinking","Innovation"
+"Leadership Skills","Public Speaking","Mind Power","Emotional Intelligence"
 ];
 
 let images=[
@@ -257,7 +252,6 @@ let images=[
 let grid=document.getElementById("bookGrid");
 
 function loadBooks(list){
-
 grid.innerHTML="";
 
 list.forEach((b,i)=>{
@@ -291,44 +285,43 @@ loadBooks(books);
 return;
 }
 
-let result=[];
+let results=[];
 
-/* exact match */
-books.forEach(b=>{
-if(b.toLowerCase().includes(t)){
-result.push(b);
+books.forEach(book=>{
+
+let name=book.toLowerCase();
+
+if(name.includes(t)){
+results.push(book);
 }
-});
+else{
 
-/* related books */
-books.forEach(b=>{
+let words=name.split(" ");
 
-if(!result.includes(b)){
+for(let w of words){
 
-let words=b.toLowerCase().split(" ");
-
-words.forEach(w=>{
 if(t.includes(w) || w.includes(t)){
-result.push(b);
-}
-});
-
+results.push(book);
+break;
 }
 
+}
+
+}
+
 });
 
-/* minimum books show */
-if(result.length<8){
+if(results.length<6){
 
 books.forEach(b=>{
-if(!result.includes(b)){
-result.push(b);
+if(!results.includes(b)){
+results.push(b);
 }
 });
 
 }
 
-loadBooks(result);
+loadBooks(results);
 
 }
 
