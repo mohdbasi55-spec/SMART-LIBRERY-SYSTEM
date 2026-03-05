@@ -5,31 +5,59 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
+
 :root{--bg:#eef2f7;--text:#000;--card:#fff;--header:#0d1b2a;}
 .dark{--bg:#121212;--text:#fff;--card:#1e1e1e;--header:#000;}
 .ambience{--bg:#0b132b;--text:#eaeaea;--card:#1c2541;--header:#000;}
 
-body{margin:0;font-family:Segoe UI;background:var(--bg);color:var(--text);}
+body{
+margin:0;
+font-family:Segoe UI;
+background:var(--bg);
+color:var(--text);
+}
 
-header{background:var(--header);color:white;padding:12px;text-align:center}
-header h2{margin:4px}
+header{
+background:var(--header);
+color:white;
+padding:10px;
+text-align:center;
+}
 
-.layout{display:flex;height:calc(100vh - 80px);}
+.topMenu{
+display:flex;
+flex-wrap:wrap;
+justify-content:center;
+gap:10px;
+margin-top:8px;
+}
+
+.topMenu button{
+padding:6px 12px;
+border:none;
+border-radius:6px;
+cursor:pointer;
+}
+
+.layout{
+display:flex;
+height:calc(100vh - 120px);
+}
 
 .sidebar{
 width:260px;
 background:var(--card);
 padding:15px;
 overflow:auto;
-box-shadow:2px 0 10px rgba(0,0,0,0.1)
+box-shadow:2px 0 10px rgba(0,0,0,0.1);
 }
 
-.sidebar input,.sidebar button,.sidebar select{
+.sidebar input,.sidebar button{
 width:100%;
 padding:8px;
 margin-top:6px;
 border-radius:6px;
-border:1px solid #aaa
+border:1px solid #aaa;
 }
 
 .bookshelf{
@@ -38,7 +66,7 @@ padding:15px;
 display:grid;
 grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
 gap:18px;
-overflow-y:auto
+overflow-y:auto;
 }
 
 .book{
@@ -54,16 +82,21 @@ font-weight:bold;
 padding:10px;
 text-shadow:0 2px 6px black;
 cursor:pointer;
-transition:.3s
+transition:.3s;
 }
 
 .book:hover{transform:scale(1.06)}
 
-.module{
-background:#eee;
-padding:10px;
-margin-top:10px;
-border-radius:8px
+.modulePanel{
+display:none;
+padding:20px;
+}
+
+.panelBox{
+background:var(--card);
+padding:15px;
+border-radius:10px;
+margin-bottom:10px;
 }
 
 #reader{display:none;padding:20px}
@@ -75,8 +108,23 @@ border-radius:8px
 <body>
 
 <header>
+
 <h2>📚 Smart Library System</h2>
-<div>Staff Digital Teaching Library</div>
+
+<div class="topMenu">
+
+<button onclick="showLibrary()">Library</button>
+<button onclick="showPanel('teachPanel')">Teaching Mode</button>
+<button onclick="showPanel('lessonPanel')">Lesson Planner</button>
+<button onclick="showPanel('notesPanel')">Notes Share</button>
+<button onclick="showPanel('collabPanel')">Faculty Collaboration</button>
+<button onclick="showPanel('doubtPanel')">Doubt Board</button>
+<button onclick="showPanel('quizPanel')">Quiz Generator</button>
+<button onclick="showPanel('studentPanel')">Student Panel</button>
+<button onclick="showPanel('analyticsPanel')">Reading Analytics</button>
+
+</div>
+
 </header>
 
 <div class="layout" id="libraryView">
@@ -97,46 +145,12 @@ border-radius:8px
 <hr>
 
 <h3>👨‍🏫 Faculty Login</h3>
+
 <input id="fid" placeholder="Faculty ID">
-<input id="fpass" placeholder="Password" type="password">
+<input id="fpass" type="password" placeholder="Password">
 <button onclick="facultyLogin()">Login</button>
 
 <div id="facultyStatus"></div>
-
-<hr>
-
-<h3>📖 Teaching Mode</h3>
-<button onclick="teachingMode()">Start Teaching Mode</button>
-
-<div class="module">
-<b>📚 Lesson Planner</b>
-<input id="lessonTopic" placeholder="Topic">
-<button onclick="saveLesson()">Save Lesson</button>
-<div id="lessonList"></div>
-</div>
-
-<div class="module">
-<b>⭐ Bookmarks</b>
-<div id="bookmarks"></div>
-</div>
-
-<div class="module">
-<b>📊 Reading Progress</b>
-<div id="progress"></div>
-</div>
-
-<div class="module">
-<b>📝 Notes Share</b>
-<input id="noteText" placeholder="Write note">
-<button onclick="addNote()">Share Note</button>
-<div id="notes"></div>
-</div>
-
-<div class="module">
-<b>👨‍💻 Faculty Collaboration</b>
-<button onclick="collab()">Share Idea</button>
-<div id="collabBox"></div>
-</div>
 
 </div>
 
@@ -145,73 +159,113 @@ border-radius:8px
 </div>
 
 <div id="reader">
-
 <h2 id="bookTitle"></h2>
-
 <div class="page" id="pageText"></div>
-
 <button onclick="bookmarkPage()">⭐ Bookmark</button>
 <button onclick="back()">⬅ Back</button>
-
 </div>
+
+
+<!-- MODULE PANELS -->
+
+<div id="teachPanel" class="modulePanel">
+<div class="panelBox">
+<h3>👨‍🏫 Teaching Mode</h3>
+<button onclick="alert('Teaching Mode Activated')">Start Teaching</button>
+</div>
+</div>
+
+<div id="lessonPanel" class="modulePanel">
+<div class="panelBox">
+<h3>📅 Lesson Planner</h3>
+<input id="lessonTopic" placeholder="Lesson topic">
+<button onclick="saveLesson()">Save</button>
+<div id="lessonList"></div>
+</div>
+</div>
+
+<div id="notesPanel" class="modulePanel">
+<div class="panelBox">
+<h3>📝 Notes Share</h3>
+<input id="noteText" placeholder="Write note">
+<button onclick="addNote()">Share</button>
+<div id="notes"></div>
+</div>
+</div>
+
+<div id="collabPanel" class="modulePanel">
+<div class="panelBox">
+<h3>👥 Faculty Collaboration</h3>
+<button onclick="collab()">Share Idea</button>
+<div id="collabBox"></div>
+</div>
+</div>
+
+<div id="doubtPanel" class="modulePanel">
+<div class="panelBox">
+<h3>❓ Student Doubt Board</h3>
+<input id="doubtText" placeholder="Ask doubt">
+<button onclick="addDoubt()">Post</button>
+<div id="doubts"></div>
+</div>
+</div>
+
+<div id="quizPanel" class="modulePanel">
+<div class="panelBox">
+<h3>🧠 Quiz Generator</h3>
+<button onclick="generateQuiz()">Generate Quiz</button>
+<div id="quiz"></div>
+</div>
+</div>
+
+<div id="studentPanel" class="modulePanel">
+<div class="panelBox">
+<h3>👨‍🎓 Student Reading</h3>
+<div id="studentProgress"></div>
+</div>
+</div>
+
+<div id="analyticsPanel" class="modulePanel">
+<div class="panelBox">
+<h3>📊 Reading Analytics</h3>
+<div id="analytics"></div>
+</div>
+</div>
+
 
 <script>
 
 let books=[
-
-"Artificial Intelligence",
-"Machine Learning",
-"Deep Learning",
-"Advanced Deep Learning",
-"Deep Learning with Python",
-"Neural Networks",
-"AI Applications",
-"Python Programming",
-"Cyber Security",
-"Cloud Computing",
-"Robotics",
-"Data Science",
-"Blockchain",
-"Computer Networks",
-"Operating Systems",
-"Algorithms",
-
-"Life Lessons",
-"Positive Thinking",
-"Time Management",
-"Leadership Skills",
-"Public Speaking",
-"Personality Development",
-"Mind Power",
-"Emotional Intelligence",
-"Success Habits",
-"Confidence Building"
-
+"Artificial Intelligence","Machine Learning","Python Programming",
+"Cyber Security","Cloud Computing","Robotics","Data Science",
+"Blockchain","Deep Learning","Computer Networks","Operating Systems",
+"Algorithms","Life Lessons","Positive Thinking","Time Management",
+"Leadership Skills","Public Speaking","Mind Power","Emotional Intelligence"
 ];
 
 let images=[
-
 "https://images.unsplash.com/photo-1677442136019-21780ecad995",
 "https://images.unsplash.com/photo-1555949963-aa79dcee981c",
 "https://images.unsplash.com/photo-1515879218367-8466d910aaa4",
 "https://images.unsplash.com/photo-1518779578993-ec3579fee39f",
 "https://images.unsplash.com/photo-1451187580459-43490279c0fa"
-
 ];
 
 let grid=document.getElementById("bookGrid");
 
 function loadBooks(list){
-
 grid.innerHTML="";
 
 list.forEach((b,i)=>{
 
 let d=document.createElement("div");
+
 d.className="book";
 d.style.backgroundImage="url("+images[i%images.length]+")";
+
 d.innerText=b;
-d.onclick=()=>openBook(b);
+
+d.onclick=()=>openBook(i);
 
 grid.appendChild(d);
 
@@ -225,44 +279,20 @@ loadBooks(books);
 
 function filterBooks(){
 
-let t=document.getElementById("searchBox").value.toLowerCase();
+let t=searchBox.value.toLowerCase();
 
-if(t===""){
-loadBooks(books);
-return;
-}
-
-let result=[];
-
-books.forEach(b=>{
-
-if(b.toLowerCase().includes(t)){
-result.push(b);
-}
-
-});
-
-if(result.length<8){
-
-let extra=books.filter(b=>!result.includes(b));
-
-result=result.concat(extra.slice(0,8-result.length));
+loadBooks(books.filter(b=>b.toLowerCase().includes(t)));
 
 }
 
-loadBooks(result);
-
-}
-
-function openBook(name){
+function openBook(i){
 
 libraryView.style.display="none";
 reader.style.display="block";
 
-bookTitle.innerText=name;
-pageText.innerText="Teaching content of "+name+" with explanation and examples.";
+bookTitle.innerText=books[i];
 
-updateProgress(name);
+pageText.innerText="Teaching content of "+books[i];
 
 }
 
@@ -281,12 +311,11 @@ document.body.className=m;
 
 function facultyLogin(){
 
-let id=document.getElementById("fid").value;
 let pass=document.getElementById("fpass").value;
 
 if(pass=="1234"){
 
-facultyStatus.innerHTML="✅ Logged in: "+id;
+facultyStatus.innerHTML="✅ Faculty Logged In";
 
 }else{
 
@@ -296,38 +325,15 @@ facultyStatus.innerHTML="❌ Wrong Password";
 
 }
 
-function teachingMode(){
-
-alert("Teaching Mode Activated\nProjector view enabled.");
-
-}
-
 function saveLesson(){
 
 let topic=document.getElementById("lessonTopic").value;
 
-let div=document.createElement("div");
-div.innerText=topic;
+let d=document.createElement("div");
 
-lessonList.appendChild(div);
+d.innerText=topic;
 
-}
-
-function bookmarkPage(){
-
-let div=document.createElement("div");
-div.innerText=bookTitle.innerText;
-
-bookmarks.appendChild(div);
-
-}
-
-function updateProgress(book){
-
-let div=document.createElement("div");
-div.innerText=book+" → 10%";
-
-progress.appendChild(div);
+lessonList.appendChild(d);
 
 }
 
@@ -336,6 +342,7 @@ function addNote(){
 let txt=document.getElementById("noteText").value;
 
 let d=document.createElement("div");
+
 d.innerText=txt;
 
 notes.appendChild(d);
@@ -347,9 +354,49 @@ function collab(){
 let idea=prompt("Share teaching idea");
 
 let d=document.createElement("div");
+
 d.innerText=idea;
 
 collabBox.appendChild(d);
+
+}
+
+function addDoubt(){
+
+let txt=document.getElementById("doubtText").value;
+
+let d=document.createElement("div");
+
+d.innerText=txt;
+
+doubts.appendChild(d);
+
+}
+
+function generateQuiz(){
+
+quiz.innerHTML=
+"Q1: What is Artificial Intelligence?<br>"+
+"Q2: What is Machine Learning?<br>"+
+"Q3: Define Data Science.";
+
+}
+
+function showPanel(id){
+
+document.getElementById("libraryView").style.display="none";
+
+document.querySelectorAll(".modulePanel").forEach(p=>p.style.display="none");
+
+document.getElementById(id).style.display="block";
+
+}
+
+function showLibrary(){
+
+document.getElementById("libraryView").style.display="flex";
+
+document.querySelectorAll(".modulePanel").forEach(p=>p.style.display="none");
 
 }
 
