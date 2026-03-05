@@ -24,7 +24,7 @@ overflow:auto;
 box-shadow:2px 0 10px rgba(0,0,0,0.1)
 }
 
-.sidebar input,.sidebar button{
+.sidebar input,.sidebar button,.sidebar select{
 width:100%;
 padding:8px;
 margin-top:6px;
@@ -59,29 +59,16 @@ transition:.3s
 
 .book:hover{transform:scale(1.06)}
 
+.module{
+background:#eee;
+padding:10px;
+margin-top:10px;
+border-radius:8px
+}
+
 #reader{display:none;padding:20px}
+.page{background:white;padding:20px;border-radius:10px}
 
-.page{
-background:white;
-padding:20px;
-border-radius:10px;
-margin-bottom:20px
-}
-
-.recommendBox{
-margin-top:20px;
-}
-
-.recBook{
-display:inline-block;
-background:#0d1b2a;
-color:white;
-padding:6px 10px;
-border-radius:6px;
-margin:4px;
-cursor:pointer;
-font-size:14px
-}
 </style>
 </head>
 
@@ -107,6 +94,50 @@ font-size:14px
 <h3>🤖 AI Recommend</h3>
 <div id="recommend">---</div>
 
+<hr>
+
+<h3>👨‍🏫 Faculty Login</h3>
+<input id="fid" placeholder="Faculty ID">
+<input id="fpass" placeholder="Password" type="password">
+<button onclick="facultyLogin()">Login</button>
+
+<div id="facultyStatus"></div>
+
+<hr>
+
+<h3>📖 Teaching Mode</h3>
+<button onclick="teachingMode()">Start Teaching Mode</button>
+
+<div class="module">
+<b>📚 Lesson Planner</b>
+<input id="lessonTopic" placeholder="Topic">
+<button onclick="saveLesson()">Save Lesson</button>
+<div id="lessonList"></div>
+</div>
+
+<div class="module">
+<b>⭐ Bookmarks</b>
+<div id="bookmarks"></div>
+</div>
+
+<div class="module">
+<b>📊 Reading Progress</b>
+<div id="progress"></div>
+</div>
+
+<div class="module">
+<b>📝 Notes Share</b>
+<input id="noteText" placeholder="Write note">
+<button onclick="addNote()">Share Note</button>
+<div id="notes"></div>
+</div>
+
+<div class="module">
+<b>👨‍💻 Faculty Collaboration</b>
+<button onclick="collab()">Share Idea</button>
+<div id="collabBox"></div>
+</div>
+
 </div>
 
 <div class="bookshelf" id="bookGrid"></div>
@@ -119,9 +150,7 @@ font-size:14px
 
 <div class="page" id="pageText"></div>
 
-<h3>📚 Recommended Books</h3>
-<div class="recommendBox" id="recommendBooks"></div>
-
+<button onclick="bookmarkPage()">⭐ Bookmark</button>
 <button onclick="back()">⬅ Back</button>
 
 </div>
@@ -129,29 +158,45 @@ font-size:14px
 <script>
 
 let books=[
-"Artificial Intelligence","AI Algorithms","Machine Learning","ML Projects",
-"Deep Learning","Advanced Deep Learning","Neural Networks","AI Applications",
-"Python Programming","Python for AI","Python Projects",
-"Cyber Security","Network Security","Ethical Hacking","Digital Forensics",
-"Cloud Computing","AWS Cloud","Azure Cloud",
-"Robotics","Industrial Robotics",
-"Data Science","Data Analytics","Big Data",
-"Blockchain","Cryptocurrency Technology",
-"Operating Systems","Linux Administration",
-"Algorithms","Data Structures",
-"Life Lessons","Positive Thinking","Time Management",
-"Leadership Skills","Public Speaking","Mind Power",
-"Emotional Intelligence","Stress Management",
-"Creative Thinking","Decision Making",
-"Success Habits","Motivational Stories"
+
+"Artificial Intelligence",
+"Machine Learning",
+"Deep Learning",
+"Advanced Deep Learning",
+"Deep Learning with Python",
+"Neural Networks",
+"AI Applications",
+"Python Programming",
+"Cyber Security",
+"Cloud Computing",
+"Robotics",
+"Data Science",
+"Blockchain",
+"Computer Networks",
+"Operating Systems",
+"Algorithms",
+
+"Life Lessons",
+"Positive Thinking",
+"Time Management",
+"Leadership Skills",
+"Public Speaking",
+"Personality Development",
+"Mind Power",
+"Emotional Intelligence",
+"Success Habits",
+"Confidence Building"
+
 ];
 
 let images=[
+
 "https://images.unsplash.com/photo-1677442136019-21780ecad995",
 "https://images.unsplash.com/photo-1555949963-aa79dcee981c",
 "https://images.unsplash.com/photo-1515879218367-8466d910aaa4",
 "https://images.unsplash.com/photo-1518779578993-ec3579fee39f",
 "https://images.unsplash.com/photo-1451187580459-43490279c0fa"
+
 ];
 
 let grid=document.getElementById("bookGrid");
@@ -163,12 +208,9 @@ grid.innerHTML="";
 list.forEach((b,i)=>{
 
 let d=document.createElement("div");
-
 d.className="book";
 d.style.backgroundImage="url("+images[i%images.length]+")";
-
 d.innerText=b;
-
 d.onclick=()=>openBook(b);
 
 grid.appendChild(d);
@@ -183,11 +225,32 @@ loadBooks(books);
 
 function filterBooks(){
 
-let t=searchBox.value.toLowerCase();
+let t=document.getElementById("searchBox").value.toLowerCase();
 
-let filtered=books.filter(b=>b.toLowerCase().includes(t));
+if(t===""){
+loadBooks(books);
+return;
+}
 
-loadBooks(filtered);
+let result=[];
+
+books.forEach(b=>{
+
+if(b.toLowerCase().includes(t)){
+result.push(b);
+}
+
+});
+
+if(result.length<8){
+
+let extra=books.filter(b=>!result.includes(b));
+
+result=result.concat(extra.slice(0,8-result.length));
+
+}
+
+loadBooks(result);
 
 }
 
@@ -197,43 +260,15 @@ libraryView.style.display="none";
 reader.style.display="block";
 
 bookTitle.innerText=name;
-
 pageText.innerText="Teaching content of "+name+" with explanation and examples.";
 
-showRecommendations(name);
-
-}
-
-function showRecommendations(name){
-
-let key=name.split(" ")[0].toLowerCase();
-
-let rec=books.filter(b=>b.toLowerCase().includes(key) && b!==name);
-
-let box=document.getElementById("recommendBooks");
-
-box.innerHTML="";
-
-rec.slice(0,6).forEach(b=>{
-
-let d=document.createElement("div");
-
-d.className="recBook";
-
-d.innerText=b;
-
-d.onclick=()=>openBook(b);
-
-box.appendChild(d);
-
-});
+updateProgress(name);
 
 }
 
 function back(){
 
 reader.style.display="none";
-
 libraryView.style.display="flex";
 
 }
@@ -241,6 +276,80 @@ libraryView.style.display="flex";
 function setMode(m){
 
 document.body.className=m;
+
+}
+
+function facultyLogin(){
+
+let id=document.getElementById("fid").value;
+let pass=document.getElementById("fpass").value;
+
+if(pass=="1234"){
+
+facultyStatus.innerHTML="✅ Logged in: "+id;
+
+}else{
+
+facultyStatus.innerHTML="❌ Wrong Password";
+
+}
+
+}
+
+function teachingMode(){
+
+alert("Teaching Mode Activated\nProjector view enabled.");
+
+}
+
+function saveLesson(){
+
+let topic=document.getElementById("lessonTopic").value;
+
+let div=document.createElement("div");
+div.innerText=topic;
+
+lessonList.appendChild(div);
+
+}
+
+function bookmarkPage(){
+
+let div=document.createElement("div");
+div.innerText=bookTitle.innerText;
+
+bookmarks.appendChild(div);
+
+}
+
+function updateProgress(book){
+
+let div=document.createElement("div");
+div.innerText=book+" → 10%";
+
+progress.appendChild(div);
+
+}
+
+function addNote(){
+
+let txt=document.getElementById("noteText").value;
+
+let d=document.createElement("div");
+d.innerText=txt;
+
+notes.appendChild(d);
+
+}
+
+function collab(){
+
+let idea=prompt("Share teaching idea");
+
+let d=document.createElement("div");
+d.innerText=idea;
+
+collabBox.appendChild(d);
 
 }
 
