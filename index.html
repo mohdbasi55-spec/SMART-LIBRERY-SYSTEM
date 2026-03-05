@@ -3,68 +3,117 @@
 <head>
 <title>Smart Library System</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <style>
 :root{--bg:#eef2f7;--text:#000;--card:#fff;--header:#0d1b2a;}
 .dark{--bg:#121212;--text:#fff;--card:#1e1e1e;--header:#000;}
 .ambience{--bg:#0b132b;--text:#eaeaea;--card:#1c2541;--header:#000;}
+
 body{margin:0;font-family:Segoe UI;background:var(--bg);color:var(--text);}
 
-header{background:var(--header);color:white;padding:10px 15px;display:flex;flex-direction:column;gap:6px;}
-.topRow{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;}
-.statusBar,.quoteBar,.currentRead{background:rgba(255,255,255,0.12);padding:6px 12px;border-radius:10px;font-size:14px;}
-.timer{font-weight:bold;}
-.centerStats{font-weight:bold;}
+/* HEADER */
+header{
+background:var(--header);
+color:white;
+padding:12px 15px;
+display:flex;
+flex-direction:column;
+gap:10px;
+}
 
-.layout{display:flex;height:calc(100vh - 140px);}
-.sidebar{width:240px;background:var(--card);padding:15px;box-shadow:2px 0 10px rgba(0,0,0,0.1);}
-.sidebar input,.sidebar button{width:100%;padding:10px;border-radius:8px;border:1px solid #aaa;margin-top:8px;}
+.statusBar,.quoteBar{
+background:rgba(255,255,255,0.15);
+padding:6px 12px;
+border-radius:10px;
+font-size:14px;
+}
 
-.bookshelf{flex:1;padding:15px;display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:22px;overflow-y:auto;}
+.layout{display:flex;height:calc(100vh - 170px);}
+
+.sidebar{
+width:240px;
+background:var(--card);
+padding:15px;
+box-shadow:2px 0 10px rgba(0,0,0,0.1);
+}
+
+.sidebar input,.sidebar button{
+width:100%;
+padding:10px;
+border-radius:8px;
+border:1px solid #aaa;
+margin-top:8px;
+}
+
+.bookshelf{
+flex:1;
+padding:15px;
+display:grid;
+grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
+gap:22px;
+overflow-y:auto;
+}
+
 .book{
-height:260px;border-radius:16px;
-display:flex;align-items:flex-end;justify-content:center;
-color:#fff;font-weight:bold;text-align:center;
-padding:12px;cursor:pointer;transition:.4s;
+height:260px;
+border-radius:16px;
+display:flex;
+align-items:flex-end;
+justify-content:center;
+color:#fff;
+font-weight:bold;
+text-align:center;
+padding:12px;
+cursor:pointer;
+transition:.4s;
 box-shadow:0 10px 25px rgba(0,0,0,0.4);
 font-size:16px;
-background-size:cover;
-background-position:center;
-position:relative;
 }
-.book::before{
-content:"";
-position:absolute;
-inset:0;
-background:linear-gradient(to top,rgba(0,0,0,0.7),transparent);
-border-radius:16px;
-}
-.book span{position:relative;z-index:1;}
 .book:hover{transform:scale(1.08);}
 
 #reader{display:none;padding:15px;}
 .page{background:var(--card);padding:20px;border-radius:15px;min-height:300px;line-height:1.7;}
 .progress{height:10px;background:#ccc;border-radius:10px;overflow:hidden;margin:10px 0;}
 .progress span{display:block;height:100%;background:#0d1b2a;width:0;}
+
+@media(max-width:768px){
+.layout{flex-direction:column;}
+.sidebar{width:100%;}
+}
 </style>
 </head>
 
 <body>
+
 <header>
-  <div class="topRow">
-    <h3>📚 Smart Library System</h3>
-    <div class="centerStats">📚100 | 👥120 | 📖 <span id="readCount">0</span></div>
+  <!-- CENTER TITLE -->
+  <div style="display:flex;justify-content:center;">
+    <h2>📚 Smart Library System</h2>
   </div>
-  <div class="topRow">
-    <div class="statusBar">🟢 Open | 👤 Active: 35 | 📖 Reading: 12</div>
-    <div class="timer">🕒 <span id="clock"></span> | 📅 <span id="date"></span></div>
-  </div>
-  <div class="topRow">
-    <div class="quoteBar">💡 Today’s Thought: Small steps lead to big success.</div>
-    <div class="currentRead">📖 You are reading: <span id="currentBook">None</span></div>
+
+  <div style="display:flex;justify-content:space-between;gap:20px;">
+
+    <!-- LEFT SIDE -->
+    <div style="display:flex;flex-direction:column;gap:6px;">
+      <div class="statusBar">🟢 Open</div>
+      <div class="statusBar">👤 Active: 35</div>
+      <div class="statusBar">📖 Reading: 12</div>
+      <div class="quoteBar">💡 Today’s Thought: Small steps lead to big success.</div>
+    </div>
+
+    <!-- RIGHT SIDE -->
+    <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end;">
+      <div class="statusBar">🕒 Time: <span id="clock"></span></div>
+      <div class="statusBar">📅 Date: <span id="date"></span></div>
+      <div class="statusBar">📖 You are reading: <span id="currentBook">None</span></div>
+      <div class="statusBar">📚100 | 👥120 | 📖 <span id="readCount">0</span></div>
+    </div>
+
   </div>
 </header>
 
 <div class="layout" id="libraryView">
+
 <div class="sidebar">
 <h3>🔍 Search</h3>
 <input type="text" id="searchBox" onkeyup="filterBooks()" placeholder="Search book">
@@ -87,6 +136,7 @@ border-radius:16px;
 <div style="flex:1;display:flex;flex-direction:column;">
 <div class="bookshelf" id="bookGrid"></div>
 </div>
+
 </div>
 
 <div id="reader">
@@ -108,8 +158,7 @@ let technicalBooks=[
 "Quantum Computing","Bioinformatics","Digital Forensics","UI UX Design","Game Development",
 "AR VR","Embedded Systems","Microprocessors","Network Security","Information Security",
 "Pattern Recognition","Smart Systems","Distributed Systems","Human Computer Interaction","Digital Image Processing",
-"Computer Vision","Data Structures","Algorithms","Linux Administration","Shell Scripting",
-"Computer Architecture","Parallel Computing","Mobile Security","Web Security","Software Architecture"
+"Computer Vision","Data Structures","Algorithms","Linux Administration","Shell Scripting"
 ];
 
 let nonTechnicalBooks=[
@@ -126,22 +175,28 @@ let nonTechnicalBooks=[
 ];
 
 let books=[...technicalBooks,...nonTechnicalBooks];
-let pages=[];for(let i=1;i<=30;i++){pages.push("Page "+i+" content with explanation and examples.");}
+
+let gradients=[
+"linear-gradient(135deg,#ff512f,#dd2476)",
+"linear-gradient(135deg,#1fa2ff,#12d8fa,#a6ffcb)",
+"linear-gradient(135deg,#8360c3,#2ebf91)",
+"linear-gradient(135deg,#ffb347,#ffcc33)",
+"linear-gradient(135deg,#fc466b,#3f5efb)"
+];
+
+let pages=[];
+for(let i=1;i<=30;i++){pages.push("Page "+i+" content with explanation and examples.");}
 
 let grid=document.getElementById("bookGrid");
 let page=0,readCount=0;
-
-function getBookImage(title){
-  return "https://source.unsplash.com/400x600/?"+encodeURIComponent(title+",book");
-}
 
 function loadBooks(list){
 grid.innerHTML="";
 list.forEach((b,i)=>{
 let d=document.createElement("div");
 d.className="book";
-d.style.backgroundImage=`url('${getBookImage(b)}')`;
-d.innerHTML="<span>"+b+"</span>";
+d.style.background=gradients[i%5];
+d.innerText=b;
 d.onclick=()=>openBook(i);
 grid.appendChild(d);
 });
@@ -160,9 +215,15 @@ reader.style.display="block";
 bookTitle.innerText=books[i];
 currentBook.innerText=books[i];
 page=0;showPage();
-readCount++;document.getElementById("readCount").innerText=readCount;
+readCount++;
+document.getElementById("readCount").innerText=readCount;
 }
-function showPage(){pageText.innerText=pages[page];bar.style.width=((page+1)/pages.length*100)+"%";}
+
+function showPage(){
+pageText.innerText=pages[page];
+bar.style.width=((page+1)/pages.length*100)+"%";
+}
+
 function nextPage(){if(page<pages.length-1){page++;showPage();}}
 function prevPage(){if(page>0){page--;showPage();}}
 function back(){reader.style.display="none";libraryView.style.display="flex";}
@@ -178,15 +239,20 @@ books.push(name);
 loadBooks(books);
 alert("Book Added Successfully!");
 }
-}else{alert("Wrong Password");}
+}else{
+alert("Wrong Password");
+}
 }
 
+/* TIME & DATE */
 function updateClock(){
 let d=new Date();
 clock.innerText=d.toLocaleTimeString();
 date.innerText=d.toLocaleDateString();
 }
-setInterval(updateClock,1000);updateClock();
+setInterval(updateClock,1000);
+updateClock();
 </script>
+
 </body>
 </html>
