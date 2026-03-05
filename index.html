@@ -1,80 +1,73 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Smart Library Teaching System</title>
+<title>Smart Library System</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
+:root{--bg:#eef2f7;--text:#000;--card:#fff;--header:#0d1b2a;}
+.dark{--bg:#121212;--text:#fff;--card:#1e1e1e;--header:#000;}
+.ambience{--bg:#0b132b;--text:#eaeaea;--card:#1c2541;--header:#000;}
 
-body{
-margin:0;
-font-family:Segoe UI;
-background:#eef2f7;
-}
+body{margin:0;font-family:Segoe UI;background:var(--bg);color:var(--text);}
 
-header{
-background:#0d1b2a;
-color:white;
-padding:15px;
-text-align:center;
-}
+header{background:var(--header);color:white;padding:12px;text-align:center}
+header h2{margin:4px}
 
-.layout{
-display:flex;
-height:90vh;
-}
+.layout{display:flex;height:calc(100vh - 80px);}
 
 .sidebar{
-width:240px;
-background:white;
+width:260px;
+background:var(--card);
 padding:15px;
-box-shadow:2px 0 10px rgba(0,0,0,0.1);
 overflow:auto;
+box-shadow:2px 0 10px rgba(0,0,0,0.1)
 }
 
-.sidebar button{
+.sidebar input,.sidebar button,.sidebar select{
 width:100%;
-padding:10px;
-margin-top:8px;
-border-radius:8px;
-border:none;
-background:#0d1b2a;
-color:white;
-cursor:pointer;
+padding:8px;
+margin-top:6px;
+border-radius:6px;
+border:1px solid #aaa
 }
 
-.main{
+.bookshelf{
 flex:1;
-padding:20px;
-overflow:auto;
-}
-
-.card{
-background:white;
-padding:20px;
-border-radius:12px;
-box-shadow:0 5px 15px rgba(0,0,0,0.1);
-margin-bottom:15px;
-}
-
-.bookGrid{
+padding:15px;
 display:grid;
 grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
-gap:20px;
+gap:18px;
+overflow-y:auto
 }
 
 .book{
-height:200px;
+height:220px;
 border-radius:12px;
+background-size:cover;
+background-position:center;
 display:flex;
 align-items:flex-end;
 justify-content:center;
 color:white;
 font-weight:bold;
 padding:10px;
+text-shadow:0 2px 6px black;
 cursor:pointer;
-background:linear-gradient(135deg,#1fa2ff,#12d8fa,#a6ffcb);
+transition:.3s
 }
+
+.book:hover{transform:scale(1.06)}
+
+.module{
+background:#eee;
+padding:10px;
+margin-top:10px;
+border-radius:8px
+}
+
+#reader{display:none;padding:20px}
+.page{background:white;padding:20px;border-radius:10px}
 
 </style>
 </head>
@@ -82,235 +75,227 @@ background:linear-gradient(135deg,#1fa2ff,#12d8fa,#a6ffcb);
 <body>
 
 <header>
-
-<h2>📚 Smart Library Teaching System</h2>
-
-<div>
-Mode:
-<button onclick="setRole('faculty')">Faculty</button>
-<button onclick="setRole('student')">Student</button>
-<button onclick="setRole('admin')">Admin</button>
-</div>
-
+<h2>📚 Smart Library System</h2>
+<div>Staff Digital Teaching Library</div>
 </header>
 
 <div class="layout">
 
 <div class="sidebar">
 
-<h3>Modules</h3>
+<h3>🔍 Search</h3>
+<input id="searchBox" onkeyup="filterBooks()" placeholder="Search book">
 
-<button onclick="showPage('library')">📚 Library</button>
+<h3>🎛 Modes</h3>
+<button onclick="setMode('')">Normal</button>
+<button onclick="setMode('dark')">Dark</button>
+<button onclick="setMode('ambience')">Library</button>
 
-<button onclick="showPage('bookmark')">📌 Bookmarks</button>
+<h3>🤖 AI Recommend</h3>
+<div id="recommend">---</div>
 
-<button onclick="showPage('notes')">📝 Notes</button>
+<hr>
 
-<button onclick="showPage('teaching')">🎓 Teaching Mode</button>
+<h3>👨‍🏫 Faculty Login</h3>
+<input id="fid" placeholder="Faculty ID">
+<input id="fpass" placeholder="Password" type="password">
+<button onclick="facultyLogin()">Login</button>
 
-<button onclick="showPage('progress')">📊 Student Progress</button>
+<div id="facultyStatus"></div>
 
-<button onclick="showPage('ai')">🤖 AI Recommend</button>
+<hr>
 
-<button onclick="showPage('admin')">🛠 Admin Panel</button>
+<h3>📖 Teaching Mode</h3>
+<button onclick="teachingMode()">Start Teaching Mode</button>
+
+<div class="module">
+<b>📚 Lesson Planner</b>
+<input id="lessonTopic" placeholder="Topic">
+<button onclick="saveLesson()">Save Lesson</button>
+<div id="lessonList"></div>
+</div>
+
+<div class="module">
+<b>⭐ Bookmarks</b>
+<div id="bookmarks"></div>
+</div>
+
+<div class="module">
+<b>📊 Reading Progress</b>
+<div id="progress"></div>
+</div>
+
+<div class="module">
+<b>📝 Notes Share</b>
+<input id="noteText" placeholder="Write note">
+<button onclick="addNote()">Share Note</button>
+<div id="notes"></div>
+</div>
+
+<div class="module">
+<b>👨‍💻 Faculty Collaboration</b>
+<button onclick="collab()">Share Idea</button>
+<div id="collabBox"></div>
+</div>
 
 </div>
 
-<div class="main" id="main">
-
-<div class="card">
-Welcome to Smart Library System
-</div>
+<div class="bookshelf" id="bookGrid"></div>
 
 </div>
+
+<div id="reader">
+
+<h2 id="bookTitle"></h2>
+
+<div class="page" id="pageText"></div>
+
+<button onclick="bookmarkPage()">⭐ Bookmark</button>
+<button onclick="back()">⬅ Back</button>
 
 </div>
 
 <script>
 
-let role="faculty"
-
-function setRole(r){
-role=r
-alert("Mode changed to "+r)
-}
-
 let books=[
-"Artificial Intelligence",
-"Machine Learning",
-"Python Programming",
-"Data Science",
-"Deep Learning",
-"Web Development",
-"Cyber Security",
-"Operating Systems"
-]
+"Artificial Intelligence","Machine Learning","Python Programming","Cyber Security",
+"Cloud Computing","Robotics","Data Science","Blockchain","Deep Learning",
+"Computer Networks","Operating Systems","Algorithms",
+"Life Lessons","Positive Thinking","Time Management","Leadership Skills",
+"Public Speaking","Personality Development","Mind Power","Emotional Intelligence"
+];
 
-function showPage(page){
+let images=[
+"https://images.unsplash.com/photo-1677442136019-21780ecad995",
+"https://images.unsplash.com/photo-1555949963-aa79dcee981c",
+"https://images.unsplash.com/photo-1515879218367-8466d910aaa4",
+"https://images.unsplash.com/photo-1518779578993-ec3579fee39f",
+"https://images.unsplash.com/photo-1451187580459-43490279c0fa"
+];
 
-let main=document.getElementById("main")
+let grid=document.getElementById("bookGrid");
 
-if(page==="library"){
+function loadBooks(list){
+grid.innerHTML="";
+list.forEach((b,i)=>{
 
-let html="<div class='card'><h2>Library</h2><div class='bookGrid'>"
+let d=document.createElement("div");
+d.className="book";
+d.style.backgroundImage="url("+images[i%images.length]+")";
 
-books.forEach((b,i)=>{
+d.innerText=b;
 
-html+=`<div class="book" onclick="openBook('${b}')">${b}</div>`
+d.onclick=()=>openBook(i);
 
-})
+grid.appendChild(d);
 
-html+="</div></div>"
+});
 
-main.innerHTML=html
-
-}
-
-if(page==="bookmark"){
-
-main.innerHTML=`
-
-<div class="card">
-
-<h2>Bookmarks</h2>
-
-<ul>
-
-<li>Machine Learning - Page 10</li>
-
-<li>Python Programming - Page 15</li>
-
-<li>Artificial Intelligence - Page 5</li>
-
-</ul>
-
-</div>
-
-`
+recommend.innerText=list[Math.floor(Math.random()*list.length)];
 
 }
 
-if(page==="notes"){
+loadBooks(books);
 
-main.innerHTML=`
-
-<div class="card">
-
-<h2>Teacher Notes</h2>
-
-<textarea style="width:100%;height:120px"></textarea>
-
-<br><br>
-
-<button onclick="alert('Note Saved')">Save Note</button>
-
-</div>
-
-`
-
+function filterBooks(){
+let t=searchBox.value.toLowerCase();
+loadBooks(books.filter(b=>b.toLowerCase().includes(t)));
 }
 
-if(page==="teaching"){
+function openBook(i){
+libraryView.style.display="none";
+reader.style.display="block";
 
-main.innerHTML=`
+bookTitle.innerText=books[i];
+pageText.innerText="Teaching content of "+books[i]+" with explanation and examples.";
 
-<div class="card">
-
-<h2>Teaching Mode</h2>
-
-<p>Teacher can show bookmarked pages to students.</p>
-
-<button onclick="alert('Teaching Mode Started')">Start Teaching</button>
-
-</div>
-
-`
-
+updateProgress(books[i]);
 }
 
-if(page==="progress"){
-
-main.innerHTML=`
-
-<div class="card">
-
-<h2>Student Progress</h2>
-
-<p>Students Completed: 25</p>
-
-<p>Reading Now: 10</p>
-
-<p>Pending: 5</p>
-
-</div>
-
-`
-
+function back(){
+reader.style.display="none";
+libraryView.style.display="flex";
 }
 
-if(page==="ai"){
-
-let rec=books[Math.floor(Math.random()*books.length)]
-
-main.innerHTML=`
-
-<div class="card">
-
-<h2>AI Recommendation</h2>
-
-<p>Recommended Book:</p>
-
-<h3>${rec}</h3>
-
-</div>
-
-`
-
+function setMode(m){
+document.body.className=m;
 }
 
-if(page==="admin"){
+function facultyLogin(){
 
-if(role!=="admin"){
+let id=document.getElementById("fid").value;
+let pass=document.getElementById("fpass").value;
 
-main.innerHTML="<div class='card'>Admin Only</div>"
+if(pass=="1234"){
 
-return
+facultyStatus.innerHTML="✅ Logged in: "+id;
 
-}
+}else{
 
-main.innerHTML=`
-
-<div class="card">
-
-<h2>Admin Panel</h2>
-
-<input id="newBook" placeholder="Add Book">
-
-<br><br>
-
-<button onclick="addBook()">Add Book</button>
-
-</div>
-
-`
+facultyStatus.innerHTML="❌ Wrong Password";
 
 }
 
 }
 
-function openBook(name){
+function teachingMode(){
 
-alert("Opening book: "+name)
+alert("Teaching Mode Activated\nProjector view enabled.");
 
 }
 
-function addBook(){
+function saveLesson(){
 
-let name=document.getElementById("newBook").value
+let topic=document.getElementById("lessonTopic").value;
 
-books.push(name)
+let div=document.createElement("div");
+div.innerText=topic;
 
-alert("Book Added")
+lessonList.appendChild(div);
+
+}
+
+function bookmarkPage(){
+
+let div=document.createElement("div");
+
+div.innerText=bookTitle.innerText;
+
+bookmarks.appendChild(div);
+
+}
+
+function updateProgress(book){
+
+let div=document.createElement("div");
+
+div.innerText=book+" → 10%";
+
+progress.appendChild(div);
+
+}
+
+function addNote(){
+
+let txt=document.getElementById("noteText").value;
+
+let d=document.createElement("div");
+
+d.innerText=txt;
+
+notes.appendChild(d);
+
+}
+
+function collab(){
+
+let idea=prompt("Share teaching idea");
+
+let d=document.createElement("div");
+
+d.innerText=idea;
+
+collabBox.appendChild(d);
 
 }
 
