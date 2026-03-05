@@ -1,13 +1,15 @@
+```html
 <!DOCTYPE html>
 <html>
 <head>
-<title>Smart Library Staff Portal</title>
+<title>Smart Library System</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <style>
 
 body{
-font-family:Segoe UI;
 margin:0;
+font-family:Segoe UI;
 background:#eef2f7;
 }
 
@@ -16,61 +18,89 @@ background:#0d1b2a;
 color:white;
 padding:15px;
 text-align:center;
-font-size:22px;
 }
 
-.container{
+.layout{
 display:flex;
-height:90vh;
+height:80vh;
 }
 
 .sidebar{
-width:250px;
+width:230px;
 background:white;
 padding:15px;
 box-shadow:2px 0 10px rgba(0,0,0,0.1);
 }
 
-.sidebar button{
+.sidebar input,.sidebar button{
 width:100%;
-padding:12px;
-margin:6px 0;
-border:none;
-background:#0d1b2a;
-color:white;
+padding:10px;
+margin-top:8px;
 border-radius:8px;
-cursor:pointer;
+border:1px solid #aaa;
 }
 
-.main{
+.bookshelf{
 flex:1;
 padding:20px;
+display:grid;
+grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
+gap:20px;
 overflow:auto;
 }
 
-.module{
+.book{
+height:240px;
+border-radius:14px;
+display:flex;
+align-items:flex-end;
+justify-content:center;
+padding:10px;
+color:white;
+font-weight:bold;
+text-align:center;
+cursor:pointer;
+box-shadow:0 10px 25px rgba(0,0,0,0.4);
+}
+
+.book:hover{
+transform:scale(1.05);
+}
+
+#reader{
 display:none;
+padding:20px;
+}
+
+.page{
+background:white;
+padding:20px;
+border-radius:10px;
+min-height:200px;
+}
+
+.staffSection{
+background:#f4f6fb;
+padding:20px;
+}
+
+.moduleGrid{
+display:grid;
+grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+gap:15px;
+}
+
+.module{
 background:white;
 padding:20px;
 border-radius:10px;
 box-shadow:0 5px 15px rgba(0,0,0,0.1);
+cursor:pointer;
 }
 
-.book{
-background:linear-gradient(135deg,#ff512f,#dd2476);
+.module:hover{
+background:#0d1b2a;
 color:white;
-padding:40px;
-border-radius:10px;
-margin:10px;
-display:inline-block;
-width:150px;
-text-align:center;
-}
-
-input,textarea{
-width:100%;
-padding:10px;
-margin:6px 0;
 }
 
 </style>
@@ -79,120 +109,192 @@ margin:6px 0;
 <body>
 
 <header>
-📚 Smart Library Staff Portal
+<h2>📚 Smart Library System</h2>
 </header>
 
-<div class="container">
+<div class="layout" id="libraryView">
 
 <div class="sidebar">
 
-<button onclick="openModule('library')">Library</button>
-<button onclick="openModule('teaching')">Teaching Mode</button>
-<button onclick="openModule('planner')">Lesson Planner</button>
-<button onclick="openModule('bookmark')">Bookmarks</button>
-<button onclick="openModule('progress')">Reading Progress</button>
-<button onclick="openModule('notes')">Notes Share</button>
-<button onclick="openModule('collab')">Faculty Collaboration</button>
-<button onclick="openModule('question')">Student Questions</button>
-<button onclick="openModule('quiz')">Quiz Generator</button>
-<button onclick="openModule('dept')">Department Library</button>
-<button onclick="openModule('analytics')">Analytics</button>
+<h3>🔍 Search</h3>
+<input id="searchBox" onkeyup="filterBooks()" placeholder="Search book">
+
+<h3>🎛 Mode</h3>
+<button onclick="setMode('light')">Light</button>
+<button onclick="setMode('dark')">Dark</button>
+
+<h3>🛠 Admin</h3>
+<button onclick="openAdmin()">Admin Login</button>
 
 </div>
 
-<div class="main">
+<div class="bookshelf" id="bookGrid"></div>
 
-<div id="library" class="module">
-<h2>Library</h2>
-<div class="book">Artificial Intelligence</div>
-<div class="book">Machine Learning</div>
-<div class="book">Python Programming</div>
-<div class="book">Data Science</div>
 </div>
 
-<div id="teaching" class="module">
-<h2>Teaching Mode</h2>
-<p>Faculty can explain book topics to students.</p>
-<textarea placeholder="Write explanation for students"></textarea>
+<div id="reader">
+<h2 id="bookTitle"></h2>
+<div class="page" id="pageText"></div>
+<br>
+<button onclick="back()">Back</button>
 </div>
 
-<div id="planner" class="module">
-<h2>Lesson Planner</h2>
-<input placeholder="Subject">
-<input placeholder="Topic">
-<button>Save Lesson</button>
+<!-- STAFF MODULE SECTION -->
+
+<div class="staffSection">
+
+<h2>🎓 Staff Teaching Modules</h2>
+
+<div class="moduleGrid">
+
+<div class="module" onclick="alert('Teaching Mode Opened')">
+📖 Teaching Mode
 </div>
 
-<div id="bookmark" class="module">
-<h2>Bookmarks</h2>
-<p>Saved Pages</p>
-<ul>
-<li>AI Page 5</li>
-<li>Python Page 8</li>
-</ul>
+<div class="module" onclick="alert('Lesson Planner')">
+🗓 Lesson Planner
 </div>
 
-<div id="progress" class="module">
-<h2>Reading Progress</h2>
-<p>AI → 60%</p>
-<p>ML → 40%</p>
+<div class="module" onclick="alert('Bookmarks')">
+🔖 Bookmark Library
 </div>
 
-<div id="notes" class="module">
-<h2>Share Notes</h2>
-<input placeholder="Title">
-<textarea placeholder="Write notes"></textarea>
-<button>Share</button>
+<div class="module" onclick="alert('Reading Progress')">
+📊 Reading Progress
 </div>
 
-<div id="collab" class="module">
-<h2>Faculty Collaboration</h2>
-<textarea placeholder="Share teaching idea"></textarea>
-<button>Post</button>
+<div class="module" onclick="alert('Notes Share')">
+📝 Share Notes
 </div>
 
-<div id="question" class="module">
-<h2>Student Questions</h2>
-<p>Student: What is AI?</p>
-<textarea placeholder="Answer"></textarea>
+<div class="module" onclick="alert('Faculty Collaboration')">
+👥 Faculty Collaboration
 </div>
 
-<div id="quiz" class="module">
-<h2>Quiz Generator</h2>
-<textarea placeholder="Enter quiz questions"></textarea>
+<div class="module" onclick="alert('Student Questions')">
+❓ Student Questions
 </div>
 
-<div id="dept" class="module">
-<h2>Department Library</h2>
-<p>CSE Books</p>
-<p>ECE Books</p>
-<p>MBA Books</p>
+<div class="module" onclick="alert('Quiz Generator')">
+🧠 Quiz Generator
 </div>
 
-<div id="analytics" class="module">
-<h2>Analytics Dashboard</h2>
-<p>Most Read Book: AI</p>
-<p>Total Readers: 120</p>
+<div class="module" onclick="alert('Department Library')">
+🏫 Department Library
+</div>
+
+<div class="module" onclick="alert('Analytics Dashboard')">
+📈 Analytics
 </div>
 
 </div>
+
 </div>
 
 <script>
 
-function openModule(id){
+let books=[
+"Artificial Intelligence","Machine Learning","Python Programming","Data Science",
+"Cloud Computing","Cyber Security","Operating Systems","Database Systems",
+"Software Engineering","Web Development","Blockchain","Robotics"
+];
 
-let modules=document.querySelectorAll(".module");
+let pages=[
+"Introduction Page",
+"Concept Explanation",
+"Examples and Applications",
+"Conclusion"
+];
 
-modules.forEach(m=>m.style.display="none");
+let grid=document.getElementById("bookGrid");
 
-document.getElementById(id).style.display="block";
+function loadBooks(list){
+
+grid.innerHTML="";
+
+list.forEach((b,i)=>{
+
+let d=document.createElement("div");
+
+d.className="book";
+
+d.style.background="linear-gradient(135deg,#ff512f,#dd2476)";
+
+d.innerText=b;
+
+d.onclick=()=>openBook(i);
+
+grid.appendChild(d);
+
+});
 
 }
 
-openModule("library");
+loadBooks(books);
+
+function filterBooks(){
+
+let t=searchBox.value.toLowerCase();
+
+loadBooks(books.filter(b=>b.toLowerCase().includes(t)));
+
+}
+
+function openBook(i){
+
+libraryView.style.display="none";
+
+reader.style.display="block";
+
+bookTitle.innerText=books[i];
+
+pageText.innerText=pages[0];
+
+}
+
+function back(){
+
+reader.style.display="none";
+
+libraryView.style.display="flex";
+
+}
+
+function setMode(m){
+
+if(m=="dark") document.body.style.background="#111";
+else document.body.style.background="#eef2f7";
+
+}
+
+function openAdmin(){
+
+let pass=prompt("Enter Admin Password");
+
+if(pass=="1234"){
+
+let name=prompt("Enter new book");
+
+if(name){
+
+books.push(name);
+
+loadBooks(books);
+
+alert("Book Added");
+
+}
+
+}else{
+
+alert("Wrong Password");
+
+}
+
+}
 
 </script>
 
 </body>
 </html>
+```
