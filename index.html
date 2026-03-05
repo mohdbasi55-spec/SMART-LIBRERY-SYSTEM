@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html>
 <head>
@@ -13,94 +12,117 @@ font-family:Segoe UI;
 background:#eef2f7;
 }
 
+/* TOP BAR */
+
 header{
 background:#0d1b2a;
 color:white;
 padding:15px;
 text-align:center;
-}
-
-.layout{
-display:flex;
-height:80vh;
-}
-
-.sidebar{
-width:230px;
-background:white;
-padding:15px;
-box-shadow:2px 0 10px rgba(0,0,0,0.1);
-}
-
-.sidebar input,.sidebar button{
-width:100%;
-padding:10px;
-margin-top:8px;
-border-radius:8px;
-border:1px solid #aaa;
-}
-
-.bookshelf{
-flex:1;
-padding:20px;
-display:grid;
-grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
-gap:20px;
-overflow:auto;
-}
-
-.book{
-height:240px;
-border-radius:14px;
-display:flex;
-align-items:flex-end;
-justify-content:center;
-padding:10px;
-color:white;
+font-size:22px;
 font-weight:bold;
-text-align:center;
+}
+
+/* MENU */
+
+nav{
+display:flex;
+justify-content:center;
+gap:20px;
+background:#1b263b;
+padding:10px;
+}
+
+nav button{
+padding:10px 18px;
+border:none;
+background:#415a77;
+color:white;
+border-radius:8px;
 cursor:pointer;
-box-shadow:0 10px 25px rgba(0,0,0,0.4);
+font-weight:bold;
 }
 
-.book:hover{
-transform:scale(1.05);
+nav button:hover{
+background:#778da9;
 }
 
-#reader{
+/* PAGE AREA */
+
+.page{
 display:none;
 padding:20px;
 }
 
-.page{
-background:white;
-padding:20px;
-border-radius:10px;
-min-height:200px;
+.active{
+display:block;
 }
 
-.staffSection{
-background:#f4f6fb;
-padding:20px;
+/* BOOK GRID */
+
+.bookshelf{
+display:grid;
+grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
+gap:20px;
 }
+
+.book{
+height:220px;
+border-radius:14px;
+overflow:hidden;
+cursor:pointer;
+box-shadow:0 8px 18px rgba(0,0,0,0.3);
+display:flex;
+flex-direction:column;
+}
+
+.book img{
+width:100%;
+height:150px;
+object-fit:cover;
+}
+
+.book span{
+padding:10px;
+font-weight:bold;
+font-size:14px;
+text-align:center;
+}
+
+/* MODULE CARDS */
 
 .moduleGrid{
 display:grid;
-grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
-gap:15px;
+grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+gap:20px;
 }
 
 .module{
 background:white;
 padding:20px;
-border-radius:10px;
-box-shadow:0 5px 15px rgba(0,0,0,0.1);
+border-radius:12px;
+box-shadow:0 6px 14px rgba(0,0,0,0.2);
 cursor:pointer;
 }
 
-.module:hover{
-background:#0d1b2a;
-color:white;
+.module h3{
+margin:0 0 8px;
+}
+
+/* ANALYTICS */
+
+.statGrid{
+display:grid;
+grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
+gap:20px;
+}
+
+.stat{
+background:white;
+padding:20px;
+border-radius:10px;
+text-align:center;
+box-shadow:0 6px 14px rgba(0,0,0,0.2);
 }
 
 </style>
@@ -108,83 +130,145 @@ color:white;
 
 <body>
 
-<header>
-<h2>📚 Smart Library System</h2>
-</header>
+<header>📚 Smart Library System</header>
 
-<div class="layout" id="libraryView">
+<nav>
+<button onclick="showPage('library')">Library</button>
+<button onclick="showPage('staff')">Staff Portal</button>
+<button onclick="showPage('student')">Student Portal</button>
+<button onclick="showPage('analytics')">Analytics</button>
+</nav>
 
-<div class="sidebar">
+<!-- LIBRARY PAGE -->
 
-<h3>🔍 Search</h3>
-<input id="searchBox" onkeyup="filterBooks()" placeholder="Search book">
+<div id="library" class="page active">
 
-<h3>🎛 Mode</h3>
-<button onclick="setMode('light')">Light</button>
-<button onclick="setMode('dark')">Dark</button>
-
-<h3>🛠 Admin</h3>
-<button onclick="openAdmin()">Admin Login</button>
-
-</div>
+<h2>Library Books</h2>
 
 <div class="bookshelf" id="bookGrid"></div>
 
 </div>
 
-<div id="reader">
-<h2 id="bookTitle"></h2>
-<div class="page" id="pageText"></div>
-<br>
-<button onclick="back()">Back</button>
-</div>
+<!-- STAFF PAGE -->
 
-<!-- STAFF MODULE SECTION -->
+<div id="staff" class="page">
 
-<div class="staffSection">
-
-<h2>🎓 Staff Teaching Modules</h2>
+<h2>Staff Teaching Modules</h2>
 
 <div class="moduleGrid">
 
-<div class="module" onclick="alert('Teaching Mode Opened')">
-📖 Teaching Mode
+<div class="module">
+<h3>Teaching Mode</h3>
+<p>Teacher can present book content to students.</p>
 </div>
 
-<div class="module" onclick="alert('Lesson Planner')">
-🗓 Lesson Planner
+<div class="module">
+<h3>Lesson Planner</h3>
+<p>Create weekly teaching schedule.</p>
 </div>
 
-<div class="module" onclick="alert('Bookmarks')">
-🔖 Bookmark Library
+<div class="module">
+<h3>Bookmark Library</h3>
+<p>Save important book pages for teaching.</p>
 </div>
 
-<div class="module" onclick="alert('Reading Progress')">
-📊 Reading Progress
+<div class="module">
+<h3>Reading Progress</h3>
+<p>Track how much of the book is completed.</p>
 </div>
 
-<div class="module" onclick="alert('Notes Share')">
-📝 Share Notes
+<div class="module">
+<h3>Faculty Collaboration</h3>
+<p>Teachers share notes and materials.</p>
 </div>
 
-<div class="module" onclick="alert('Faculty Collaboration')">
-👥 Faculty Collaboration
+<div class="module">
+<h3>Quiz Generator</h3>
+<p>Generate quiz questions from books.</p>
 </div>
 
-<div class="module" onclick="alert('Student Questions')">
-❓ Student Questions
+<div class="module">
+<h3>Doubt Panel</h3>
+<p>Students can ask doubts.</p>
 </div>
 
-<div class="module" onclick="alert('Quiz Generator')">
-🧠 Quiz Generator
+<div class="module">
+<h3>Department Library</h3>
+<p>Books categorized by department.</p>
 </div>
 
-<div class="module" onclick="alert('Department Library')">
-🏫 Department Library
 </div>
 
-<div class="module" onclick="alert('Analytics Dashboard')">
-📈 Analytics
+</div>
+
+<!-- STUDENT PAGE -->
+
+<div id="student" class="page">
+
+<h2>Student Learning Modules</h2>
+
+<div class="moduleGrid">
+
+<div class="module">
+<h3>My Learning</h3>
+<p>Books currently reading.</p>
+</div>
+
+<div class="module">
+<h3>My Progress</h3>
+<p>Track reading progress.</p>
+</div>
+
+<div class="module">
+<h3>Practice Quiz</h3>
+<p>Attempt quizzes created by teachers.</p>
+</div>
+
+<div class="module">
+<h3>Bookmarks</h3>
+<p>Save important pages.</p>
+</div>
+
+<div class="module">
+<h3>Notes</h3>
+<p>Write your personal notes.</p>
+</div>
+
+<div class="module">
+<h3>Ask Doubt</h3>
+<p>Ask teachers questions.</p>
+</div>
+
+</div>
+
+</div>
+
+<!-- ANALYTICS PAGE -->
+
+<div id="analytics" class="page">
+
+<h2>Library Analytics</h2>
+
+<div class="statGrid">
+
+<div class="stat">
+<h3>100</h3>
+<p>Total Books</p>
+</div>
+
+<div class="stat">
+<h3>120</h3>
+<p>Students</p>
+</div>
+
+<div class="stat">
+<h3>35</h3>
+<p>Active Readers</p>
+</div>
+
+<div class="stat">
+<h3>AI Basics</h3>
+<p>Most Read Book</p>
 </div>
 
 </div>
@@ -193,108 +277,89 @@ color:white;
 
 <script>
 
+/* PAGE SWITCH */
+
+function showPage(id){
+
+document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"))
+
+document.getElementById(id).classList.add("active")
+
+}
+
+/* BOOK DATA */
+
 let books=[
-"Artificial Intelligence","Machine Learning","Python Programming","Data Science",
-"Cloud Computing","Cyber Security","Operating Systems","Database Systems",
-"Software Engineering","Web Development","Blockchain","Robotics"
-];
 
-let pages=[
-"Introduction Page",
-"Concept Explanation",
-"Examples and Applications",
-"Conclusion"
-];
+"Artificial Intelligence",
+"Machine Learning",
+"Python Programming",
+"Cyber Security",
+"Cloud Computing",
+"Data Science",
+"Web Development",
+"Mobile App Development",
+"Blockchain",
+"DevOps",
 
-let grid=document.getElementById("bookGrid");
+"Positive Thinking",
+"Life Lessons",
+"Self Discipline",
+"Leadership Skills",
+"Motivational Stories",
+"Public Speaking",
+"Time Management",
+"Creative Thinking",
+"Emotional Intelligence",
+"Personal Growth"
 
-function loadBooks(list){
+]
 
-grid.innerHTML="";
+let images=[
 
-list.forEach((b,i)=>{
+"https://source.unsplash.com/300x200/?artificial-intelligence",
+"https://source.unsplash.com/300x200/?machine-learning",
+"https://source.unsplash.com/300x200/?python",
+"https://source.unsplash.com/300x200/?cybersecurity",
+"https://source.unsplash.com/300x200/?cloud-computing",
+"https://source.unsplash.com/300x200/?data-science",
+"https://source.unsplash.com/300x200/?web-development",
+"https://source.unsplash.com/300x200/?mobile-app",
+"https://source.unsplash.com/300x200/?blockchain",
+"https://source.unsplash.com/300x200/?devops",
 
-let d=document.createElement("div");
+"https://source.unsplash.com/300x200/?motivation",
+"https://source.unsplash.com/300x200/?life",
+"https://source.unsplash.com/300x200/?discipline",
+"https://source.unsplash.com/300x200/?leadership",
+"https://source.unsplash.com/300x200/?success",
+"https://source.unsplash.com/300x200/?speaking",
+"https://source.unsplash.com/300x200/?time-management",
+"https://source.unsplash.com/300x200/?creativity",
+"https://source.unsplash.com/300x200/?emotions",
+"https://source.unsplash.com/300x200/?growth"
 
-d.className="book";
+]
 
-d.style.background="linear-gradient(135deg,#ff512f,#dd2476)";
+let grid=document.getElementById("bookGrid")
 
-d.innerText=b;
+books.forEach((b,i)=>{
 
-d.onclick=()=>openBook(i);
+let div=document.createElement("div")
+div.className="book"
 
-grid.appendChild(d);
+div.innerHTML=`
 
-});
+<img src="${images[i]}">
+<span>${b}</span>
 
-}
+`
 
-loadBooks(books);
+grid.appendChild(div)
 
-function filterBooks(){
-
-let t=searchBox.value.toLowerCase();
-
-loadBooks(books.filter(b=>b.toLowerCase().includes(t)));
-
-}
-
-function openBook(i){
-
-libraryView.style.display="none";
-
-reader.style.display="block";
-
-bookTitle.innerText=books[i];
-
-pageText.innerText=pages[0];
-
-}
-
-function back(){
-
-reader.style.display="none";
-
-libraryView.style.display="flex";
-
-}
-
-function setMode(m){
-
-if(m=="dark") document.body.style.background="#111";
-else document.body.style.background="#eef2f7";
-
-}
-
-function openAdmin(){
-
-let pass=prompt("Enter Admin Password");
-
-if(pass=="1234"){
-
-let name=prompt("Enter new book");
-
-if(name){
-
-books.push(name);
-
-loadBooks(books);
-
-alert("Book Added");
-
-}
-
-}else{
-
-alert("Wrong Password");
-
-}
-
-}
+})
 
 </script>
 
 </body>
 </html>
-```
