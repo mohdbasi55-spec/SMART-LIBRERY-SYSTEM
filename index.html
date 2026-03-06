@@ -1,47 +1,124 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Smart Library</title>
+<title>Smart Library System</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
+
+:root{--bg:#eef2f7;--text:#000;--card:#fff;--header:#0d1b2a;}
+.dark{--bg:#121212;--text:#fff;--card:#1e1e1e;--header:#000;}
+.ambience{--bg:#0b132b;--text:#eaeaea;--card:#1c2541;--header:#000;}
+
 body{
-font-family:Arial;
-background:#f5f5f5;
 margin:0;
-padding:0;
+font-family:Segoe UI;
+background:var(--bg);
+color:var(--text);
 }
 
 header{
-background:#222;
+background:var(--header);
 color:white;
-padding:15px;
+padding:10px;
 text-align:center;
-font-size:22px;
 }
 
-.container{
-padding:20px;
+.topMenu{
+display:flex;
+flex-wrap:wrap;
+justify-content:center;
+gap:10px;
+margin-top:8px;
 }
 
-input{
-width:60%;
-padding:10px;
-font-size:16px;
-}
-
-button{
-padding:10px;
-font-size:16px;
+.topMenu button{
+padding:6px 12px;
+border:none;
+border-radius:6px;
 cursor:pointer;
 }
 
-.book{
-background:white;
-padding:10px;
-margin:10px 0;
-border-radius:6px;
-box-shadow:0 0 5px rgba(0,0,0,0.2);
+.layout{
+display:flex;
+height:calc(100vh - 120px);
 }
+
+.sidebar{
+width:260px;
+background:var(--card);
+padding:15px;
+overflow:auto;
+box-shadow:2px 0 10px rgba(0,0,0,0.1);
+}
+
+.sidebar input,.sidebar button{
+width:100%;
+padding:8px;
+margin-top:6px;
+border-radius:6px;
+border:1px solid #aaa;
+}
+
+.suggestions{
+background:#fff;
+border:1px solid #ccc;
+border-radius:6px;
+margin-top:4px;
+max-height:120px;
+overflow:auto;
+}
+
+.suggestions div{
+padding:6px;
+cursor:pointer;
+}
+
+.suggestions div:hover{
+background:#eee;
+}
+
+.bookshelf{
+flex:1;
+padding:15px;
+display:grid;
+grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
+gap:18px;
+overflow-y:auto;
+}
+
+.book{
+height:220px;
+border-radius:12px;
+background-size:cover;
+background-position:center;
+display:flex;
+align-items:flex-end;
+justify-content:center;
+color:white;
+font-weight:bold;
+padding:10px;
+text-shadow:0 2px 6px black;
+cursor:pointer;
+transition:.3s;
+}
+
+.book:hover{transform:scale(1.06)}
+
+.modulePanel{
+display:none;
+padding:20px;
+}
+
+.panelBox{
+background:var(--card);
+padding:15px;
+border-radius:10px;
+margin-bottom:10px;
+}
+
+#reader{display:none;padding:20px}
+.page{background:white;padding:20px;border-radius:10px}
 
 </style>
 </head>
@@ -49,88 +126,194 @@ box-shadow:0 0 5px rgba(0,0,0,0.2);
 <body>
 
 <header>
-AI Smart Library
+
+<h2>📚 Smart Library System</h2>
+
+<div class="topMenu">
+
+<button onclick="showLibrary()">Library</button>
+<button onclick="showPanel('teachPanel')">Teaching Mode</button>
+<button onclick="showPanel('lessonPanel')">Lesson Planner</button>
+<button onclick="showPanel('notesPanel')">Notes Share</button>
+<button onclick="showPanel('collabPanel')">Faculty Collaboration</button>
+<button onclick="showPanel('doubtPanel')">Doubt Board</button>
+<button onclick="showPanel('quizPanel')">Quiz Generator</button>
+<button onclick="showPanel('studentPanel')">Student Panel</button>
+<button onclick="showPanel('analyticsPanel')">Reading Analytics</button>
+
+</div>
+
 </header>
 
-<div class="container">
+<div class="layout" id="libraryView">
 
-<h2>Smart Book Search</h2>
+<div class="sidebar">
 
-<input type="text" id="searchBox" placeholder="Search books like AI, Python, Deep Learning">
-<button onclick="searchBooks()">Search</button>
+<h3>🔍 Search</h3>
+<input id="searchBox" onkeyup="filterBooks();smartSuggest()" placeholder="Search book">
+<div id="suggestions" class="suggestions"></div>
 
-<div id="results"></div>
+<h3>🎛 Modes</h3>
+<button onclick="setMode('')">Normal</button>
+<button onclick="setMode('dark')">Dark</button>
+<button onclick="setMode('ambience')">Library</button>
 
+<h3>🤖 AI Recommend</h3>
+<div id="recommend">---</div>
+
+<hr>
+
+<h3>👨‍🏫 Faculty Login</h3>
+
+<input id="fid" placeholder="Faculty ID">
+<input id="fpass" type="password" placeholder="Password">
+<button onclick="facultyLogin()">Login</button>
+
+<div id="facultyStatus"></div>
+
+</div>
+
+<div class="bookshelf" id="bookGrid"></div>
+
+</div>
+
+<div id="reader">
+<h2 id="bookTitle"></h2>
+<div class="page" id="pageText"></div>
+<button onclick="bookmarkPage()">⭐ Bookmark</button>
+<button onclick="back()">⬅ Back</button>
 </div>
 
 <script>
 
 let books=[
-
-{name:"Deep Learning",tags:["ai","machine learning","neural network"]},
-
-{name:"Machine Learning Basics",tags:["machine learning","ai","data"]},
-
-{name:"Neural Networks Guide",tags:["deep learning","ai","neural network"]},
-
-{name:"Python for Data Science",tags:["python","data science","ai"]},
-
-{name:"Artificial Intelligence Basics",tags:["ai","machine learning"]},
-
-{name:"Data Science Handbook",tags:["data","python","analysis"]},
-
-{name:"Computer Vision",tags:["deep learning","image","ai"]},
-
-{name:"Natural Language Processing",tags:["ai","nlp","deep learning"]},
-
-{name:"Reinforcement Learning",tags:["machine learning","ai"]},
-
-{name:"Python Programming",tags:["python","coding"]}
-
+"Artificial Intelligence","Machine Learning","Python Programming",
+"Cyber Security","Cloud Computing","Robotics","Data Science",
+"Blockchain","Deep Learning","Deep Neural Networks",
+"Deep Learning with Python","Deep Learning Applications",
+"Computer Networks","Operating Systems","Algorithms",
+"Life Lessons","Positive Thinking","Time Management",
+"Leadership Skills","Public Speaking","Mind Power",
+"Emotional Intelligence"
 ];
 
-function searchBooks(){
+let images=[
+"https://images.unsplash.com/photo-1677442136019-21780ecad995",
+"https://images.unsplash.com/photo-1555949963-aa79dcee981c",
+"https://images.unsplash.com/photo-1515879218367-8466d910aaa4",
+"https://images.unsplash.com/photo-1518779578993-ec3579fee39f",
+"https://images.unsplash.com/photo-1451187580459-43490279c0fa"
+];
 
-let search=document.getElementById("searchBox").value.toLowerCase();
+let grid=document.getElementById("bookGrid");
 
-let resultDiv=document.getElementById("results");
+function loadBooks(list){
+grid.innerHTML="";
 
-resultDiv.innerHTML="";
+list.forEach((b,i)=>{
 
-let results=[];
+let d=document.createElement("div");
 
-books.forEach(book=>{
+d.className="book";
+d.style.backgroundImage="url("+images[i%images.length]+")";
 
-if(book.name.toLowerCase().includes(search) ||
-book.tags.some(tag=>tag.includes(search))){
+d.innerText=b;
 
-results.push(book);
+d.onclick=()=>openBook(i);
+
+grid.appendChild(d);
+
+});
+
+recommend.innerText=list[Math.floor(Math.random()*list.length)];
+
+}
+
+loadBooks(books);
+
+function filterBooks(){
+
+let t=searchBox.value.toLowerCase();
+
+loadBooks(books.filter(b=>b.toLowerCase().includes(t)));
+
+}
+
+/* SMART SEARCH AI SUGGESTIONS */
+
+function smartSuggest(){
+
+let t=searchBox.value.toLowerCase();
+
+let box=document.getElementById("suggestions");
+
+box.innerHTML="";
+
+if(t.length<1) return;
+
+books.forEach(b=>{
+
+if(b.toLowerCase().includes(t)){
+
+let d=document.createElement("div");
+
+d.innerText=b;
+
+d.onclick=function(){
+
+searchBox.value=b;
+
+box.innerHTML="";
+
+filterBooks();
+
+}
+
+box.appendChild(d);
 
 }
 
 });
 
-if(results.length==0){
-
-books.forEach(book=>{
-if(book.tags.includes("ai") || book.tags.includes("machine learning")){
-results.push(book);
-}
-});
-
 }
 
-results.forEach(book=>{
+function openBook(i){
 
-let div=document.createElement("div");
+libraryView.style.display="none";
+reader.style.display="block";
 
-div.className="book";
+bookTitle.innerText=books[i];
 
-div.innerHTML="<b>"+book.name+"</b><br>Related Topics: "+book.tags.join(", ");
+pageText.innerText="Teaching content of "+books[i];
 
-resultDiv.appendChild(div);
+}
 
-});
+function back(){
+
+reader.style.display="none";
+libraryView.style.display="flex";
+
+}
+
+function setMode(m){
+
+document.body.className=m;
+
+}
+
+function facultyLogin(){
+
+let pass=document.getElementById("fpass").value;
+
+if(pass=="1234"){
+
+facultyStatus.innerHTML="✅ Faculty Logged In";
+
+}else{
+
+facultyStatus.innerHTML="❌ Wrong Password";
+
+}
 
 }
 
