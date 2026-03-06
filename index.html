@@ -3,196 +3,150 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NexLib | AI-Powered Smart Library System</title>
+    <title>NexGen Smart Library | College Portal</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root { --primary: #1e40af; --secondary: #3b82f6; }
-        .glass { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
-        .sidebar-link:hover { background: #f1f5f9; color: var(--primary); transition: 0.3s; }
-        .ai-glow { box-shadow: 0 0 15px rgba(59, 130, 246, 0.5); }
+        .sidebar { transition: width 0.3s; }
+        .book-card:hover { transform: translateY(-8px); transition: 0.3s; box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1); }
+        .ai-pulse { animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); } 100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); } }
     </style>
 </head>
-<body class="bg-slate-100 text-slate-900 font-sans leading-normal">
+<body class="bg-gray-50 flex h-screen overflow-hidden">
 
-    <div class="flex h-screen overflow-hidden">
-        <aside class="w-64 bg-white border-r border-slate-200 hidden lg:flex flex-col">
-            <div class="p-6 border-b border-slate-100">
-                <h1 class="text-2xl font-black text-blue-700 flex items-center gap-2">
-                    <i class="fas fa-brain"></i> NexLib
-                </h1>
-            </div>
-            <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
-                <p class="text-xs font-bold text-slate-400 uppercase px-3">Main Menu</p>
-                <a href="#" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg font-medium"><i class="fas fa-th-large"></i> Dashboard</a>
-                <a href="#" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg font-medium"><i class="fas fa-book"></i> Catalog</a>
-                
-                <p class="text-xs font-bold text-slate-400 uppercase px-3 mt-6">Staff Modules</p>
-                <button onclick="openStaffTeaching()" class="sidebar-link w-full flex items-center gap-3 px-3 py-2 rounded-lg font-medium"><i class="fas fa-chalkboard-teacher text-orange-500"></i> Teaching Hub</button>
-                <button onclick="generateQuiz()" class="sidebar-link w-full flex items-center gap-3 px-3 py-2 rounded-lg font-medium"><i class="fas fa-robot text-purple-500"></i> AI Quiz Gen</button>
-                
-                <p class="text-xs font-bold text-slate-400 uppercase px-3 mt-6">Student Access</p>
-                <a href="#" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg font-medium"><i class="fas fa-bookmark text-blue-500"></i> My Bookmarks</a>
-                <a href="#" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg font-medium"><i class="fas fa-history"></i> Reading History</a>
-            </nav>
-            <div class="p-4 border-t border-slate-100">
-                <div class="flex items-center gap-3 bg-slate-50 p-3 rounded-xl">
-                    <img src="https://ui-avatars.com/api/?name=Staff+User&background=random" class="w-10 h-10 rounded-full">
-                    <div><p class="text-sm font-bold">Prof. Arunkumar</p><p class="text-xs text-slate-500">IT Department</p></div>
+    <aside class="w-20 lg:w-64 bg-indigo-950 text-white flex flex-col p-4">
+        <div class="flex items-center gap-3 mb-10 px-2">
+            <i class="fas fa-brain text-blue-400 text-3xl"></i>
+            <span class="hidden lg:block font-bold text-xl tracking-widest">NEX-LIB</span>
+        </div>
+        <nav class="flex-1 space-y-4">
+            <button onclick="showSection('home')" class="w-full flex items-center gap-4 p-3 rounded-xl hover:bg-white/10 transition"><i class="fas fa-home"></i> <span class="hidden lg:block">Home</span></button>
+            <button onclick="showSection('teaching')" class="w-full flex items-center gap-4 p-3 rounded-xl hover:bg-blue-600 transition"><i class="fas fa-chalkboard-teacher text-yellow-400"></i> <span class="hidden lg:block font-bold">Staff Console</span></button>
+            <button onclick="showSection('library')" class="w-full flex items-center gap-4 p-3 rounded-xl hover:bg-white/10 transition"><i class="fas fa-book"></i> <span class="hidden lg:block">Catalog</span></button>
+            <button onclick="generateAIQuiz()" class="w-full flex items-center gap-4 p-3 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 shadow-lg"><i class="fas fa-robot"></i> <span class="hidden lg:block font-bold text-xs uppercase">AI Quiz Gen</span></button>
+        </nav>
+    </aside>
+
+    <main class="flex-1 flex flex-col overflow-hidden">
+        
+        <header class="h-20 bg-white border-b flex items-center justify-between px-8 shadow-sm">
+            <div class="flex-1 max-w-xl">
+                <div class="relative group">
+                    <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                    <input type="text" id="megaSearch" onkeyup="smartSearch()" placeholder="Search Technical, Humanities, Literature..." class="w-full pl-12 pr-4 py-3 rounded-full bg-gray-100 border-none focus:ring-2 focus:ring-blue-500 outline-none transition-all">
                 </div>
             </div>
-        </aside>
-
-        <main class="flex-1 overflow-y-auto bg-slate-50">
-            <header class="glass sticky top-0 z-30 p-4 border-b border-slate-200 flex justify-between items-center">
-                <div class="flex items-center bg-white border border-slate-200 rounded-full px-4 py-2 w-1/2 ai-glow">
-                    <i class="fas fa-search text-slate-400 mr-2"></i>
-                    <input type="text" id="mainSearch" onkeyup="smartLibrarySearch()" placeholder="Search by Topic, ISBN, Author or Department..." class="w-full bg-transparent outline-none text-sm">
-                    <button onclick="startVoiceSearch()" class="text-blue-600 hover:text-blue-800"><i class="fas fa-microphone"></i></button>
+            <div class="flex items-center gap-6">
+                <div class="text-right">
+                    <p class="text-sm font-bold text-gray-800">Department: IT / CSE</p>
+                    <p class="text-xs text-green-500 font-semibold"><i class="fas fa-circle text-[8px] animate-pulse"></i> Live Sync Active</p>
                 </div>
-                <div class="flex gap-4">
-                    <div class="text-right hidden sm:block">
-                        <p id="liveTime" class="text-sm font-bold text-slate-700"></p>
-                        <p class="text-[10px] text-green-500 font-bold uppercase">System Online</p>
+                <img src="https://ui-avatars.com/api/?name=Staff+User" class="w-10 h-10 rounded-full border-2 border-blue-500">
+            </div>
+        </header>
+
+        <div class="flex-1 overflow-y-auto p-8">
+            <div id="homeSection">
+                <div class="flex justify-between items-center mb-8">
+                    <h2 class="text-3xl font-black text-gray-900">Recommended for Your Dept</h2>
+                    <div class="flex gap-2">
+                        <select onchange="filterDept(this.value)" class="bg-white px-4 py-2 rounded-lg border text-sm font-bold outline-none focus:ring-2 ring-blue-100 cursor-pointer">
+                            <option value="all">All Categories</option>
+                            <option value="technical">Technical (Engg)</option>
+                            <option value="non-technical">Non-Technical (Arts)</option>
+                        </select>
                     </div>
-                    <button class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-lg hover:bg-blue-700">Student Portal</button>
                 </div>
-            </header>
 
-            <div class="p-6 md:p-8 space-y-8">
-                <section class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                    <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
-                        <div class="flex justify-between items-start mb-2">
-                            <span class="p-2 bg-blue-50 text-blue-600 rounded-lg"><i class="fas fa-book-reader"></i></span>
-                            <span class="text-xs font-bold text-green-500">+12%</span>
-                        </div>
-                        <h3 class="text-2xl font-black">2,450</h3>
-                        <p class="text-xs text-slate-500 font-medium uppercase tracking-wider">Active Readers</p>
+                <div id="bookGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
                     </div>
-                    <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
-                        <div class="flex justify-between items-start mb-2">
-                            <span class="p-2 bg-purple-50 text-purple-600 rounded-lg"><i class="fas fa-file-pdf"></i></span>
-                        </div>
-                        <h3 class="text-2xl font-black">8,900+</h3>
-                        <p class="text-xs text-slate-500 font-medium uppercase tracking-wider">E-Resources</p>
-                    </div>
-                    </section>
+            </div>
+        </div>
+    </main>
 
-                <div>
-                    <div class="flex justify-between items-end mb-6">
-                        <div>
-                            <h2 class="text-2xl font-black text-slate-800">Smart Catalog</h2>
-                            <p class="text-sm text-slate-500">AI-suggested books based on your Department (IT/CSE)</p>
-                        </div>
-                        <div class="flex gap-2">
-                            <button class="px-4 py-2 bg-white rounded-lg border text-sm font-bold shadow-sm">Technical</button>
-                            <button class="px-4 py-2 bg-white rounded-lg border text-sm font-bold shadow-sm">Non-Tech</button>
-                        </div>
-                    </div>
-
-                    <div id="bookGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                        </div>
+    <div id="readerModal" class="fixed inset-0 bg-white z-[100] hidden flex flex-col">
+        <nav class="h-16 bg-indigo-950 text-white flex items-center justify-between px-6">
+            <h3 id="readerTitle" class="font-bold">Staff Teaching Mode</h3>
+            <div class="flex gap-4">
+                <button onclick="startVoiceBroadcast()" class="bg-red-600 px-4 py-1 rounded-full text-xs font-bold animate-pulse"><i class="fas fa-microphone"></i> LIVE</button>
+                <button onclick="closeReader()" class="text-2xl">&times;</button>
+            </div>
+        </nav>
+        <div class="flex flex-1 overflow-hidden">
+            <div class="flex-1 p-10 overflow-y-auto bg-gray-100">
+                <div class="bg-white shadow-2xl p-12 min-h-screen max-w-4xl mx-auto rounded-lg">
+                    <p id="bookContent" class="text-gray-700 leading-loose text-lg"></p>
                 </div>
             </div>
-        </main>
-    </div>
-
-    <div id="teachingModal" class="fixed inset-0 bg-slate-900/80 z-[100] hidden flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-6xl h-[85vh] rounded-3xl overflow-hidden flex flex-col md:flex-row shadow-2xl">
-            <div class="flex-1 bg-slate-900 text-white p-8 overflow-y-auto relative">
-                <button onclick="closeStaffTeaching()" class="absolute top-4 right-4 text-3xl">&times;</button>
-                <h2 class="text-3xl font-bold mb-4 text-blue-400">Staff Teaching Console</h2>
-                <div class="aspect-video bg-slate-800 rounded-2xl flex items-center justify-center border border-slate-700">
-                    <p class="text-slate-500 italic">Live PDF Stream / Screen Share Active</p>
-                </div>
-                <div class="mt-6">
-                    <h3 class="font-bold mb-2">Live Transcript (Voice-to-Notes)</h3>
-                    <div class="bg-white/5 p-4 rounded-xl text-sm font-mono text-green-400 min-h-[100px]">
-                        AI: "Listening to your lecture... Key points like 'Binary Trees' and 'Recursion' are being saved to Student Study Tracker."
-                    </div>
-                </div>
-            </div>
-            <div class="w-full md:w-80 p-6 bg-slate-50 overflow-y-auto">
-                <h4 class="font-bold text-indigo-900 mb-4 uppercase text-xs tracking-widest">Connected Students (42)</h4>
-                <div class="space-y-3">
-                    <div class="flex items-center gap-2 p-2 bg-white rounded-lg border border-slate-200">
-                        <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                        <p class="text-sm font-bold">Karthick S (Active)</p>
-                    </div>
-                    </div>
+            <div class="w-96 border-l p-6 flex flex-col gap-6">
+                <h4 class="font-bold text-indigo-900 uppercase text-xs">Teaching Notes (Auto-Sync)</h4>
+                <textarea class="w-full flex-1 border rounded-2xl p-4 text-sm focus:ring-2 ring-blue-500 outline-none" placeholder="Staff can type summaries here... Students will see it instantly."></textarea>
+                <button class="bg-blue-600 text-white py-3 rounded-xl font-bold shadow-lg">Save & Broadcast</button>
             </div>
         </div>
     </div>
 
     <script>
-        const libraryDB = [
-            { id: 101, title: "Modern Operating Systems", author: "Andrew S. Tanenbaum", dept: "CSE/IT", type: "Technical", rating: 4.9, stock: 12, isbn: "978-0133591620" },
-            { id: 102, title: "Introduction to Algorithms", author: "Thomas H. Cormen", dept: "CSE", type: "Technical", rating: 4.8, stock: 5, isbn: "978-0262033848" },
-            { id: 103, title: "Atomic Habits", author: "James Clear", dept: "General", type: "Non-Technical", rating: 5.0, stock: 20, isbn: "978-0735211292" },
-            { id: 104, title: "VLSI Design", author: "Pucknell", dept: "ECE", type: "Technical", rating: 4.4, stock: 8, isbn: "978-8120309871" }
+        const booksDB = [
+            { id: 1, title: "Modern AI & ML", author: "Dr. Andrew Ng", cat: "technical", rating: 4.9, info: "Core concepts of neural networks and learning algorithms." },
+            { id: 2, title: "Wings of Fire", author: "Dr. APJ Abdul Kalam", cat: "non-technical", rating: 5.0, info: "Inspirational autobiography of the Missile Man of India." },
+            { id: 3, title: "Cloud Computing", author: "Satya Nadella", cat: "technical", rating: 4.7, info: "Architecture and design of distributed cloud systems." },
+            { id: 4, title: "English Literature", author: "Shakespeare", cat: "non-technical", rating: 4.5, info: "Classic collection of plays and sonnets." }
         ];
 
         function renderBooks(data) {
             const grid = document.getElementById('bookGrid');
             grid.innerHTML = data.map(book => `
-                <div class="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm hover:shadow-xl transition-all group">
+                <div class="bg-white rounded-3xl p-6 border border-gray-100 book-card">
                     <div class="flex justify-between items-start mb-4">
-                        <div class="bg-blue-50 text-blue-600 text-[10px] font-black px-2 py-1 rounded-md uppercase tracking-widest">${book.dept}</div>
-                        <span class="text-xs font-bold text-slate-400">ID: ${book.id}</span>
-                    </div>
-                    <h3 class="font-bold text-lg text-slate-800 group-hover:text-blue-600 transition-colors">${book.title}</h3>
-                    <p class="text-sm text-slate-500 mb-4 italic">By ${book.author}</p>
-                    <div class="flex items-center gap-4 mb-6">
-                        <div class="flex-1 bg-slate-100 h-1.5 rounded-full overflow-hidden">
-                            <div class="bg-blue-600 h-full w-[80%]"></div>
+                        <span class="px-3 py-1 bg-blue-50 text-blue-600 text-[10px] font-black uppercase rounded-full">${book.cat}</span>
+                        <div class="flex text-yellow-400 text-xs">
+                            ${'<i class="fas fa-star"></i>'.repeat(Math.floor(book.rating))}
                         </div>
-                        <span class="text-[10px] font-bold text-slate-400">Stock: ${book.stock}</span>
                     </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-1">${book.title}</h3>
+                    <p class="text-sm text-gray-400 mb-4 italic">By ${book.author}</p>
+                    <p class="text-xs text-gray-500 mb-6 line-clamp-2 leading-relaxed">${book.info}</p>
                     <div class="flex gap-2">
-                        <button onclick="borrowBook(${book.id})" class="flex-1 bg-slate-900 text-white py-2 rounded-lg text-xs font-bold hover:bg-blue-600 transition-all shadow-md">BORROW</button>
-                        <button class="px-3 py-2 border border-slate-200 rounded-lg hover:bg-slate-50"><i class="fas fa-ellipsis-v"></i></button>
+                        <button onclick="openReader('${book.title}', '${book.info}')" class="flex-1 bg-indigo-900 text-white py-3 rounded-xl text-xs font-bold hover:bg-blue-600 transition shadow-md">READ & TEACH</button>
+                        <button class="bg-gray-100 p-3 rounded-xl hover:bg-red-50 hover:text-red-500 transition"><i class="fas fa-bookmark"></i></button>
                     </div>
                 </div>
             `).join('');
         }
 
-        function smartLibrarySearch() {
-            const q = document.getElementById('mainSearch').value.toLowerCase();
-            const filtered = libraryDB.filter(b => 
-                b.title.toLowerCase().includes(q) || b.author.toLowerCase().includes(q) || b.dept.toLowerCase().includes(q)
-            );
+        function filterDept(val) {
+            const filtered = val === 'all' ? booksDB : booksDB.filter(b => b.cat === val);
             renderBooks(filtered);
         }
 
-        function startVoiceSearch() {
-            alert("Listening... Say the book name or department.");
-            // SpeechRecognition API logic goes here
+        function smartSearch() {
+            const q = document.getElementById('megaSearch').value.toLowerCase();
+            const filtered = booksDB.filter(b => b.title.toLowerCase().includes(q) || b.author.toLowerCase().includes(q));
+            renderBooks(filtered);
         }
 
-        function openStaffTeaching() {
-            document.getElementById('teachingModal').classList.remove('hidden');
+        function openReader(title, info) {
+            document.getElementById('readerModal').classList.remove('hidden');
+            document.getElementById('readerTitle').innerText = "TEACHING MODE: " + title;
+            document.getElementById('bookContent').innerText = "Content of " + title + ": " + info.repeat(20);
         }
 
-        function closeStaffTeaching() {
-            document.getElementById('teachingModal').classList.add('hidden');
+        function closeReader() {
+            document.getElementById('readerModal').classList.add('hidden');
         }
 
-        function generateQuiz() {
-            const topic = prompt("Enter Topic for AI Quiz Generation:");
-            if(topic) alert(AI is analyzing Library Resources for '${topic}'... 10 MCQ Questions Generated.);
+        function generateAIQuiz() {
+            alert("AI is reading the current book catalog... 10 MCQs generated and sent to Students Portal.");
         }
 
-        function borrowBook(id) {
-            alert(System validated Student ID. Book ${id} has been issued. Returning deadline: 2 weeks.);
+        function startVoiceBroadcast() {
+            alert("Voice Synthesis Active: Your explanation is being recorded and converted to text for students.");
         }
-
-        setInterval(() => {
-            const now = new Date();
-            document.getElementById('liveTime').innerText = now.toLocaleTimeString();
-        }, 1000);
 
         // Init
-        renderBooks(libraryDB);
+        renderBooks(booksDB);
     </script>
 </body>
 </html>
