@@ -10,112 +10,43 @@
 .dark{--bg:#121212;--text:#fff;--card:#1e1e1e;--header:#000;}
 .ambience{--bg:#0b132b;--text:#eaeaea;--card:#1c2541;--header:#000;}
 
-body{
-margin:0;
-font-family:Segoe UI;
-background:var(--bg);
-color:var(--text);
-}
+body{margin:0;font-family:Segoe UI;background:var(--bg);color:var(--text);}
 
-header{
-background:var(--header);
-color:white;
-padding:10px;
-text-align:center;
-}
+header{background:var(--header);color:white;padding:10px;text-align:center;}
 
-.topMenu{
-display:flex;
-flex-wrap:wrap;
-justify-content:center;
-gap:10px;
-margin-top:8px;
-}
+.topMenu{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:8px;}
 
-.topMenu button{
-padding:6px 12px;
-border:none;
-border-radius:6px;
-cursor:pointer;
-}
+.topMenu button{padding:6px 12px;border:none;border-radius:6px;cursor:pointer;}
 
-.layout{
-display:flex;
-height:calc(100vh - 120px);
-}
+.layout{display:flex;height:calc(100vh - 120px);}
 
 .sidebar{
-width:260px;
-background:var(--card);
-padding:15px;
-overflow:auto;
+width:260px;background:var(--card);padding:15px;overflow:auto;
 box-shadow:2px 0 10px rgba(0,0,0,0.1);
 }
 
 .sidebar input,.sidebar button{
-width:100%;
-padding:8px;
-margin-top:6px;
-border-radius:6px;
-border:1px solid #aaa;
-}
-
-.suggestions{
-background:#fff;
-border:1px solid #ccc;
-border-radius:6px;
-margin-top:4px;
-max-height:120px;
-overflow:auto;
-}
-
-.suggestions div{
-padding:6px;
-cursor:pointer;
-}
-
-.suggestions div:hover{
-background:#eee;
+width:100%;padding:8px;margin-top:6px;border-radius:6px;border:1px solid #aaa;
 }
 
 .bookshelf{
-flex:1;
-padding:15px;
-display:grid;
+flex:1;padding:15px;display:grid;
 grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
-gap:18px;
-overflow-y:auto;
+gap:18px;overflow-y:auto;
 }
 
 .book{
-height:220px;
-border-radius:12px;
-background-size:cover;
-background-position:center;
-display:flex;
-align-items:flex-end;
-justify-content:center;
-color:white;
-font-weight:bold;
-padding:10px;
-text-shadow:0 2px 6px black;
-cursor:pointer;
-transition:.3s;
+height:220px;border-radius:12px;background-size:cover;background-position:center;
+display:flex;align-items:flex-end;justify-content:center;color:white;
+font-weight:bold;padding:10px;text-shadow:0 2px 6px black;
+cursor:pointer;transition:.3s;
 }
 
 .book:hover{transform:scale(1.06)}
 
-.modulePanel{
-display:none;
-padding:20px;
-}
+.modulePanel{display:none;padding:20px}
 
-.panelBox{
-background:var(--card);
-padding:15px;
-border-radius:10px;
-margin-bottom:10px;
-}
+.panelBox{background:var(--card);padding:15px;border-radius:10px;margin-bottom:10px}
 
 #reader{display:none;padding:20px}
 .page{background:white;padding:20px;border-radius:10px}
@@ -150,8 +81,7 @@ margin-bottom:10px;
 <div class="sidebar">
 
 <h3>🔍 Search</h3>
-<input id="searchBox" onkeyup="filterBooks();smartSuggest()" placeholder="Search book">
-<div id="suggestions" class="suggestions"></div>
+<input id="searchBox" onkeyup="filterBooks()" placeholder="Search book">
 
 <h3>🎛 Modes</h3>
 <button onclick="setMode('')">Normal</button>
@@ -184,17 +114,81 @@ margin-bottom:10px;
 <button onclick="back()">⬅ Back</button>
 </div>
 
+<!-- MODULE PANELS -->
+
+<div id="teachPanel" class="modulePanel">
+<div class="panelBox">
+<h3>👨‍🏫 Teaching Mode</h3>
+<button onclick="alert('Teaching Mode Activated')">Start Teaching</button>
+</div>
+</div>
+
+<div id="lessonPanel" class="modulePanel">
+<div class="panelBox">
+<h3>📅 Lesson Planner</h3>
+<input id="lessonTopic" placeholder="Lesson topic">
+<button onclick="saveLesson()">Save</button>
+<div id="lessonList"></div>
+</div>
+</div>
+
+<div id="notesPanel" class="modulePanel">
+<div class="panelBox">
+<h3>📝 Notes Share</h3>
+<input id="noteText" placeholder="Write note">
+<button onclick="addNote()">Share</button>
+<div id="notes"></div>
+</div>
+</div>
+
+<div id="collabPanel" class="modulePanel">
+<div class="panelBox">
+<h3>👥 Faculty Collaboration</h3>
+<button onclick="collab()">Share Idea</button>
+<div id="collabBox"></div>
+</div>
+</div>
+
+<div id="doubtPanel" class="modulePanel">
+<div class="panelBox">
+<h3>❓ Student Doubt Board</h3>
+<input id="doubtText" placeholder="Ask doubt">
+<button onclick="addDoubt()">Post</button>
+<div id="doubts"></div>
+</div>
+</div>
+
+<div id="quizPanel" class="modulePanel">
+<div class="panelBox">
+<h3>🧠 Quiz Generator</h3>
+<button onclick="generateQuiz()">Generate Quiz</button>
+<div id="quiz"></div>
+</div>
+</div>
+
+<div id="studentPanel" class="modulePanel">
+<div class="panelBox">
+<h3>👨‍🎓 Student Reading</h3>
+<div id="studentProgress"></div>
+</div>
+</div>
+
+<div id="analyticsPanel" class="modulePanel">
+<div class="panelBox">
+<h3>📊 Reading Analytics</h3>
+<div id="analytics"></div>
+</div>
+</div>
+
 <script>
 
 let books=[
-"Artificial Intelligence","Machine Learning","Python Programming",
-"Cyber Security","Cloud Computing","Robotics","Data Science",
-"Blockchain","Deep Learning","Deep Neural Networks",
-"Deep Learning with Python","Deep Learning Applications",
-"Computer Networks","Operating Systems","Algorithms",
+"Artificial Intelligence","Machine Learning","Deep Learning","Neural Networks",
+"Python Programming","Cyber Security","Cloud Computing","Robotics",
+"Data Science","Big Data","Blockchain","Computer Networks",
+"Operating Systems","Algorithms","Database Systems",
 "Life Lessons","Positive Thinking","Time Management",
-"Leadership Skills","Public Speaking","Mind Power",
-"Emotional Intelligence"
+"Leadership Skills","Public Speaking","Mind Power","Emotional Intelligence"
 ];
 
 let images=[
@@ -208,18 +202,16 @@ let images=[
 let grid=document.getElementById("bookGrid");
 
 function loadBooks(list){
+
 grid.innerHTML="";
 
 list.forEach((b,i)=>{
 
 let d=document.createElement("div");
-
 d.className="book";
 d.style.backgroundImage="url("+images[i%images.length]+")";
-
 d.innerText=b;
-
-d.onclick=()=>openBook(i);
+d.onclick=()=>openBook(b);
 
 grid.appendChild(d);
 
@@ -235,70 +227,48 @@ function filterBooks(){
 
 let t=searchBox.value.toLowerCase();
 
-loadBooks(books.filter(b=>b.toLowerCase().includes(t)));
-
+if(t==""){
+loadBooks(books);
+return;
 }
 
-/* SMART SEARCH AI SUGGESTIONS */
-
-function smartSuggest(){
-
-let t=searchBox.value.toLowerCase();
-
-let box=document.getElementById("suggestions");
-
-box.innerHTML="";
-
-if(t.length<1) return;
+let results=[];
 
 books.forEach(b=>{
-
 if(b.toLowerCase().includes(t)){
-
-let d=document.createElement("div");
-
-d.innerText=b;
-
-d.onclick=function(){
-
-searchBox.value=b;
-
-box.innerHTML="";
-
-filterBooks();
-
+results.push(b);
 }
-
-box.appendChild(d);
-
-}
-
 });
 
+books.forEach(b=>{
+if(!results.includes(b) && results.length<8){
+if(b.toLowerCase().includes("learning") && t.includes("learning")) results.push(b);
+if(b.toLowerCase().includes("data") && t.includes("data")) results.push(b);
+if(b.toLowerCase().includes("intelligence") && t.includes("ai")) results.push(b);
+}
+});
+
+loadBooks(results.length?results:books);
+
 }
 
-function openBook(i){
+function openBook(name){
 
 libraryView.style.display="none";
 reader.style.display="block";
 
-bookTitle.innerText=books[i];
-
-pageText.innerText="Teaching content of "+books[i];
+bookTitle.innerText=name;
+pageText.innerText="Teaching content of "+name;
 
 }
 
 function back(){
-
 reader.style.display="none";
 libraryView.style.display="flex";
-
 }
 
 function setMode(m){
-
 document.body.className=m;
-
 }
 
 function facultyLogin(){
@@ -306,14 +276,74 @@ function facultyLogin(){
 let pass=document.getElementById("fpass").value;
 
 if(pass=="1234"){
-
 facultyStatus.innerHTML="✅ Faculty Logged In";
-
 }else{
-
 facultyStatus.innerHTML="❌ Wrong Password";
+}
 
 }
+
+function saveLesson(){
+
+let topic=document.getElementById("lessonTopic").value;
+
+let d=document.createElement("div");
+d.innerText=topic;
+lessonList.appendChild(d);
+
+}
+
+function addNote(){
+
+let txt=document.getElementById("noteText").value;
+
+let d=document.createElement("div");
+d.innerText=txt;
+notes.appendChild(d);
+
+}
+
+function collab(){
+
+let idea=prompt("Share teaching idea");
+
+let d=document.createElement("div");
+d.innerText=idea;
+collabBox.appendChild(d);
+
+}
+
+function addDoubt(){
+
+let txt=document.getElementById("doubtText").value;
+
+let d=document.createElement("div");
+d.innerText=txt;
+doubts.appendChild(d);
+
+}
+
+function generateQuiz(){
+
+quiz.innerHTML=
+"Q1: What is Artificial Intelligence?<br>"+
+"Q2: What is Machine Learning?<br>"+
+"Q3: Define Data Science.";
+
+}
+
+function showPanel(id){
+
+document.getElementById("libraryView").style.display="none";
+document.querySelectorAll(".modulePanel").forEach(p=>p.style.display="none");
+document.getElementById(id).style.display="block";
+
+}
+
+function showLibrary(){
+
+document.getElementById("libraryView").style.display="flex";
+document.querySelectorAll(".modulePanel").forEach(p=>p.style.display="none");
 
 }
 
