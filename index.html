@@ -1,388 +1,242 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Smart Library System</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Library System | College Department</title>
+    <style>
+        /* Base Styles */
+        :root {
+            --primary-color: #004b87;
+            --secondary-color: #fca311;
+            --bg-color: #f4f7f6;
+            --text-color: #333;
+            --white: #ffffff;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
 
-<style>
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
 
-:root{--bg:#eef2f7;--text:#000;--card:#fff;--header:#0d1b2a;}   
-.dark{--bg:#121212;--text:#fff;--card:#1e1e1e;--header:#000;}
-.ambience{--bg:#0b132b;--text:#eaeaea;--card:#1c2541;--header:#000;}
+        /* Navigation */
+        header {
+            background-color: var(--primary-color);
+            color: var(--white);
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
 
-body{
-margin:0;
-font-family:Segoe UI;
-background:var(--bg);
-color:var(--text);
-}
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
 
-header{
-background:var(--header);
-color:white;
-padding:10px;
-text-align:center;
-}
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 20px;
+        }
 
-.topMenu{
-display:flex;
-flex-wrap:wrap;
-justify-content:center;
-gap:10px;
-margin-top:8px;
-}
+        nav a {
+            color: var(--white);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
 
-.topMenu button{
-padding:6px 12px;
-border:none;
-border-radius:6px;
-cursor:pointer;
-}
+        nav a:hover {
+            color: var(--secondary-color);
+        }
 
-.layout{
-display:flex;
-height:calc(100vh - 120px);
-}
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(rgba(0, 75, 135, 0.8), rgba(0, 75, 135, 0.8)), url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fit=crop&q=80&w=1920') center/cover;
+            height: 60vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: var(--white);
+            text-align: center;
+            padding: 0 20px;
+        }
 
-.sidebar{
-width:260px;
-background:var(--card);
-padding:15px;
-overflow:auto;
-box-shadow:2px 0 10px rgba(0,0,0,0.1);
-}
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
 
-.sidebar input,.sidebar button{
-width:100%;
-padding:8px;
-margin-top:6px;
-border-radius:6px;
-border:1px solid #aaa;
-}
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            max-width: 600px;
+        }
 
-.suggestions{
-background:#fff;
-border:1px solid #ccc;
-border-radius:6px;
-margin-top:4px;
-max-height:120px;
-overflow:auto;
-}
+        /* Search Bar */
+        .search-container {
+            display: flex;
+            width: 100%;
+            max-width: 600px;
+            background: var(--white);
+            border-radius: 30px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
 
-.suggestions div{
-padding:6px;
-cursor:pointer;
-}
+        .search-container input {
+            flex: 1;
+            padding: 15px 25px;
+            border: none;
+            outline: none;
+            font-size: 1rem;
+        }
 
-.suggestions div:hover{
-background:#eee;
-}
+        .search-container button {
+            background: var(--secondary-color);
+            color: var(--white);
+            border: none;
+            padding: 0 30px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            transition: background 0.3s;
+        }
 
-.bookshelf{
-flex:1;
-padding:15px;
-display:grid;
-grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
-gap:18px;
-overflow-y:auto;
-}
+        .search-container button:hover {
+            background: #e08e0b;
+        }
 
-.book{
-height:220px;
-border-radius:12px;
-background-size:cover;
-background-position:center;
-display:flex;
-align-items:flex-end;
-justify-content:center;
-color:white;
-font-weight:bold;
-padding:10px;
-text-shadow:0 2px 6px black;
-cursor:pointer;
-transition:.3s;
-}
+        /* Features Section */
+        .features {
+            padding: 4rem 5%;
+            text-align: center;
+        }
 
-.book:hover{transform:scale(1.06)}
+        .features h2 {
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-bottom: 3rem;
+        }
 
-.modulePanel{
-display:none;
-padding:20px;
-}
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
 
-.panelBox{
-background:var(--card);
-padding:15px;
-border-radius:10px;
-margin-bottom:10px;
-}
+        .card {
+            background: var(--white);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            transition: transform 0.3s;
+        }
 
-#reader{display:none;padding:20px}
-.page{background:white;padding:20px;border-radius:10px}
+        .card:hover {
+            transform: translateY(-10px);
+        }
 
-</style>
+        .card h3 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        /* Footer */
+        footer {
+            background: #222;
+            color: #ddd;
+            text-align: center;
+            padding: 2rem 5%;
+            margin-top: auto;
+        }
+
+        footer p {
+            margin-bottom: 10px;
+        }
+    </style>
 </head>
-
 <body>
 
-<header>
-
-<h2>📚 Smart Library System</h2>
-
-<div class="topMenu">
-
-<button onclick="showLibrary()">Library</button>
-<button onclick="showPanel('teachPanel')">Teaching Mode</button>
-<button onclick="showPanel('lessonPanel')">Lesson Planner</button>
-<button onclick="showPanel('notesPanel')">Notes Share</button>
-<button onclick="showPanel('collabPanel')">Faculty Collaboration</button>
-<button onclick="showPanel('doubtPanel')">Doubt Board</button>
-<button onclick="showPanel('quizPanel')">Quiz Generator</button>
-<button onclick="showPanel('studentPanel')">Student Panel</button>
-<button onclick="showPanel('analyticsPanel')">Reading Analytics</button>
-
-</div>
-
-</header>
-
-<div class="layout" id="libraryView">
-
-<div class="sidebar">
-
-<h3>🔍 Search</h3>
-<input id="searchBox" onkeyup="filterBooks();smartSuggest()" placeholder="Search book">
-<div id="suggestions" class="suggestions"></div>
-
-<h3>🎛 Modes</h3>
-<button onclick="setMode('')">Normal</button>
-<button onclick="setMode('dark')">Dark</button>
-<button onclick="setMode('ambience')">Library</button>
-
-<h3>🤖 AI Recommend</h3>
-<div id="recommend">---</div>
-
-<hr>
-
-<h3>👨‍🏫 Faculty Login</h3>
-
-<input id="fid" placeholder="Faculty ID">
-<input id="fpass" type="password" placeholder="Password">
-<button onclick="facultyLogin()">Login</button>
-
-<div id="facultyStatus"></div>
-
-</div>
-
-<div class="bookshelf" id="bookGrid"></div>
-
-</div>
-
-<div id="reader">
-<h2 id="bookTitle"></h2>
-<div class="page" id="pageText"></div>
-<button onclick="bookmarkPage()">⭐ Bookmark</button>
-<button onclick="back()">⬅ Back</button>
-</div>
-
-<script>
-
-let books=[
-"Artificial Intelligence","Machine Learning","Python Programming",
-"Cyber Security","Cloud Computing","Robotics","Data Science",
-"Blockchain","Deep Learning","Deep Neural Networks",
-"Deep Learning with Python","Deep Learning Applications",
-"Computer Networks","Operating Systems","Algorithms",
-"Life Lessons","Positive Thinking","Time Management",
-"Leadership Skills","Public Speaking","Mind Power",
-"Emotional Intelligence"
-];
-
-let images=[
-"https://images.unsplash.com/photo-1677442136019-21780ecad995",
-"https://images.unsplash.com/photo-1555949963-aa79dcee981c",
-"https://images.unsplash.com/photo-1515879218367-8466d910aaa4",
-"https://images.unsplash.com/photo-1518779578993-ec3579fee39f",
-"https://images.unsplash.com/photo-1451187580459-43490279c0fa"
-];
-
-let grid=document.getElementById("bookGrid");
-
-function loadBooks(list){
-grid.innerHTML="";
-
-list.forEach((b,i)=>{
-
-let d=document.createElement("div");
-
-d.className="book";
-d.style.backgroundImage="url("+images[i%images.length]+")";
-
-d.innerText=b;
-
-d.onclick=()=>openBook(i);
-
-grid.appendChild(d);
-
-});
-
-recommend.innerText=list[Math.floor(Math.random()*list.length)];
-
-}
-
-loadBooks(books);
-
-function filterBooks(){
-
-let t=searchBox.value.toLowerCase();
-
-loadBooks(books.filter(b=>b.toLowerCase().includes(t)));
-
-}
-
-/* SMART SEARCH AI SUGGESTIONS */
-
-function smartSuggest(){
-
-let t=searchBox.value.toLowerCase();
-
-let box=document.getElementById("suggestions");
-
-box.innerHTML="";
-
-if(t.length<1) return;
-
-books.forEach(b=>{
-
-if(b.toLowerCase().includes(t)){
-
-let d=document.createElement("div");
-
-d.innerText=b;
-
-d.onclick=function(){
-
-searchBox.value=b;
-
-box.innerHTML="";
-
-filterBooks();
-
-}
-
-box.appendChild(d);
-
-}
-
-});
-
-}
-
-function openBook(i){
-
-libraryView.style.display="none";
-reader.style.display="block";
-
-bookTitle.innerText=books[i];
-
-pageText.innerText="Teaching content of "+books[i];
-
-}
-
-function back(){
-
-reader.style.display="none";
-libraryView.style.display="flex";
-
-}
-
-function setMode(m){
-
-document.body.className=m;
-
-}
-
-function facultyLogin(){
-
-let pass=document.getElementById("fpass").value;
-
-if(pass=="1234"){
-
-facultyStatus.innerHTML="✅ Faculty Logged In";
-
-}else{
-
-facultyStatus.innerHTML="❌ Wrong Password";
-
-}
-
-}
-
-/* ===========================
-TEACHING MODE BACKEND
-=========================== */
-
-let TeachingMode={
-enabled:false,
-difficulty:"normal",
-
-toggle:function(){
-this.enabled=!this.enabled;
-return this.enabled?"Teaching Mode ON":"Teaching Mode OFF";
-},
-
-stepByStep:function(topic){
-return[
-"1. Understand basics of "+topic,
-"2. Learn key concepts",
-"3. Study examples",
-"4. Practice exercises"
-];
-},
-
-generateExample:function(topic){
-return "Example project using "+topic;
-},
-
-generateQuiz:function(topic){
-return[
-"What is "+topic+"?",
-"Explain basic concept of "+topic,
-"Where is "+topic+" used?"
-];
-},
-
-suggestDoubt:function(topic){
-return[
-"What is the main idea of "+topic+"?",
-"Why is "+topic+" important?",
-"Where is "+topic+" used?"
-];
-},
-
-explainCode:function(code){
-return "Code explanation:\n"+code;
-},
-
-learningTips:function(topic){
-return[
-"Practice "+topic+" daily",
-"Create mini projects",
-"Teach someone else"
-];
-},
-
-setDifficulty:function(level){
-this.difficulty=level;
-return "Difficulty set to "+level;
-},
-
-summary:function(topic){
-return topic+" quick summary for teaching.";
-}
-
-};
-
-</script>
-
+    <header>
+        <div class="logo">
+            <span>📚</span> SmartLib College
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#home">Home</a></li>
+                <li><a href="#catalog">Catalog</a></li>
+                <li><a href="#services">Services</a></li>
+                <li><a href="#department">Department Info</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="hero" id="home">
+        <h1>Welcome to the Smart Library System</h1>
+        <p>Access millions of digital resources, reserve study spaces, and explore our AI-powered catalog.</p>
+        
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Search books, articles, authors...">
+            <button onclick="performSearch()">Search</button>
+        </div>
+    </section>
+
+    <section class="features" id="services">
+        <h2>Department Services</h2>
+        <div class="grid">
+            <div class="card">
+                <h3>📖 E-Resource Portal</h3>
+                <p>24/7 access to academic journals, databases, and e-books from anywhere in the world.</p>
+            </div>
+            <div class="card">
+                <h3>🤖 AI Recommendations</h3>
+                <p>Get personalized reading and research material suggestions based on your coursework.</p>
+            </div>
+            <div class="card">
+                <h3>🏷️ RFID Checkout</h3>
+                <p>Self-service kiosks with automated RFID tagging for instant, seamless book borrowing.</p>
+            </div>
+            <div class="card">
+                <h3>💻 Study Room Booking</h3>
+                <p>Reserve collaborative workspaces and quiet pods using our smart scheduling system.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 SmartLib College Department. All rights reserved.</p>
+        <p>Email: library@smartlibcollege.edu | Phone: +1 (555) 123-4567</p>
+    </footer>
+
+    <script>
+        // Simple search function demonstration
+        function performSearch() {
+            const query = document.getElementById('searchInput').value;
+            if(query.trim() === "") {
+                alert("Please enter a search term.");
+            } else {
+                alert("Searching catalog for: " + query + "\n(This would connect to your backend database)");
+            }
+        }
+    </script>
 </body>
 </html>
