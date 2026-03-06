@@ -3,198 +3,196 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EduSmart | Advanced Library & Learning Hub</title>
+    <title>NexLib | AI-Powered Smart Library System</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
-        body { font-family: 'Inter', sans-serif; transition: all 0.3s ease; }
-        .glass-nav { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); }
-        .dashboard-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
-        .book-hover:hover .overlay { opacity: 1; }
+        :root { --primary: #1e40af; --secondary: #3b82f6; }
+        .glass { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
+        .sidebar-link:hover { background: #f1f5f9; color: var(--primary); transition: 0.3s; }
+        .ai-glow { box-shadow: 0 0 15px rgba(59, 130, 246, 0.5); }
     </style>
 </head>
-<body class="bg-slate-50 text-gray-800">
+<body class="bg-slate-100 text-slate-900 font-sans leading-normal">
 
-    <nav class="glass-nav sticky top-0 z-50 border-b border-gray-200 px-6 py-3">
-        <div class="max-w-7xl mx-auto flex justify-between items-center">
-            <div class="flex items-center gap-3">
-                <div class="bg-indigo-600 p-2 rounded-lg text-white">
-                    <i class="fas fa-microchip text-xl"></i>
+    <div class="flex h-screen overflow-hidden">
+        <aside class="w-64 bg-white border-r border-slate-200 hidden lg:flex flex-col">
+            <div class="p-6 border-b border-slate-100">
+                <h1 class="text-2xl font-black text-blue-700 flex items-center gap-2">
+                    <i class="fas fa-brain"></i> NexLib
+                </h1>
+            </div>
+            <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
+                <p class="text-xs font-bold text-slate-400 uppercase px-3">Main Menu</p>
+                <a href="#" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg font-medium"><i class="fas fa-th-large"></i> Dashboard</a>
+                <a href="#" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg font-medium"><i class="fas fa-book"></i> Catalog</a>
+                
+                <p class="text-xs font-bold text-slate-400 uppercase px-3 mt-6">Staff Modules</p>
+                <button onclick="openStaffTeaching()" class="sidebar-link w-full flex items-center gap-3 px-3 py-2 rounded-lg font-medium"><i class="fas fa-chalkboard-teacher text-orange-500"></i> Teaching Hub</button>
+                <button onclick="generateQuiz()" class="sidebar-link w-full flex items-center gap-3 px-3 py-2 rounded-lg font-medium"><i class="fas fa-robot text-purple-500"></i> AI Quiz Gen</button>
+                
+                <p class="text-xs font-bold text-slate-400 uppercase px-3 mt-6">Student Access</p>
+                <a href="#" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg font-medium"><i class="fas fa-bookmark text-blue-500"></i> My Bookmarks</a>
+                <a href="#" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg font-medium"><i class="fas fa-history"></i> Reading History</a>
+            </nav>
+            <div class="p-4 border-t border-slate-100">
+                <div class="flex items-center gap-3 bg-slate-50 p-3 rounded-xl">
+                    <img src="https://ui-avatars.com/api/?name=Staff+User&background=random" class="w-10 h-10 rounded-full">
+                    <div><p class="text-sm font-bold">Prof. Arunkumar</p><p class="text-xs text-slate-500">IT Department</p></div>
                 </div>
-                <h1 class="text-xl font-bold tracking-tight text-indigo-900">EduSmart <span class="text-blue-500 font-light text-sm">v2.0</span></h1>
             </div>
-            
-            <div class="hidden md:flex items-center space-x-6 text-sm font-semibold">
-                <a href="#" class="text-indigo-600 border-b-2 border-indigo-600">Home</a>
-                <a href="#" class="hover:text-indigo-600">AI Tutor</a>
-                <a href="#" class="hover:text-indigo-600">Global Archive</a>
-                <button onclick="toggleModal('staffLogin')" class="bg-gray-100 px-4 py-2 rounded-lg hover:bg-gray-200">Staff Portal</button>
-                <button onclick="toggleModal('studentLogin')" class="bg-indigo-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-indigo-700">Student Login</button>
-            </div>
-        </div>
-    </nav>
+        </aside>
 
-    <main class="max-w-7xl mx-auto p-4 md:p-8">
-        
-        <header class="mb-12">
-            <h2 class="text-3xl font-extrabold text-gray-900 mb-4">What do you want to learn today?</h2>
-            <div class="flex flex-col md:flex-row gap-4">
-                <div class="relative flex-1">
-                    <i class="fas fa-search absolute left-4 top-4 text-gray-400"></i>
-                    <input type="text" id="megaSearch" onkeyup="smartSearch()" placeholder="Search Technical, Non-Technical, or Research Papers..." 
-                        class="w-full pl-12 pr-4 py-4 rounded-2xl border-none ring-1 ring-gray-200 focus:ring-4 focus:ring-indigo-200 shadow-sm outline-none transition-all">
+        <main class="flex-1 overflow-y-auto bg-slate-50">
+            <header class="glass sticky top-0 z-30 p-4 border-b border-slate-200 flex justify-between items-center">
+                <div class="flex items-center bg-white border border-slate-200 rounded-full px-4 py-2 w-1/2 ai-glow">
+                    <i class="fas fa-search text-slate-400 mr-2"></i>
+                    <input type="text" id="mainSearch" onkeyup="smartLibrarySearch()" placeholder="Search by Topic, ISBN, Author or Department..." class="w-full bg-transparent outline-none text-sm">
+                    <button onclick="startVoiceSearch()" class="text-blue-600 hover:text-blue-800"><i class="fas fa-microphone"></i></button>
                 </div>
-                <select id="deptFilter" onchange="smartSearch()" class="bg-white px-6 py-4 rounded-2xl border-none ring-1 ring-gray-200 shadow-sm outline-none font-medium">
-                    <option value="all">All Departments</option>
-                    <option value="technical">Technical (Engg)</option>
-                    <option value="non-technical">Non-Technical (Arts/Lit)</option>
-                    <option value="research">Research Papers</option>
-                </select>
-                <button onclick="generateAIQuiz()" class="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-6 py-4 rounded-2xl font-bold shadow-lg flex items-center gap-2">
-                    <i class="fas fa-robot"></i> AI Quiz
-                </button>
-            </div>
-            <p id="aiHint" class="mt-3 text-sm text-indigo-500 font-medium italic"></p>
-        </header>
+                <div class="flex gap-4">
+                    <div class="text-right hidden sm:block">
+                        <p id="liveTime" class="text-sm font-bold text-slate-700"></p>
+                        <p class="text-[10px] text-green-500 font-bold uppercase">System Online</p>
+                    </div>
+                    <button class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-lg hover:bg-blue-700">Student Portal</button>
+                </div>
+            </header>
 
-        <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
-            
-            <aside class="lg:col-span-1 space-y-6">
-                <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
-                    <h3 class="font-bold mb-4 flex items-center gap-2"><i class="fas fa-chart-line text-green-500"></i> Learning Tracker</h3>
-                    <div class="space-y-4">
-                        <div>
-                            <div class="flex justify-between text-xs mb-1"><span>Python Course</span><span>75%</span></div>
-                            <div class="w-full bg-gray-100 h-2 rounded-full"><div class="bg-green-500 h-2 rounded-full w-3/4"></div></div>
+            <div class="p-6 md:p-8 space-y-8">
+                <section class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="p-2 bg-blue-50 text-blue-600 rounded-lg"><i class="fas fa-book-reader"></i></span>
+                            <span class="text-xs font-bold text-green-500">+12%</span>
                         </div>
+                        <h3 class="text-2xl font-black">2,450</h3>
+                        <p class="text-xs text-slate-500 font-medium uppercase tracking-wider">Active Readers</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="p-2 bg-purple-50 text-purple-600 rounded-lg"><i class="fas fa-file-pdf"></i></span>
+                        </div>
+                        <h3 class="text-2xl font-black">8,900+</h3>
+                        <p class="text-xs text-slate-500 font-medium uppercase tracking-wider">E-Resources</p>
+                    </div>
+                    </section>
+
+                <div>
+                    <div class="flex justify-between items-end mb-6">
                         <div>
-                            <div class="flex justify-between text-xs mb-1"><span>Data Structures</span><span>30%</span></div>
-                            <div class="w-full bg-gray-100 h-2 rounded-full"><div class="bg-blue-500 h-2 rounded-full w-1/3"></div></div>
+                            <h2 class="text-2xl font-black text-slate-800">Smart Catalog</h2>
+                            <p class="text-sm text-slate-500">AI-suggested books based on your Department (IT/CSE)</p>
+                        </div>
+                        <div class="flex gap-2">
+                            <button class="px-4 py-2 bg-white rounded-lg border text-sm font-bold shadow-sm">Technical</button>
+                            <button class="px-4 py-2 bg-white rounded-lg border text-sm font-bold shadow-sm">Non-Tech</button>
                         </div>
                     </div>
-                </div>
 
-                <div class="bg-indigo-900 text-white p-6 rounded-3xl shadow-xl">
-                    <h3 class="font-bold mb-4"><i class="fas fa-chalkboard-teacher text-yellow-400"></i> Staff Dashboard</h3>
-                    <button class="w-full bg-white/10 hover:bg-white/20 p-3 rounded-xl mb-2 text-left text-sm flex items-center gap-2">
-                        <i class="fas fa-plus"></i> Add New Resources
-                    </button>
-                    <button onclick="startVoiceTeaching()" class="w-full bg-yellow-500 hover:bg-yellow-400 p-3 rounded-xl text-indigo-900 font-bold text-sm flex items-center gap-2">
-                        <i class="fas fa-microphone"></i> Voice Teaching Mode
-                    </button>
+                    <div id="bookGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                        </div>
                 </div>
-            </aside>
-
-            <section class="lg:col-span-3">
-                <div class="flex justify-between items-center mb-6">
-                    <h3 class="text-xl font-bold">Recommended for You</h3>
-                    <div class="flex gap-2">
-                        <button class="p-2 bg-white rounded-lg border text-gray-400 hover:text-indigo-600"><i class="fas fa-th-large"></i></button>
-                        <button class="p-2 bg-white rounded-lg border text-gray-400 hover:text-indigo-600"><i class="fas fa-list"></i></button>
-                    </div>
-                </div>
-
-                <div id="bookDisplay" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                    </div>
-            </section>
-        </div>
-    </main>
-
-    <div id="readerPanel" class="fixed inset-0 bg-black/80 z-[60] hidden flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-5xl h-[90vh] rounded-3xl flex overflow-hidden">
-            <div class="flex-1 p-8 overflow-y-auto">
-                <div class="flex justify-between mb-6">
-                    <h2 id="readingTitle" class="text-2xl font-bold">Book Content</h2>
-                    <button onclick="closeReader()" class="text-2xl">&times;</button>
-                </div>
-                <p id="bookContentText" class="text-gray-600 leading-relaxed">Loading digital content...</p>
             </div>
-            <div class="w-80 bg-gray-50 border-l p-6">
-                <h4 class="font-bold mb-4"><i class="fas fa-sticky-note"></i> My Smart Notes</h4>
-                <textarea class="w-full h-40 p-3 border rounded-xl text-sm mb-4" placeholder="Take notes while reading..."></textarea>
-                <button class="w-full bg-indigo-600 text-white py-2 rounded-lg">Save Note</button>
-                <hr class="my-6">
-                <button class="w-full border border-indigo-600 py-2 rounded-lg text-indigo-600 mb-2">Invite Collaborator</button>
-                <p class="text-[10px] text-center text-gray-400 italic">Faculty: Prof. Rajesh is online</p>
+        </main>
+    </div>
+
+    <div id="teachingModal" class="fixed inset-0 bg-slate-900/80 z-[100] hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-6xl h-[85vh] rounded-3xl overflow-hidden flex flex-col md:flex-row shadow-2xl">
+            <div class="flex-1 bg-slate-900 text-white p-8 overflow-y-auto relative">
+                <button onclick="closeStaffTeaching()" class="absolute top-4 right-4 text-3xl">&times;</button>
+                <h2 class="text-3xl font-bold mb-4 text-blue-400">Staff Teaching Console</h2>
+                <div class="aspect-video bg-slate-800 rounded-2xl flex items-center justify-center border border-slate-700">
+                    <p class="text-slate-500 italic">Live PDF Stream / Screen Share Active</p>
+                </div>
+                <div class="mt-6">
+                    <h3 class="font-bold mb-2">Live Transcript (Voice-to-Notes)</h3>
+                    <div class="bg-white/5 p-4 rounded-xl text-sm font-mono text-green-400 min-h-[100px]">
+                        AI: "Listening to your lecture... Key points like 'Binary Trees' and 'Recursion' are being saved to Student Study Tracker."
+                    </div>
+                </div>
+            </div>
+            <div class="w-full md:w-80 p-6 bg-slate-50 overflow-y-auto">
+                <h4 class="font-bold text-indigo-900 mb-4 uppercase text-xs tracking-widest">Connected Students (42)</h4>
+                <div class="space-y-3">
+                    <div class="flex items-center gap-2 p-2 bg-white rounded-lg border border-slate-200">
+                        <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                        <p class="text-sm font-bold">Karthick S (Active)</p>
+                    </div>
+                    </div>
             </div>
         </div>
     </div>
 
     <script>
-        const libraryData = [
-            { id: 1, title: "Deep Learning with Python", category: "technical", rating: 4.8, author: "Francois Chollet", info: "Master modern AI with Keras.", status: "Staff Pick" },
-            { id: 2, title: "The Psychology of Money", category: "non-technical", rating: 4.5, author: "Morgan Housel", info: "Timeless lessons on wealth & greed.", status: "Popular" },
-            { id: 3, title: "Advanced Fluid Mechanics", category: "technical", rating: 4.2, author: "White & Majumdar", info: "Core mechanical engineering resource.", status: "Available" },
-            { id: 4, title: "Digital Marketing Strategy", category: "non-technical", rating: 4.7, author: "Simon Kingsnorth", info: "Practical guide to online branding.", status: "Available" },
-            { id: 5, title: "Quantum Computing basics", category: "technical", rating: 4.9, author: "Nielsen & Chuang", info: "Foundation of future computing.", status: "Research" },
-            { id: 6, title: "Brief History of Time", category: "non-technical", rating: 5.0, author: "Stephen Hawking", info: "Exploring the cosmos.", status: "Legendary" }
+        const libraryDB = [
+            { id: 101, title: "Modern Operating Systems", author: "Andrew S. Tanenbaum", dept: "CSE/IT", type: "Technical", rating: 4.9, stock: 12, isbn: "978-0133591620" },
+            { id: 102, title: "Introduction to Algorithms", author: "Thomas H. Cormen", dept: "CSE", type: "Technical", rating: 4.8, stock: 5, isbn: "978-0262033848" },
+            { id: 103, title: "Atomic Habits", author: "James Clear", dept: "General", type: "Non-Technical", rating: 5.0, stock: 20, isbn: "978-0735211292" },
+            { id: 104, title: "VLSI Design", author: "Pucknell", dept: "ECE", type: "Technical", rating: 4.4, stock: 8, isbn: "978-8120309871" }
         ];
 
         function renderBooks(data) {
-            const container = document.getElementById('bookDisplay');
-            container.innerHTML = data.map(book => `
-                <div class="bg-white rounded-3xl p-6 border border-gray-100 dashboard-card transition-all">
+            const grid = document.getElementById('bookGrid');
+            grid.innerHTML = data.map(book => `
+                <div class="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm hover:shadow-xl transition-all group">
                     <div class="flex justify-between items-start mb-4">
-                        <span class="text-[10px] font-bold px-3 py-1 bg-indigo-50 text-indigo-600 rounded-full uppercase tracking-tighter">${book.category}</span>
-                        <button onclick="toggleBookmark(${book.id})" class="text-gray-300 hover:text-red-500"><i class="fas fa-bookmark"></i></button>
+                        <div class="bg-blue-50 text-blue-600 text-[10px] font-black px-2 py-1 rounded-md uppercase tracking-widest">${book.dept}</div>
+                        <span class="text-xs font-bold text-slate-400">ID: ${book.id}</span>
                     </div>
-                    <h4 class="font-bold text-lg mb-1 leading-tight">${book.title}</h4>
-                    <p class="text-xs text-gray-400 mb-4 font-semibold">By ${book.author}</p>
-                    <div class="flex items-center gap-2 mb-4">
-                        <div class="text-yellow-400 text-xs">
-                            ${'<i class="fas fa-star"></i>'.repeat(Math.floor(book.rating))}
+                    <h3 class="font-bold text-lg text-slate-800 group-hover:text-blue-600 transition-colors">${book.title}</h3>
+                    <p class="text-sm text-slate-500 mb-4 italic">By ${book.author}</p>
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="flex-1 bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                            <div class="bg-blue-600 h-full w-[80%]"></div>
                         </div>
-                        <span class="text-xs font-bold text-gray-600">${book.rating}</span>
+                        <span class="text-[10px] font-bold text-slate-400">Stock: ${book.stock}</span>
                     </div>
-                    <p class="text-sm text-gray-500 mb-6 line-clamp-2">${book.info}</p>
                     <div class="flex gap-2">
-                        <button onclick="openReader('${book.title}')" class="flex-1 bg-indigo-600 text-white py-3 rounded-xl text-xs font-bold hover:bg-indigo-700 shadow-md">Read Now</button>
-                        <button onclick="alert('Added to your borrowing list')" class="bg-gray-100 text-gray-600 px-4 py-3 rounded-xl hover:bg-gray-200 transition-colors"><i class="fas fa-plus"></i></button>
+                        <button onclick="borrowBook(${book.id})" class="flex-1 bg-slate-900 text-white py-2 rounded-lg text-xs font-bold hover:bg-blue-600 transition-all shadow-md">BORROW</button>
+                        <button class="px-3 py-2 border border-slate-200 rounded-lg hover:bg-slate-50"><i class="fas fa-ellipsis-v"></i></button>
                     </div>
                 </div>
             `).join('');
         }
 
-        function smartSearch() {
-            const query = document.getElementById('megaSearch').value.toLowerCase();
-            const filter = document.getElementById('deptFilter').value;
-            const hint = document.getElementById('aiHint');
-
-            const filtered = libraryData.filter(b => {
-                const matchQuery = b.title.toLowerCase().includes(query) || b.author.toLowerCase().includes(query);
-                const matchDept = filter === 'all' || b.category === filter;
-                return matchQuery && matchDept;
-            });
-
-            if(query.length > 2) {
-                hint.innerText = AI Suggestion: People searching for "${query}" also read "Advanced Algorithms";
-            } else { hint.innerText = ""; }
-
+        function smartLibrarySearch() {
+            const q = document.getElementById('mainSearch').value.toLowerCase();
+            const filtered = libraryDB.filter(b => 
+                b.title.toLowerCase().includes(q) || b.author.toLowerCase().includes(q) || b.dept.toLowerCase().includes(q)
+            );
             renderBooks(filtered);
         }
 
-        function openReader(title) {
-            document.getElementById('readerPanel').classList.remove('hidden');
-            document.getElementById('readingTitle').innerText = title;
-            document.getElementById('bookContentText').innerText = This is a smart digital preview of "${title}". In a real system, here we would integrate a PDF viewer or an e-pub reader module. Staff can use the Voice Teaching mode to dictate summaries to students.;
+        function startVoiceSearch() {
+            alert("Listening... Say the book name or department.");
+            // SpeechRecognition API logic goes here
         }
 
-        function closeReader() {
-            document.getElementById('readerPanel').classList.add('hidden');
+        function openStaffTeaching() {
+            document.getElementById('teachingModal').classList.remove('hidden');
         }
 
-        function generateAIQuiz() {
-            const topic = prompt("Enter topic for AI Quiz (e.g., Python, Fluid Mechanics):");
-            if(topic) alert(AI is generating 10 questions on ${topic}... Please wait.);
+        function closeStaffTeaching() {
+            document.getElementById('teachingModal').classList.add('hidden');
         }
 
-        function startVoiceTeaching() {
-            alert("Voice Teaching Mode Activated. System is listening to your lecture and auto-generating notes for students.");
+        function generateQuiz() {
+            const topic = prompt("Enter Topic for AI Quiz Generation:");
+            if(topic) alert(AI is analyzing Library Resources for '${topic}'... 10 MCQ Questions Generated.);
         }
 
-        // Initial Load
-        renderBooks(libraryData);
+        function borrowBook(id) {
+            alert(System validated Student ID. Book ${id} has been issued. Returning deadline: 2 weeks.);
+        }
+
+        setInterval(() => {
+            const now = new Date();
+            document.getElementById('liveTime').innerText = now.toLocaleTimeString();
+        }, 1000);
+
+        // Init
+        renderBooks(libraryDB);
     </script>
 </body>
 </html>
