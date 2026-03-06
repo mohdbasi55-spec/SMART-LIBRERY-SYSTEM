@@ -6,7 +6,7 @@
 
 <style>
 
-:root{--bg:#eef2f7;--text:#000;--card:#fff;--header:#0d1b2a;}
+:root{--bg:#eef2f7;--text:#000;--card:#fff;--header:#0d1b2a;}   
 .dark{--bg:#121212;--text:#fff;--card:#1e1e1e;--header:#000;}
 .ambience{--bg:#0b132b;--text:#eaeaea;--card:#1c2541;--header:#000;}
 
@@ -316,6 +316,71 @@ facultyStatus.innerHTML="❌ Wrong Password";
 }
 
 }
+
+/* ===========================
+TEACHING MODE BACKEND
+=========================== */
+
+let TeachingMode={
+enabled:false,
+difficulty:"normal",
+
+toggle:function(){
+this.enabled=!this.enabled;
+return this.enabled?"Teaching Mode ON":"Teaching Mode OFF";
+},
+
+stepByStep:function(topic){
+return[
+"1. Understand basics of "+topic,
+"2. Learn key concepts",
+"3. Study examples",
+"4. Practice exercises"
+];
+},
+
+generateExample:function(topic){
+return "Example project using "+topic;
+},
+
+generateQuiz:function(topic){
+return[
+"What is "+topic+"?",
+"Explain basic concept of "+topic,
+"Where is "+topic+" used?"
+];
+},
+
+suggestDoubt:function(topic){
+return[
+"What is the main idea of "+topic+"?",
+"Why is "+topic+" important?",
+"Where is "+topic+" used?"
+];
+},
+
+explainCode:function(code){
+return "Code explanation:\n"+code;
+},
+
+learningTips:function(topic){
+return[
+"Practice "+topic+" daily",
+"Create mini projects",
+"Teach someone else"
+];
+},
+
+setDifficulty:function(level){
+this.difficulty=level;
+return "Difficulty set to "+level;
+},
+
+summary:function(topic){
+return topic+" quick summary for teaching.";
+}
+
+};
 
 </script>
 
