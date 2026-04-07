@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #4facfe;
+            --secondary-color: #00f2fe;
+            --text-dark: #333;
+            --text-light: #777;
+            --white: #ffffff;
+            --error: #ff4d4d;
+        }
+
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            font-family: 'Inter', sans-serif;
+        }
+
+        .box {
+            width: 100%;
+            max-width: 400px;
+            background: var(--white);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+            text-align: center;
+        }
+
+        h2 {
+            margin-bottom: 30px;
+            color: var(--text-dark);
+            font-weight: 600;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px 15px;
+            margin-top: 5px;
+            border-radius: 10px;
+            border: 1px solid #e1e1e1;
+            font-size: 14px;
+            box-sizing: border-box; /* Prevents width overflow */
+            transition: 0.3s;
+            outline: none;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.2);
+        }
+
+        /* Specialized Rows */
+        .options-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 15px 0 25px;
+            font-size: 13px;
+            color: var(--text-light);
+        }
+
+        .options-row label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .options-row input[type="checkbox"] {
+            width: auto;
+            margin: 0 8px 0 0;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            border: none;
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(79, 172, 254, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .footer-link {
+            margin-top: 25px;
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        .footer-link a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .footer-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+<div class="box">
+    <h2>Welcome Back</h2>
+
+    <div class="input-group">
+        <input type="text" id="user_id" placeholder="User ID">
+    </div>
+    
+    <div class="input-group">
+        <input type="password" id="password" placeholder="Password">
+    </div>
+
+    <select id="role">
+        <option value="" disabled selected>Select your role</option>
+        <option value="Admin">Admin</option>
+        <option value="Teacher">Teacher</option>
+        <option value="Student">Student</option>
+    </select>
+
+    <div class="options-row">
+        <label><input type="checkbox" onclick="togglePassword()"> Show</label>
+        <label><input type="checkbox" id="remember"> Remember Me</label>
+    </div>
+
+    <button onclick="login()">Sign In</button>
+
+    <div class="footer-link">
+        Don't have an account? <a href="register.html">Create one</a>
+    </div>
+</div>
+
+<script>
+    // Logic remains functional as per your original script
+    function togglePassword(){
+        const pass = document.getElementById("password");
+        pass.type = pass.type === "password" ? "text" : "password";
+    }
+
+    async function hashPassword(password) {
+        const data = new TextEncoder().encode(password);
+        const hash = await crypto.subtle.digest("SHA-256", data);
+        return Array.from(new Uint8Array(hash))
+            .map(b => b.toString(16).padStart(2, "0"))
+            .join("");
+    }
+
+    async function login(){
+        const id = document.getElementById("user_id").value.trim();
+        const pass = document.getElementById("password").value;
+        const role = document.getElementById("role").value;
+        const remember = document.getElementById("remember").checked;
+
+        if(!id || !pass || !role){
+            alert("Please complete all fields.");
+            return;
+        }
+
+        const users = JSON.parse(localStorage.getItem("users")) || [];
+        const hashed = await hashPassword(pass);
+
+        const user = users.find(u => 
+            u.user_id === id && 
+            u.password === hashed &&
+            u.role === role
+        );
+
+        if(user){
+            const storage = remember ? localStorage : sessionStorage;
+            storage.setItem("currentUser", JSON.stringify(user));
+            
+            // Smoother feedback than a basic alert
+            console.log("Success");
+            
+            if(user.role === "Admin") window.location.href = "admin_dashboard.html";
+            else if(user.role === "Teacher") window.location.href = "bagup/teacher/dashboard.html";
+            else window.location.href = "student_dashboard.html";
+        } else {
+            alert("Invalid credentials. Please try again.");
+        }
+    }
+</script>
+
+</body>
+</html>

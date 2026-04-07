@@ -1,0 +1,45 @@
+<?php
+session_start();
+include 'db.php';
+
+// Notice Post Logic
+if(isset($_POST['submit_notice'])){
+    $title = mysqli_real_escape_string($conn, $_POST['title']);
+    $msg = mysqli_real_escape_string($conn, $_POST['message']);
+
+    $sql = "INSERT INTO notices (title, message) VALUES ('$title', '$msg')";
+    if(mysqli_query($conn, $sql)){
+        echo "<script>alert('Notice Posted Successfully!'); window.location='teacher_dashboard.php';</script>";
+    }
+}
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Post Notice | PRO-ARCHIVE</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { --bg: #050505; --surface: #111111; --primary: #00ff88; --text: #fff; }
+        body { background: var(--bg); color: var(--text); font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .form-card { background: var(--surface); padding: 30px; border-radius: 20px; width: 450px; border: 1px solid #222; }
+        input, textarea { width: 100%; background: #000; border: 1px solid #333; color: #fff; padding: 12px; border-radius: 10px; margin-bottom: 20px; box-sizing: border-box; }
+        .btn-post { width: 100%; background: var(--primary); color: #000; border: none; padding: 12px; border-radius: 10px; font-weight: bold; cursor: pointer; }
+        .btn-back { display: block; text-align: center; margin-top: 15px; color: #888; text-decoration: none; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+
+    <div class="form-card">
+        <h2 style="color:var(--primary); margin-top:0;"><i class="fas fa-bullhorn"></i> Post New Notice</h2>
+        <form action="" method="POST">
+            <input type="text" name="title" placeholder="Notice Title (e.g. Exam Update)" required>
+            <textarea name="message" rows="5" placeholder="Type the detailed message here..." required></textarea>
+            <button type="submit" name="submit_notice" class="btn-post">BROADCAST NOTICE</button>
+        </form>
+        <a href="teacher_dashboard.php" class="btn-back">Cancel & Go Back</a>
+    </div>
+
+</body>
+</html>

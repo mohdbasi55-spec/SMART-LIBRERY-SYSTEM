@@ -1,0 +1,26 @@
+<?php
+session_start();
+include 'db.php';
+
+// Student login check
+if(!isset($_SESSION['user_id'])){
+    die("Unauthorized access");
+}
+
+if(isset($_GET['book_name']) && isset($_GET['url'])) {
+    $student_id = $_SESSION['user_id'];
+    $book_name = mysqli_real_escape_string($conn, $_GET['book_name']);
+    $redirect_url = $_GET['url'];
+
+    // Reading history-la entry podalaam
+    // Unga transactions table-la 'Digital Read' nu status vachikalaam
+    $query = "INSERT INTO transactions (user_id, book_id, status, issue_date) 
+              VALUES ('$student_id', (SELECT book_id FROM books WHERE book_name='$book_name' LIMIT 1), 'Digital Read', NOW())";
+    
+    mysqli_query($conn, $query);
+
+    // Record panna udane original Project Gutenberg link-ku poidum
+    header("Location: " . $redirect_url);
+    exit();
+}
+?>

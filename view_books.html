@@ -1,0 +1,66 @@
+SELECT * FROM books
+<?php
+session_start();
+include 'db.php';
+
+// Fetching books to display
+$search = isset($_GET['search']) ? $_GET['search'] : '';
+$query = "SELECT * FROM books WHERE book_name LIKE '%$search%' OR author LIKE '%$search%'";
+$result = mysqli_query($conn, $query);
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Digital Library | Browse</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .book-card { border-radius: 20px; transition: 0.3s; height: 100%; border: none; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .book-card:hover { transform: scale(1.05); }
+        .status-badge { position: absolute; top: 10px; right: 10px; }
+    </style>
+</head>
+<body class="bg-light p-4">
+
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="fw-bold"><i class="fas fa-book-open text-primary me-2"></i> Browse Books</h3>
+        <a href="student_dashboard.php" class="btn btn-outline-secondary">Back to Dashboard</a>
+    </div>
+
+    <form method="GET" class="mb-4">
+        <div class="input-group shadow-sm">
+            <input type="text" name="search" class="form-control" placeholder="Search by name, author or subject..." value="<?php echo $search; ?>">
+            <button class="btn btn-primary" type="submit">Search</button>
+        </div>
+    </form>
+
+    <div class="row g-4">
+        <?php while($book = mysqli_fetch_assoc($result)) { ?>
+        <div class="col-md-3">
+            <div class="card book-card p-3">
+                <span class="badge <?php echo ($book['available_qty'] > 0) ? 'bg-success' : 'bg-danger'; ?> status-badge">
+                    <?php echo ($book['available_qty'] > 0) ? 'Available' : 'Out of Stock'; ?>
+                </span>
+                <div class="card-body text-center">
+                    <i class="fas fa-book fa-3x text-secondary mb-3"></i>
+                    <h6 class="fw-bold"><?php echo $book['book_name']; ?></h6>
+                    <small class="text-muted d-block mb-2">Author: <?php echo $book['author']; ?></small>
+                    <div class="text-warning mb-3">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+                    </div>
+                    <?php if($book['available_qty'] > 0) { ?>
+                        <button class="btn btn-sm btn-outline-primary w-100">Reserve Book</button>
+                    <?php } else { ?>
+                        <button class="btn btn-sm btn-secondary w-100" disabled>Notify Me</button>
+                    <?php } ?>
+                </div>
+            </div>
+        </div>
+        <?php } ?>
+    </div>
+</div>
+
+</body>
+</html>

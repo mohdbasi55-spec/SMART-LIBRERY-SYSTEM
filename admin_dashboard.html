@@ -1,0 +1,105 @@
+<?php
+session_start();
+include 'db.php';
+
+// Check if Admin is logged in
+if(!isset($_SESSION['role']) || $_SESSION['role'] != 'Admin'){
+    header("Location: login.php");
+    exit();
+}
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard | Smart Library</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { background: #f4f7f6; font-family: 'Poppins', sans-serif; }
+        .sidebar { height: 100vh; width: 250px; position: fixed; background: #2c3e50; color: white; padding-top: 20px; }
+        .sidebar a { color: #bdc3c7; text-decoration: none; padding: 15px 25px; display: block; transition: 0.3s; }
+        .sidebar a:hover { background: #34495e; color: white; }
+        .main-content { margin-left: 250px; padding: 30px; }
+        .stat-card { border: none; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .welcome-text { color: #2c3e50; font-weight: 700; }
+    </style>
+</head>
+<body>
+
+<div class="sidebar">
+    <h4 class="text-center mb-4">ADMIN PANEL</h4>
+    <hr>
+    <a href="admin_dashboard.html"><i class="fas fa-home me-2"></i> Dashboard</a>
+    <a href="manage_books.html"><i class="fas fa-book me-2"></i> Manage Books</a>
+    <a href="issue_book.html"><i class="fas fa-exchange-alt me-2"></i> Issue / Return</a>
+    <a href="view_users.html"><i class="fas fa-users me-2"></i> Manage Users</a>
+    <a href="reports.html"><i class="fas fa-file-chart-line me-2"></i> Reports</a>
+    <hr>
+    <a href="index.php" class="text-danger"><i class="fas fa-sign-out-alt me-2"></i> Logout</a>
+</div>
+
+<div class="main-content">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="welcome-text">Welcome, <?php echo $_SESSION['fullname']; ?>!</h2>
+        <span class="badge bg-primary px-3 py-2">Role: Administrator</span>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-3">
+            <div class="card stat-card p-4 bg-white">
+                <h6 class="text-muted small uppercase">Total Books</h6>
+                <h2 class="fw-bold">1,250</h2>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card stat-card p-4 bg-white text-success">
+                <h6 class="text-muted small uppercase">Available</h6>
+                <h2 class="fw-bold">840</h2>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card stat-card p-4 bg-white text-warning">
+                <h6 class="text-muted small uppercase">Books Issued</h6>
+                <h2 class="fw-bold">410</h2>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card stat-card p-4 bg-white text-danger">
+                <h6 class="text-muted small uppercase">Fine Collected</h6>
+                <h2 class="fw-bold">₹ 540</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-5">
+        <h4 class="mb-4 fw-bold">Quick Management</h4>
+        <div class="row g-4">
+            <div class="col-md-6">
+                <div class="card p-4 stat-card">
+                    <h5><i class="fas fa-plus-circle text-primary me-2"></i> Add New Resource</h5>
+                    <p class="small text-muted">Register new books, journals, or department projects into the system.</p>
+                    <a href="add_book.php" class="btn btn-primary btn-sm w-25">Go</a>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card p-4 stat-card">
+                    <h5><i class="fas fa-search text-success me-2"></i> Student Search</h5>
+                    <p class="small text-muted">Find student details using Roll Number to check their borrow history.</p>
+                    <a href="view_users.php" class="btn btn-success btn-sm w-25 text-white">Search</a>
+                </div>
+                <div class="col-md-6">
+    <div class="card p-4 stat-card">
+        <h5><i class="fas fa-users text-success me-2"></i> User Directory</h5>
+        <p class="small text-muted">View and manage all registered Students and Teachers.</p>
+        <a href="users.php"><i class="fas fa-users me-2"></i> Manage Users</a>
+    </div>
+</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

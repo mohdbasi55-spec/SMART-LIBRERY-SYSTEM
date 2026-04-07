@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Library | Issue & Return</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .card {
+            border-radius: 15px;
+        }
+
+        .title {
+            font-weight: bold;
+        }
+
+        .table th {
+            font-size: 14px;
+        }
+
+        .badge {
+            font-size: 13px;
+        }
+    </style>
+</head>
+
+<body class="p-4">
+
+<div class="container">
+
+    <div class="row g-4">
+
+        <!-- 🔹 ISSUE BOOK FORM -->
+        <div class="col-md-4">
+            <div class="card shadow p-4 border-0">
+                <h4 class="title text-primary mb-4">📚 Issue Book</h4>
+
+                <form method="POST">
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Student ID</label>
+                        <input type="text" name="student_id" class="form-control" placeholder="Enter Roll No" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Book ID</label>
+                        <input type="text" name="book_id" class="form-control" placeholder="Enter Book ID" required>
+                    </div>
+
+                    <button type="submit" name="issue_book_button" class="btn btn-primary w-100 fw-bold">
+                        Issue Now
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- 🔹 RETURN BOOK TABLE -->
+        <div class="col-md-8">
+            <div class="card shadow p-4 border-0">
+                <h4 class="title text-success mb-4">📥 Books to be Returned</h4>
+
+                <table class="table table-hover align-middle text-center">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Student ID</th>
+                            <th>Book ID</th>
+                            <th>Issue Date</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <!-- 🔁 PHP LOOP START -->
+                        <?php
+                        $get_issued = mysqli_query($conn, "SELECT * FROM transactions WHERE status='Issued'");
+
+                        if(mysqli_num_rows($get_issued) > 0){
+                            while($row = mysqli_fetch_assoc($get_issued)){
+                        ?>
+
+                        <tr>
+                            <td><?php echo $row['user_id']; ?></td>
+
+                            <td>
+                                <span class="badge bg-info text-dark">
+                                    <?php echo $row['book_id']; ?>
+                                </span>
+                            </td>
+
+                            <td><?php echo $row['issue_date']; ?></td>
+
+                            <td>
+                                <a href="issue_book.php?return_id=<?php echo $row['id']; ?>&b_id=<?php echo $row['book_id']; ?>" 
+                                   class="btn btn-sm btn-success px-3"
+                                   onclick="return confirm('Confirm Book Return?')">
+                                   Return
+                                </a>
+                            </td>
+                        </tr>
+
+                        <?php
+                            }
+                        } else {
+                            echo "<tr><td colspan='4'>No books to return</td></tr>";
+                        }
+                        ?>
+                        <!-- 🔁 PHP LOOP END -->
+
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

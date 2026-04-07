@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Dashboard - Smart Library System</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="dashboard-body">
+    <!-- Header -->
+    <header class="dashboard-header">
+        <div class="container">
+            <div class="logo">
+                <i class="fas fa-book-open"></i>
+                <h1>Smart Library System</h1>
+            </div>
+            <nav class="dashboard-nav">
+                <ul>
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="#" class="active">Dashboard</a></li>
+                </ul>
+            </nav>
+            <div class="user-menu">
+                <div class="user-info">
+                    <img src="https://via.placeholder.com/40" alt="User" class="user-avatar">
+                    <span class="user-name">Dr. Sarah Johnson</span>
+                    <span class="user-role">Teacher</span>
+                </div>
+                <div class="user-dropdown">
+                    <button class="dropdown-toggle" onclick="toggleDropdown()">
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="dropdown-menu">
+                        <a href="#"><i class="fas fa-user"></i> Profile</a>
+                        <a href="#"><i class="fas fa-cog"></i> Settings</a>
+                        <a href="../login.html"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Dashboard Container -->
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <ul class="sidebar-menu">
+                <li><a href="#dashboard" class="active" onclick="showSection('dashboard')"><i class="fas fa-home"></i> Dashboard</a></li>
+                <li><a href="#profile" onclick="showSection('profile')"><i class="fas fa-user"></i> Profile</a></li>
+                <li><a href="#notice" onclick="showSection('notice')"><i class="fas fa-bullhorn"></i> Post Notice</a></li>
+                <li><a href="#attendance" onclick="showSection('attendance')"><i class="fas fa-calendar-check"></i> Attendance</a></li>
+                <li><a href="#materials" onclick="showSection('materials')"><i class="fas fa-upload"></i> Upload Materials</a></li>
+                <li><a href="#students" onclick="showSection('students')"><i class="fas fa-users"></i> Students</a></li>
+                <li><a href="#chat" onclick="showSection('chat')"><i class="fas fa-comments"></i> Chat</a></li>
+                <li><a href="#notifications" onclick="showSection('notifications')"><i class="fas fa-bell"></i> Notifications</a></li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="content-section active">
+                <div class="section-header">
+                    <h2>Teacher Dashboard</h2>
+                    <p>Welcome back, Dr. Sarah! Here's your overview.</p>
+                </div>
+
+                <div class="dashboard-stats">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>45</h3>
+                            <p>Total Students</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>12</h3>
+                            <p>Classes Taken</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-book"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>8</h3>
+                            <p>Materials Uploaded</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-bullhorn"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>5</h3>
+                            <p>Notices Posted</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid">
+                    <div class="dashboard-card">
+                        <h3>Recent Activities</h3>
+                        <div class="activity-list">
+                            <div class="activity-item">
+                                <i class="fas fa-calendar-check"></i>
+                                <div class="activity-details">
+                                    <p>Marked attendance for Computer Science</p>
+                                    <span>2 hours ago</span>
+                                </div>
+                            </div>
+                            <div class="activity-item">
+                                <i class="fas fa-upload"></i>
+                                <div class="activity-details">
+                                    <p>Uploaded "Algorithm Notes" PDF</p>
+                                    <span>1 day ago</span>
+                                </div>
+                            </div>
+                            <div class="activity-item">
+                                <i class="fas fa-bullhorn"></i>
+                                <div class="activity-details">
+                                    <p>Posted notice about assignment deadline</p>
+                                    <span>2 days ago</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-card">
+                        <h3>Upcoming Classes</h3>
+                        <div class="class-schedule">
+                            <div class="class-item">
+                                <div class="class-time">
+                                    <span class="time">9:00 AM</span>
+                                    <span class="duration">1 hour</span>
+                                </div>
+                                <div class="class-details">
+                                    <h4>Computer Science - 4th Semester</h4>
+                                    <p>Data Structures</p>
+                                </div>
+                            </div>
+                            <div class="class-item">
+                                <div class="class-time">
+                                    <span class="time">11:00 AM</span>
+                                    <span class="duration">1 hour</span>
+                                </div>
+                                <div class="class-details">
+                                    <h4>Computer Science - 2nd Semester</h4>
+                                    <p>Programming Basics</p>
+                                </div>
+                            </div>
+                            <div class="class-item">
+                                <div class="class-time">
+                                    <span class="time">2:00 PM</span>
+                                    <span class="duration">1 hour</span>
+                                </div>
+                                <div class="class-details">
+                                    <h4>Computer Science - 6th Semester</h4>
+                                    <p>Machine Learning</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Profile Section -->
+            <section id="profile" class="content-section">
+                <div class="section-header">
+                    <h2>My Profile</h2>
+                    <p>Manage your personal information</p>
+                </div>
+
+                <div class="profile-container">
+                    <div class="profile-card">
+                        <div class="profile-header">
+                            <img src="https://via.placeholder.com/100" alt="Profile" class="profile-avatar">
+                            <div class="profile-info">
+                                <h3>Dr. Sarah Johnson</h3>
+                                <p>Computer Science Department</p>
+                                <span class="status-badge active">Active</span>
+                            </div>
+                        </div>
+
+                        <div class="profile-details">
+                            <div class="detail-group">
+                                <h4>Personal Information</h4>
+                                <div class="detail-item">
+                                    <span class="detail-label">Teacher ID:</span>
+                                    <span class="detail-value">TCS2024001</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Email:</span>
+                                    <span class="detail-value">sarah.johnson@college.edu</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Phone:</span>
+                                    <span class="detail-value">+91 98765 43210</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Department:</span>
+                                    <span class="detail-value">Computer Science</span>
+                                </div>
+                            </div>
+
+                            <div class="detail-group">
+                                <h4>Professional Information</h4>
+                                <div class="detail-item">
+                                    <span class="detail-label">Subject:</span>
+                                    <span class="detail-value">Computer Science</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Experience:</span>
+                                    <span class="detail-value">10 years</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Qualification:</span>
+                                    <span class="detail-value">Ph.D. in Computer Science</span>
+                                </div>
+                            </div>
+
+                            <button class="btn btn-primary">Edit Profile</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Notice Section -->
+            <section id="notice" class="content-section">
+                <div class="section-header">
+                    <h2>Post Notice</h2>
+                    <p>Create and manage class notices</p>
+                </div>
+
+                <div class="notice-container">
+                    <div class="notice-form">
+                        <h3>Create New Notice</h3>
+                        <form id="noticeForm">
+                            <div class="form-group">
+                                <label for="noticeTitle">Notice Title</label>
+                                <input type="text" id="noticeTitle" placeholder="Enter notice title" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="noticeCategory">Category</label>
+                                <select id="noticeCategory" required>
+                                    <option value="">Select Category</option>
+                                    <option value="assignment">Assignment</option>
+                                    <option value="exam">Exam</option>
+                                    <option value="class">Class Update</option>
+                                    <option value="general">General</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="noticeTarget">Target Audience</label>
+                                <select id="noticeTarget" required>
+                                    <option value="">Select Audience</option>
+                                    <option value="all">All Students</option>
+                                    <option value="cs-2nd">CS 2nd Semester</option>
+                                    <option value="cs-4th">CS 4th Semester</option>
+                                    <option value="cs-6th">CS 6th Semester</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="noticeMessage">Message</label>
+                                <textarea id="noticeMessage" rows="6" placeholder="Enter notice message" required></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="noticePriority">Priority</label>
+                                <div class="priority-options">
+                                    <label class="priority-option">
+                                        <input type="radio" name="priority" value="low" checked>
+                                        <span class="priority-badge low">Low</span>
+                                    </label>
+                                    <label class="priority-option">
+                                        <input type="radio" name="priority" value="medium">
+                                        <span class="priority-badge medium">Medium</span>
+                                    </label>
+                                    <label class="priority-option">
+                                        <input type="radio" name="priority" value="high">
+                                        <span class="priority-badge high">High</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary">Post Notice</button>
+                                <button type="reset" class="btn btn-outline">Clear</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="previous-notices">
+                        <h3>Previous Notices</h3>
+                        <div class="notices-list">
+                            <div class="notice-item">
+                                <div class="notice-header">
+                                    <h4>Assignment Deadline Extended</h4>
+                                    <span class="notice-date">March 8, 2024</span>
+                                </div>
+                                <div class="notice-content">
+                                    <p>The deadline for Data Structures assignment has been extended to March 15, 2024.</p>
+                                </div>
+                                <div class="notice-meta">
+                                    <span class="notice-category assignment">Assignment</span>
+                                    <span class="notice-audience">CS 4th Semester</span>
+                                    <span class="notice-priority high">High Priority</span>
+                                </div>
+                            </div>
+
+                            <div class="notice-item">
+                                <div class="notice-header">
+                                    <h4>Class Test Schedule</h4>
+                                    <span class="notice-date">March 5, 2024</span>
+                                </div>
+                                <div class="notice-content">
+                                    <p>Class test for Algorithm Design will be conducted on March 12, 2024.</p>
+                                </div>
+                                <div class="notice-meta">
+                                    <span class="notice-category exam">Exam</span>
+                                    <span class="notice-audience">All Students</span>
+                                    <span class="notice-priority medium">Medium Priority</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Attendance Section -->
+            <section id="attendance" class="content-section">
+                <div class="section-header">
+                    <h2>Take Attendance</h2>
+                    <p>Mark student attendance for your classes</p>
+                </div>
+
+                <div class="attendance-container">
+                    <div class="attendance-form">
+                        <h3>Mark Attendance</h3>
+                        <form id="attendanceForm">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="attendanceSubject">Subject</label>
+                                    <select id="attendanceSubject" required>
+                                        <option value="">Select Subject</option>
+                                        <option value="data-structures">Data Structures</option>
+                                        <option value="algorithms">Algorithms</option>
+                                        <option value="programming">Programming Basics</option>
+                                        <option value="machine-learning">Machine Learning</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="attendanceClass">Class</label>
+                                    <select id="attendanceClass" required>
+                                        <option value="">Select Class</option>
+                                        <option value="cs-2nd">CS 2nd Semester</option>
+                                        <option value="cs-4th">CS 4th Semester</option>
+                                        <option value="cs-6th">CS 6th Semester</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="attendanceDate">Date</label>
+                                    <input type="date" id="attendanceDate" required>
+                                </div>
+                            </div>
+
+                            <button type="button" class="btn btn-primary" onclick="loadStudents()">Load Students</button>
+                        </form>
+                    </div>
+
+                    <div class="attendance-list" id="attendanceList" style="display: none;">
+                        <h3>Student List</h3>
+                        <div class="attendance-actions">
+                            <button class="btn btn-sm btn-success" onclick="markAllPresent()">Mark All Present</button>
+                            <button class="btn btn-sm btn-danger" onclick="markAllAbsent()">Mark All Absent</button>
+                            <button class="btn btn-primary" onclick="submitAttendance()">Submit Attendance</button>
+                        </div>
+
+                        <div class="students-table">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Student ID</th>
+                                        <th>Name</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>CS2024001</td>
+                                        <td>John Doe</td>
+                                        <td>
+                                            <div class="attendance-toggle">
+                                                <label class="switch">
+                                                    <input type="checkbox" checked>
+                                                    <span class="slider"></span>
+                                                </label>
+                                                <span class="status-text">Present</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>CS2024002</td>
+                                        <td>Jane Smith</td>
+                                        <td>
+                                            <div class="attendance-toggle">
+                                                <label class="switch">
+                                                    <input type="checkbox" checked>
+                                                    <span class="slider"></span>
+                                                </label>
+                                                <span class="status-text">Present</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>CS2024003</td>
+                                        <td>Mike Johnson</td>
+                                        <td>
+                                            <div class="attendance-toggle">
+                                                <label class="switch">
+                                                    <input type="checkbox">
+                                                    <span class="slider"></span>
+                                                </label>
+                                                <span class="status-text">Absent</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Materials Section -->
+            <section id="materials" class="content-section">
+                <div class="section-header">
+                    <h2>Upload Materials</h2>
+                    <p>Upload study materials and e-books for students</p>
+                </div>
+
+                <div class="materials-container">
+                    <div class="upload-form">
+                        <h3>Upload New Material</h3>
+                        <form id="uploadForm">
+                            <div class="form-group">
+                                <label for="materialTitle">Title</label>
+                                <input type="text" id="materialTitle" placeholder="Enter material title" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="materialType">Type</label>
+                                <select id="materialType" required>
+                                    <option value="">Select Type</option>
+                                    <option value="notes">Study Notes</option>
+                                    <option value="ebook">E-Book</option>
+                                    <option value="presentation">Presentation</option>
+                                    <option value="assignment">Assignment</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="materialSubject">Subject</label>
+                                <select id="materialSubject" required>
+                                    <option value="">Select Subject</option>
+                                    <option value="data-structures">Data Structures</option>
+                                    <option value="algorithms">Algorithms</option>
+                                    <option value="programming">Programming Basics</option>
+                                    <option value="machine-learning">Machine Learning</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="materialDescription">Description</label>
+                                <textarea id="materialDescription" rows="4" placeholder="Enter material description"></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="materialFile">Upload File</label>
+                                <div class="file-upload">
+                                    <input type="file" id="materialFile" accept=".pdf,.doc,.docx,.ppt,.pptx" required>
+                                    <div class="file-upload-label">
+                                        <i class="fas fa-cloud-upload-alt"></i>
+                                        <span>Choose file or drag and drop</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary">Upload Material</button>
+                        </form>
+                    </div>
+
+                    <div class="uploaded-materials">
+                        <h3>Uploaded Materials</h3>
+                        <div class="materials-grid">
+                            <div class="material-card">
+                                <div class="material-icon">
+                                    <i class="fas fa-file-pdf"></i>
+                                </div>
+                                <div class="material-info">
+                                    <h4>Data Structures Notes</h4>
+                                    <p>Study Notes • Computer Science</p>
+                                    <div class="material-meta">
+                                        <span class="file-size">2.5 MB</span>
+                                        <span class="upload-date">March 10, 2024</span>
+                                    </div>
+                                    <div class="material-actions">
+                                        <button class="btn btn-sm btn-outline">View</button>
+                                        <button class="btn btn-sm btn-outline">Download</button>
+                                        <button class="btn btn-sm btn-danger">Delete</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="material-card">
+                                <div class="material-icon">
+                                    <i class="fas fa-file-pdf"></i>
+                                </div>
+                                <div class="material-info">
+                                    <h4>Algorithm Design</h4>
+                                    <p>E-Book • Computer Science</p>
+                                    <div class="material-meta">
+                                        <span class="file-size">15.2 MB</span>
+                                        <span class="upload-date">March 8, 2024</span>
+                                    </div>
+                                    <div class="material-actions">
+                                        <button class="btn btn-sm btn-outline">View</button>
+                                        <button class="btn btn-sm btn-outline">Download</button>
+                                        <button class="btn btn-sm btn-danger">Delete</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Students Section -->
+            <section id="students" class="content-section">
+                <div class="section-header">
+                    <h2>Students</h2>
+                    <p>View and manage student information</p>
+                </div>
+
+                <div class="students-container">
+                    <div class="students-filters">
+                        <div class="search-bar">
+                            <div class="search-input">
+                                <i class="fas fa-search"></i>
+                                <input type="text" placeholder="Search students...">
+                            </div>
+                            <select class="filter-select">
+                                <option>All Classes</option>
+                                <option>CS 2nd Semester</option>
+                                <option>CS 4th Semester</option>
+                                <option>CS 6th Semester</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="students-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Student ID</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Class</th>
+                                    <th>Attendance</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>CS2024001</td>
+                                    <td>
+                                        <div class="student-info">
+                                            <img src="https://via.placeholder.com/30" alt="Student" class="student-avatar">
+                                            <span>John Doe</span>
+                                        </div>
+                                    </td>
+                                    <td>john.doe@college.edu</td>
+                                    <td>CS 4th Semester</td>
+                                    <td>
+                                        <div class="attendance-badge good">85%</div>
+                                    </td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <button class="btn btn-sm btn-outline" onclick="viewStudent('CS2024001')">View</button>
+                                            <button class="btn btn-sm btn-outline" onclick="messageStudent('CS2024001')">Message</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>CS2024002</td>
+                                    <td>
+                                        <div class="student-info">
+                                            <img src="https://via.placeholder.com/30" alt="Student" class="student-avatar">
+                                            <span>Jane Smith</span>
+                                        </div>
+                                    </td>
+                                    <td>jane.smith@college.edu</td>
+                                    <td>CS 4th Semester</td>
+                                    <td>
+                                        <div class="attendance-badge good">92%</div>
+                                    </td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <button class="btn btn-sm btn-outline" onclick="viewStudent('CS2024002')">View</button>
+                                            <button class="btn btn-sm btn-outline" onclick="messageStudent('CS2024002')">Message</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>CS2024003</td>
+                                    <td>
+                                        <div class="student-info">
+                                            <img src="https://via.placeholder.com/30" alt="Student" class="student-avatar">
+                                            <span>Mike Johnson</span>
+                                        </div>
+                                    </td>
+                                    <td>mike.johnson@college.edu</td>
+                                    <td>CS 4th Semester</td>
+                                    <td>
+                                        <div class="attendance-badge warning">75%</div>
+                                    </td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <button class="btn btn-sm btn-outline" onclick="viewStudent('CS2024003')">View</button>
+                                            <button class="btn btn-sm btn-outline" onclick="messageStudent('CS2024003')">Message</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Chat Section -->
+            <section id="chat" class="content-section">
+                <div class="section-header">
+                    <h2>Chat with Students</h2>
+                    <p>Communicate with your students</p>
+                </div>
+
+                <div class="chat-container">
+                    <div class="chat-sidebar">
+                        <div class="chat-search">
+                            <i class="fas fa-search"></i>
+                            <input type="text" placeholder="Search students...">
+                        </div>
+                        <div class="student-list">
+                            <div class="student-item active" onclick="openChat('student1')">
+                                <img src="https://via.placeholder.com/40" alt="Student" class="student-avatar">
+                                <div class="student-info">
+                                    <h4>John Doe</h4>
+                                    <p>CS 4th Semester</p>
+                                </div>
+                                <div class="student-status online"></div>
+                            </div>
+                            <div class="student-item" onclick="openChat('student2')">
+                                <img src="https://via.placeholder.com/40" alt="Student" class="student-avatar">
+                                <div class="student-info">
+                                    <h4>Jane Smith</h4>
+                                    <p>CS 4th Semester</p>
+                                </div>
+                                <div class="student-status offline"></div>
+                            </div>
+                            <div class="student-item" onclick="openChat('student3')">
+                                <img src="https://via.placeholder.com/40" alt="Student" class="student-avatar">
+                                <div class="student-info">
+                                    <h4>Mike Johnson</h4>
+                                    <p>CS 4th Semester</p>
+                                </div>
+                                <div class="student-status online"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="chat-main">
+                        <div class="chat-header">
+                            <img src="https://via.placeholder.com/40" alt="Student" class="chat-avatar">
+                            <div class="chat-info">
+                                <h4>John Doe</h4>
+                                <p>CS 4th Semester</p>
+                            </div>
+                            <div class="chat-status online">Online</div>
+                        </div>
+
+                        <div class="chat-messages">
+                            <div class="message received">
+                                <p>Hi Dr. Johnson! I have a question about the data structures assignment.</p>
+                                <span class="message-time">10:30 AM</span>
+                            </div>
+                            <div class="message sent">
+                                <p>Hello John! Sure, what would you like to know?</p>
+                                <span class="message-time">10:32 AM</span>
+                            </div>
+                            <div class="message received">
+                                <p>I'm confused about the implementation of binary search trees.</p>
+                                <span class="message-time">10:35 AM</span>
+                            </div>
+                            <div class="message sent">
+                                <p>I can help you with that. Let me share some resources and explain the concept.</p>
+                                <span class="message-time">10:36 AM</span>
+                            </div>
+                        </div>
+
+                        <div class="chat-input">
+                            <div class="input-group">
+                                <input type="text" placeholder="Type your message...">
+                                <button class="btn btn-primary btn-sm">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Notifications Section -->
+            <section id="notifications" class="content-section">
+                <div class="section-header">
+                    <h2>Notifications</h2>
+                    <p>View system notifications and updates</p>
+                </div>
+
+                <div class="notifications-container">
+                    <div class="notification-filters">
+                        <button class="filter-btn active">All</button>
+                        <button class="filter-btn">Unread</button>
+                        <button class="filter-btn">System</button>
+                    </div>
+
+                    <div class="notifications-list">
+                        <div class="notification-item unread">
+                            <div class="notification-icon">
+                                <i class="fas fa-user-plus"></i>
+                            </div>
+                            <div class="notification-content">
+                                <h4>New Student Registration</h4>
+                                <p>5 new students have registered for Computer Science courses.</p>
+                                <span class="notification-time">2 hours ago</span>
+                            </div>
+                            <div class="notification-actions">
+                                <button class="btn btn-sm btn-outline">View Students</button>
+                            </div>
+                        </div>
+
+                        <div class="notification-item unread">
+                            <div class="notification-icon">
+                                <i class="fas fa-calendar"></i>
+                            </div>
+                            <div class="notification-content">
+                                <h4>Class Schedule Updated</h4>
+                                <p>Your class schedule for next week has been updated.</p>
+                                <span class="notification-time">1 day ago</span>
+                            </div>
+                        </div>
+
+                        <div class="notification-item">
+                            <div class="notification-icon">
+                                <i class="fas fa-upload"></i>
+                            </div>
+                            <div class="notification-content">
+                                <h4>Material Upload Successful</h4>
+                                <p>Your study materials have been successfully uploaded.</p>
+                                <span class="notification-time">3 days ago</span>
+                            </div>
+                        </div>
+
+                        <div class="notification-item">
+                            <div class="notification-icon">
+                                <i class="fas fa-bullhorn"></i>
+                            </div>
+                            <div class="notification-content">
+                                <h4>Notice Posted Successfully</h4>
+                                <p>Your notice about assignment deadline has been posted.</p>
+                                <span class="notification-time">1 week ago</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="../js/script.js"></script>
+    <script>
+        function showSection(sectionId) {
+            // Hide all sections
+            const sections = document.querySelectorAll('.content-section');
+            sections.forEach(section => section.classList.remove('active'));
+            
+            // Show selected section
+            document.getElementById(sectionId).classList.add('active');
+            
+            // Update sidebar menu
+            const menuItems = document.querySelectorAll('.sidebar-menu a');
+            menuItems.forEach(item => item.classList.remove('active'));
+            document.querySelector(`[href="#${sectionId}"]`).classList.add('active');
+        }
+
+        function toggleDropdown() {
+            const dropdown = document.querySelector('.dropdown-menu');
+            dropdown.classList.toggle('show');
+        }
+
+        function loadStudents() {
+            const attendanceList = document.getElementById('attendanceList');
+            attendanceList.style.display = 'block';
+            
+            // In a real application, this would load students from the database
+            console.log('Loading students for attendance...');
+        }
+
+        function markAllPresent() {
+            const checkboxes = document.querySelectorAll('#attendanceList input[type="checkbox"]');
+            checkboxes.forEach(checkbox => checkbox.checked = true);
+            updateStatusText();
+        }
+
+        function markAllAbsent() {
+            const checkboxes = document.querySelectorAll('#attendanceList input[type="checkbox"]');
+            checkboxes.forEach(checkbox => checkbox.checked = false);
+            updateStatusText();
+        }
+
+        function updateStatusText() {
+            const toggles = document.querySelectorAll('.attendance-toggle');
+            toggles.forEach(toggle => {
+                const checkbox = toggle.querySelector('input[type="checkbox"]');
+                const statusText = toggle.querySelector('.status-text');
+                statusText.textContent = checkbox.checked ? 'Present' : 'Absent';
+            });
+        }
+
+        function submitAttendance() {
+            // In a real application, this would submit attendance to the server
+            alert('Attendance submitted successfully!');
+        }
+
+        function openChat(studentId) {
+            // Update active student in chat
+            const studentItems = document.querySelectorAll('.student-item');
+            studentItems.forEach(item => item.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            
+            // In a real application, this would load the chat history
+            console.log('Opening chat with student:', studentId);
+        }
+
+        function viewStudent(studentId) {
+            // In a real application, this would show student details
+            console.log('Viewing student:', studentId);
+        }
+
+        function messageStudent(studentId) {
+            // In a real application, this would open chat with student
+            console.log('Messaging student:', studentId);
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const dropdown = document.querySelector('.dropdown-menu');
+            const dropdownToggle = document.querySelector('.dropdown-toggle');
+            
+            if (!dropdownToggle.contains(event.target)) {
+                dropdown.classList.remove('show');
+            }
+        });
+
+        // Set today's date as default for attendance
+        document.addEventListener('DOMContentLoaded', function() {
+            const attendanceDate = document.getElementById('attendanceDate');
+            if (attendanceDate) {
+                attendanceDate.valueAsDate = new Date();
+            }
+        });
+    </script>
+</body>
+</html>

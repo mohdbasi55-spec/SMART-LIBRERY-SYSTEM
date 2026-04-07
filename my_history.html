@@ -1,0 +1,100 @@
+<?php
+session_start();
+include 'db.php';
+
+if(!isset($_SESSION['user_id'])){ header("Location: login.php"); exit(); }
+$user_id = $_SESSION['user_id'];
+
+// 1. Calculate Stats (Student Progress)
+$total_q = mysqli_query($conn, "SELECT COUNT(*) as total FROM transactions WHERE user_id='$user_id'");
+$total_data = mysqli_fetch_assoc($total_q);
+
+$digital_q = mysqli_query($conn, "SELECT COUNT(*) as digital FROM transactions WHERE user_id='$user_id' AND status='Digital Read'");
+$digital_data = mysqli_fetch_assoc($digital_q);
+
+// 2. Fetch History List
+$query = "SELECT t.*, b.book_name, b.author FROM transactions t 
+          JOIN books b ON t.book_id = b.book_id 
+          WHERE t.user_id = '$user_id' ORDER BY t.issue_date DESC";
+$result = mysqli_query($conn, $query);
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Learning Insights | PRO-ARCHIVE</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --bg: #0f172a; --card: #1e293b; --accent: #fbbf24; --text: #f8fafc; }
+        body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; padding: 30px; }
+        
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 40px; }
+        .stat-card { background: var(--card); padding: 25px; border-radius: 20px; border-top: 4px solid var(--accent); text-align: center; }
+        .stat-card h3 { font-size: 2.5rem; margin: 10px 0; color: var(--accent); }
+        
+        .history-list { max-width: 900px; margin: 0 auto; }
+        .history-item { 
+            background: var(--card); margin-bottom: 15px; padding: 20px; border-radius: 15px; 
+            display: flex; justify-content: space-between; align-items: center;
+            transition: 0.3s; border: 1px solid transparent;
+        }
+        .history-item:hover { border-color: var(--accent); transform: scale(1.02); }
+        
+        .book-info h4 { margin: 0; font-size: 1.1rem; }
+        .book-info p { margin: 5px 0 0; color: #94a3b8; font-size: 0.85rem; }
+        
+        .badge { padding: 6px 12px; border-radius: 8px; font-size: 0.7rem; font-weight: bold; text-transform: uppercase; }
+        .bg-digital { background: rgba(251, 191, 36, 0.2); color: var(--accent); }
+        .bg-physical { background: rgba(59, 130, 246, 0.2); color: #60a5fa; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div style="display:flex; justify-content: space-between; align-items:center; margin-bottom: 30px;">
+        <h2><i class="fas fa-chart-line text-warning"></i> My Reading Insights</h2>
+        <a href="student_dashboard.php" style="color:var(--accent); text-decoration:none;"><i class="fas fa-arrow-left"></i> Dashboard</a>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <p>Books Finished</p>
+            <h3><?php echo $total_data['total']; ?></h3>
+            <small class="text-muted">Total Activity</small>
+        </div>
+        <div class="stat-card">
+            <p>Digital Reads</p>
+            <h3><?php echo $digital_data['digital']; ?></h3>
+            <small class="text-muted">Online Books</small>
+        </div>
+        <div class="stat-card">
+            <p>Current Level</p>
+            <h3><?php echo ($total_data['total'] > 5) ? 'Gold' : 'Silver'; ?></h3>
+            <small class="text-muted">Reader Rank</small>
+        </div>
+    </div>
+
+    <div class="history-list">
+        <h4 style="margin-bottom: 20px; color: #94a3b8;">RECENT ACTIVITY</h4>
+        <?php while($row = mysqli_fetch_assoc($result)) { 
+            $is_digital = ($row['status'] == 'Digital Read');
+        ?>
+        <div class="history-item">
+            <div class="book-info">
+                <h4><?php echo $row['book_name']; ?></h4>
+                <p><i class="fas fa-user-edit me-1"></i> <?php echo $row['author']; ?></p>
+                <p><i class="fas fa-calendar-alt me-1"></i> <?php echo date('d M, Y', strtotime($row['issue_date'])); ?></p>
+            </div>
+            <div>
+                <span class="badge <?php echo $is_digital ? 'bg-digital' : 'bg-physical'; ?>">
+                    <?php echo $is_digital ? 'E-Book' : 'Physical'; ?>
+                </span>
+            </div>
+        </div>
+        <?php } ?>
+    </div>
+</div>
+
+</body>
+</html>

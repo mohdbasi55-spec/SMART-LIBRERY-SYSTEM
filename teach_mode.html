@@ -1,0 +1,62 @@
+<?php
+include 'db.php';
+
+// URL-la id iruka-nu check pannuvom
+if(isset($_GET['id'])) {
+    $id = mysqli_real_escape_string($conn, $_GET['id']);
+    
+    // Database-la irundhu antha book details-ah edukkurom
+    $query = "SELECT * FROM books WHERE book_id = '$id'";
+    $result = mysqli_query($conn, $query);
+    $book = mysqli_fetch_assoc($result);
+
+    if($book) {
+        $file_path = $book['file_path']; // Example: java.pdf
+    } else {
+        die("Error: Book not found in Database!");
+    }
+} else {
+    die("Error: No Book ID provided! Go back to Dashboard and click Start Class.");
+}
+?>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Teaching: <?php echo $book['book_name']; ?></title>
+    <style>
+        body { margin: 0; background: #1a1a1a; color: white; font-family: sans-serif; }
+        .header { height: 50px; background: #000; display: flex; align-items: center; padding: 0 20px; border-bottom: 2px solid #00ff88; }
+        .container { display: flex; height: calc(100vh - 50px); }
+        .pdf-viewer { flex: 3; background: #444; }
+        .controls { flex: 1; padding: 20px; background: #121212; border-left: 1px solid #333; }
+        embed { width: 100%; height: 100%; border: none; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <b>LIVE CLASS: <?php echo $book['book_name']; ?></b>
+    </div>
+
+    <div class="container">
+        <div class="pdf-viewer">
+            <?php if(!empty($file_path)) { ?>
+                <embed src="uploads/<?php echo $file_path; ?>" type="application/pdf">
+            <?php } else { ?>
+                <div style="padding:50px; text-align:center;">
+                    <h3>PDF File name missing in Database!</h3>
+                </div>
+            <?php } ?>
+        </div>
+
+        <div class="controls">
+            <h3>Teacher Controls</h3>
+            <p>Status: <span style="color:#00ff88;">● Live</span></p>
+            <textarea style="width:100%; height:100px; background:#222; color:white; border:1px solid #444; border-radius:5px; padding:10px;" placeholder="Type notes here..."></textarea>
+            <button style="width:100%; margin-top:10px; padding:10px; background:#00ff88; border:none; font-weight:bold; cursor:pointer;">Push Notes</button>
+        </div>
+    </div>
+
+</body>
+</html>

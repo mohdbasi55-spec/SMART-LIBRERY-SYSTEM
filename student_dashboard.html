@@ -1,0 +1,126 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Student Hub | Digital Library</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { background: #f4f7f6; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .sidebar { height: 100vh; width: 250px; position: fixed; background: #2c3e50; color: white; padding-top: 20px; }
+        .sidebar a { color: #bdc3c7; text-decoration: none; display: block; padding: 15px 25px; transition: 0.3s; }
+        .sidebar a:hover { background: #34495e; color: white; border-left: 5px solid #3498db; }
+        .main-content { margin-left: 250px; padding: 30px; }
+        .card-custom { border: none; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: 0.3s; }
+        .card-custom:hover { transform: translateY(-5px); }
+        .announcement-bar { background: #fff3cd; border-left: 5px solid #ffc107; padding: 10px; border-radius: 5px; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+
+<div class="sidebar shadow">
+    <div class="text-center mb-4">
+        <i class="fas fa-user-graduate fa-3x text-info"></i>
+        <h5 class="mt-2 fw-bold"><?php echo $fullname; ?></h5>
+        <small class="text-muted">Student ID: <?php echo $user_id; ?></small>
+    </div>
+    <hr>
+    <a href="student_dashboard.html><i class="fas fa-home me-2"></i> Dashboard</a>
+    <a href="view_library.html"><i class="fas fa-book-open me-2"></i> Browse Library</a>
+    <a href="my_history.html"><i class="fas fa-history me-2"></i> Reading History</a>
+    <a href="ask_doubt.htmk"><i class="fas fa-question-circle me-2"></i> Ask a Doubt</a>
+    <a href="index.html" class="text-danger"><i class="fas fa-sign-out-alt me-2"></i> Logout</a>
+</div>
+
+<div class="main-content">
+    
+    <div class="announcement-bar shadow-sm">
+        <marquee behavior="scroll" direction="left">
+            <i class="fas fa-bullhorn text-danger me-2"></i> 
+            <b>Notification:</b> New Python Programming books added! | Library closes early this Friday at 4:00 PM.
+        </marquee>
+    </div>
+
+    <h3 class="fw-bold mb-4">My Student Hub</h3>
+
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card card-custom p-4 bg-white">
+                <i class="fas fa-library fa-2x text-primary mb-3"></i>
+                <h5>Access Library</h5>
+                <p class="text-muted small">Search and view all books available in our college library.</p>
+                <a href="view_library.html" class="btn btn-primary btn-sm">Open Library</a>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card card-custom p-4 bg-white">
+                <i class="fas fa-comments fa-2x text-success mb-3"></i>
+                <h5>Doubt Portal</h5>
+                <p class="text-muted small">Stuck with a topic? Message your teacher for help.</p>
+                <a href="ask_doubt.html" class="btn btn-success btn-sm">Ask Now</a>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card card-custom p-4 bg-white text-center">
+                <h6 class="text-muted">Library Attendance</h6>
+                <div class="display-6 fw-bold text-dark">85%</div>
+                <div class="progress mt-2" style="height: 10px;">
+                    <div class="progress-bar bg-info" style="width: 85%"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-5">
+    <h5 class="fw-bold mb-3 text-dark"><i class="fas fa-bookmark text-warning me-2"></i> Books Currently with Me</h5>
+    <div class="row g-3">
+        <?php
+        // 1. Database Query - Safety-ah check pannuvom
+        $query = "SELECT t.*, b.book_name 
+                  FROM transactions t 
+                  JOIN books b ON t.book_id = b.book_id 
+                  WHERE t.user_id='$user_id' AND t.status='Issued'";
+        
+        $res = mysqli_query($conn, $query);
+
+        // 2. Query success-ah nu check pannuvom (Error varaama irukka)
+        if($res && mysqli_num_rows($res) > 0){
+            while($row = mysqli_fetch_assoc($res)){
+                // Simple Due Date Logic (15 days)
+                $issue_date = date('d M Y', strtotime($row['issue_date']));
+        ?>
+            <div class="col-md-6">
+                <div class="card border-0 shadow-sm p-3 mb-2 bg-white" style="border-left: 5px solid #2ecc71 !important; border-radius: 12px;">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-1 fw-bold text-dark"><?php echo $row['book_name']; ?></h6>
+                            <small class="text-muted"><i class="fas fa-calendar-alt me-1"></i> Issued: <?php echo $issue_date; ?></small>
+                        </div>
+                        <div class="text-end">
+                            <span class="badge bg-light text-success border">Active</span>
+                        </div>
+                    </div>
+                    <div class="mt-3 d-flex gap-2">
+                        <a href="view_library.html" class="btn btn-sm btn-outline-primary flex-fill"><i class="fas fa-search"></i> Find More</a>
+                        <a href="ask_doubt.html" class="btn btn-sm btn-outline-info flex-fill"><i class="fas fa-question-circle"></i> Ask Doubt</a>
+                    </div>
+                </div>
+            </div>
+        <?php
+            }
+        } else {
+            // Book edhalana indha message varum
+            echo "<div class='col-12'><div class='alert alert-light text-center border p-4 shadow-sm' style='border-radius: 15px;'>
+                    <i class='fas fa-book-open fa-2x text-muted mb-2'></i>
+                    <p class='mb-0'>You haven't borrowed any books yet.</p>
+                    <a href='view_library.html' class='btn btn-primary btn-sm mt-3'>Explore Library</a>
+                  </div></div>";
+        }
+        ?>
+    </div>
+</div>
+</body>
+</html>

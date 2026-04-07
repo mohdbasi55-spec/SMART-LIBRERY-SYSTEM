@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PRO-ARCHIVE v2.0 | Advanced Literature</title>
+
+<style>
+    :root {
+        --bg: #0f172a;
+        --card-bg: #1e293b;
+        --accent: #fbbf24;
+        --text: #f8fafc;
+        --text-dim: #94a3b8;
+        --shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+
+    body {
+        background-color: var(--bg);
+        color: var(--text);
+        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        margin: 0;
+        padding: 40px 20px;
+        line-height: 1.5;
+    }
+
+    .header {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    .header h1 {
+        font-size: 3rem;
+        letter-spacing: -2px;
+        margin-bottom: 5px;
+        background: linear-gradient(to right, #fbbf24, #f59e0b);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .controls {
+        max-width: 800px;
+        margin: 0 auto 50px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        align-items: center;
+    }
+
+    .search-wrapper {
+        position: relative;
+        width: 100%;
+        max-width: 500px;
+    }
+
+    #searchInput {
+        width: 100%;
+        padding: 15px 25px;
+        border-radius: 50px;
+        background: var(--card-bg);
+        border: 2px solid transparent;
+        color: white;
+        font-size: 1rem;
+        outline: none;
+        transition: all 0.3s ease;
+        box-shadow: var(--shadow);
+    }
+
+    #searchInput:focus {
+        border-color: var(--accent);
+        background: #243147;
+    }
+
+    .filter-group {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .filter-btn {
+        background: #334155;
+        border: none;
+        color: var(--text-dim);
+        padding: 8px 18px;
+        border-radius: 20px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 0.85rem;
+        transition: 0.3s;
+    }
+
+    .filter-btn.active {
+        background: var(--accent);
+        color: #0f172a;
+    }
+
+    .filter-btn:hover:not(.active) {
+        background: #475569;
+        color: white;
+    }
+
+    .library-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 30px;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .book-card {
+        background: var(--card-bg);
+        border-radius: 16px;
+        overflow: hidden;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        border: 1px solid rgba(255,255,255,0.05);
+        display: flex;
+        flex-direction: column;
+    }
+
+    .book-card:hover {
+        transform: translateY(-12px);
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        border-color: rgba(251, 191, 36, 0.4);
+    }
+
+    .cover-wrap {
+        width: 100%;
+        height: 320px;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .cover-wrap img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.6s ease;
+    }
+
+    .book-card:hover img {
+        transform: scale(1.08);
+    }
+
+    .info {
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+    }
+
+    .category {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        color: var(--accent);
+        font-weight: 800;
+        margin-bottom: 8px;
+        letter-spacing: 1px;
+    }
+
+    .title {
+        font-size: 1.15rem;
+        font-weight: 700;
+        margin: 0;
+        line-height: 1.2;
+        color: var(--text);
+    }
+
+    .author {
+        font-size: 0.9rem;
+        color: var(--text-dim);
+        margin: 10px 0 20px;
+    }
+
+    .btn {
+        margin-top: auto;
+        display: block;
+        width: 100%;
+        padding: 12px;
+        background: var(--accent);
+        color: #000;
+        text-align: center;
+        text-decoration: none;
+        font-weight: bold;
+        border-radius: 8px;
+        transition: 0.3s;
+        box-sizing: border-box;
+    }
+
+    .btn:hover {
+        background: #fff;
+        transform: scale(1.02);
+    }
+
+    #noResults {
+        display: none;
+        text-align: center;
+        grid-column: 1 / -1;
+        padding: 50px;
+        color: var(--text-dim);
+        font-size: 1.2rem;
+    }
+</style>
+</head>
+<body>
+
+<div class="header">
+    <h1>PRO-ARCHIVE v2.0</h1>
+    <p style="color: var(--text-dim);">Digital Public Domain Collection</p>
+</div>
+
+<div class="controls">
+    <div class="search-wrapper">
+        <input type="text" id="searchInput" placeholder="Search by title or author...">
+    </div>
+    
+    <div class="filter-group">
+        <button class="filter-btn active" data-filter="all">All Works</button>
+        <button class="filter-btn" data-filter="Adventure">Adventure</button>
+        <button class="filter-btn" data-filter="Technical/Detective">Technical</button>
+      
+        
+    </div>
+</div>
+
+<div class="library-grid" id="bookGrid">
+
+    <!-- Book 1 -->
+    <div class="book-card" data-category="Cosmic Horror">
+        <div class="cover-wrap">
+            <img src="https://www.gutenberg.org/cache/epub/8492/pg8492.cover.medium.jpg">
+        </div>
+        <div class="info">
+            <div class="category">Cosmic Horror</div>
+            <h2 class="title">The King in Yellow</h2>
+            <p class="author">Robert W. Chambers</p>
+            <a href="log_read.php?book_name=The King in Yellow&url=https://www.gutenberg.org/cache/epub/8492/pg8492-images.html" class="btn" target="_blank">READ NOW</a>
+        </div>
+    </div>
+
+    <!-- Book 2 -->
+    <div class="book-card" data-category="Technical/Detective">
+        <div class="cover-wrap">
+            <img src="https://www.gutenberg.org/cache/epub/61262/pg61262.cover.medium.jpg">
+        </div>
+        <div class="info">
+            <div class="category">Technical</div>
+            <h2 class="title">Poirot Investigates</h2>
+            <p class="author">Agatha Christie</p>
+            <a href="log_read.php?book_name=Poirot Investigates&url=https://www.gutenberg.org/cache/epub/61262/pg61262-images.html" class="btn" target="_blank">READ NOW</a>
+        </div>
+    </div>
+
+
+
+
+
+<!-- Book 2 -->
+<div class="book-card" data-category="Technical/Detective">
+    <div class="cover-wrap">
+        <img src="https://www.gutenberg.org/cache/epub/23/pg23.cover.medium.jpg">
+    </div>
+    <div class="info">
+        <div class="category">History - American</div>
+        <h2 class="title">Narrative of the Life of Frederick Douglass</h2>
+        <p class="author">Frederick Douglass</p>
+        <a href="log_read.php?book_name=Narrative of the Life of Frederick Douglass&url=https://www.gutenberg.org/ebooks/23" class="btn" target="_blank">READ NOW</a>
+    </div>
+</div>
+
+
+
+<!-- Book 1 -->
+<div class="book-card">
+    <div class="cover-wrap">
+        <img src="https://www.gutenberg.org/cache/epub/408/pg408.cover.medium.jpg">
+    </div>
+    <div class="info">
+        <div class="category">History - American</div>
+        <h2 class="title">The Souls of Black Folk</h2>
+        <p class="author">W. E. B. Du Bois</p>
+        <a href="https://www.gutenberg.org/ebooks/408" class="btn" target="_blank">READ NOW</a>
+    </div>
+</div>
+
+<!-- Book 2 -->
+<div class="book-card">
+    <div class="cover-wrap">
+        <img src="https://www.gutenberg.org/cache/epub/23/pg23.cover.medium.jpg">
+    </div>
+    <div class="info">
+        <div class="category">History - American</div>
+        <h2 class="title">Narrative of the Life of Frederick Douglass</h2>
+        <p class="author">Frederick Douglass</p>
+        <a href="https://www.gutenberg.org/ebooks/23" class="btn" target="_blank">READ NOW</a>
+    </div>
+</div>
+
+<!-- Book 3 -->
+<div class="book-card">
+    <div class="cover-wrap">
+        <img src="https://www.gutenberg.org/cache/epub/58031/pg58031.cover.medium.jpg">
+    </div>
+    <div class="info">
+        <div class="category">History - American</div>
+        <h2 class="title">JFK Assassination Report</h2>
+        <p class="author">Warren Commission</p>
+        <a href="https://www.gutenberg.org/ebooks/58031" class="btn" target="_blank">READ NOW</a>
+    </div>
+</div>
+
+<!-- Book 4 -->
+<div class="book-card">
+    <div class="cover-wrap">
+        <img src="https://www.gutenberg.org/cache/epub/20203/pg20203.cover.medium.jpg">
+    </div>
+    <div class="info">
+        <div class="category">History - American</div>
+        <h2 class="title">Autobiography of Benjamin Franklin</h2>
+        <p class="author">Benjamin Franklin</p>
+        <a href="https://www.gutenberg.org/ebooks/20203" class="btn" target="_blank">READ NOW</a>
+    </div>
+</div>
+
+<!-- Book 5 -->
+<div class="book-card">
+    <div class="cover-wrap">
+        <img src="https://www.gutenberg.org/cache/epub/245/pg245.cover.medium.jpg">
+    </div>
+    <div class="info">
+        <div class="category">History - American</div>
+        <h2 class="title">Life on the Mississippi</h2>
+        <p class="author">Mark Twain</p>
+        <a href="https://www.gutenberg.org/ebooks/245" class="btn" target="_blank">READ NOW</a>
+    </div>
+</div>
+
+<!-- Book 6 -->
+<div class="book-card">
+    <div class="cover-wrap">
+        <img src="https://www.gutenberg.org/cache/epub/815/pg815.cover.medium.jpg">
+    </div>
+    <div class="info">
+        <div class="category">History - American</div>
+        <h2 class="title">Democracy in America</h2>
+        <p class="author">Alexis de Tocqueville</p>
+        <a href="https://www.gutenberg.org/ebooks/815" class="btn" target="_blank">READ NOW</a>
+    </div>
+</div>
+
+<!-- Book 7 -->
+<div class="book-card">
+    <div class="cover-wrap">
+        <img src="https://www.gutenberg.org/cache/epub/851/pg851.cover.medium.jpg">
+    </div>
+    <div class="info">
+        <div class="category">History - American</div>
+        <h2 class="title">Mary Rowlandson Narrative</h2>
+        <p class="author">Mary White Rowlandson</p>
+        <a href="https://www.gutenberg.org/ebooks/851" class="btn" target="_blank">READ NOW</a>
+    </div>
+</div>
+
+<!-- Book 8 -->
+<div class="book-card">
+    <div class="cover-wrap">
+        <img src="https://www.gutenberg.org/cache/epub/45502/pg45502.cover.medium.jpg">
+    </div>
+    <div class="info">
+        <div class="category">History - American</div>
+        <h2 class="title">How the Other Half Lives</h2>
+        <p class="author">Jacob A. Riis</p>
+        <a href="https://www.gutenberg.org/ebooks/45502" class="btn" target="_blank">READ NOW</a>
+    </div>
+</div>
+
+<!-- Book 9 -->
+<div class="book-card">
+    <div class="cover-wrap">
+        <img src="https://www.gutenberg.org/cache/epub/4367/pg4367.cover.medium.jpg">
+    </div>
+    <div class="info">
+        <div class="category">History - American</div>
+        <h2 class="title">Memoirs of U.S. Grant</h2>
+        <p class="author">Ulysses S. Grant</p>
+        <a href="https://www.gutenberg.org/ebooks/4367" class="btn" target="_blank">READ NOW</a>
+    </div>
+</div>
+
+<!-- Book 10 -->
+<div class="book-card">
+    <div class="cover-wrap">
+        <img src="https://www.gutenberg.org/cache/epub/147/pg147.cover.medium.jpg">
+    </div>
+    <div class="info">
+        <div class="category">History - American</div>
+        <h2 class="title">Common Sense</h2>
+        <p class="author">Thomas Paine</p>
+        <a href="https://www.gutenberg.org/ebooks/147" class="btn" target="_blank">READ NOW</a>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+<!-- Book 1 -->
+<div class="book-card">
+<div class="cover-wrap">
+<img src="https://www.gutenberg.org/cache/epub/2701/pg2701.cover.medium.jpg">
+</div>
+<div class="info">
+<div class="category">Adventure</div>
+<h2 class="title">Moby Dick; Or, The Whale</h2>
+<p class="author">Herman Melville</p>
+<a href="https://www.gutenberg.org/ebooks/2701" class="btn" target="_blank">READ NOW</a>
+</div>
+</div>
+
+<!-- Book 2 -->
+<div class="book-card">
+<div class="cover-wrap">
+<img src="https://www.gutenberg.org/cache/epub/1184/pg1184.cover.medium.jpg">
+</div>
+<div class="info">
+<div class="category">Adventure</div>
+<h2 class="title">The Count of Monte Cristo</h2>
+<p class="author">Alexandre Dumas</p>
+<a href="https://www.gutenberg.org/ebooks/1184" class="btn" target="_blank">READ NOW</a>
+</div>
+</div>
+
+<!-- Book 3 -->
+<div class="book-card">
+<div class="cover-wrap">
+<img src="https://www.gutenberg.org/cache/epub/1259/pg1259.cover.medium.jpg">
+</div>
+<div class="info">
+<div class="category">Adventure</div>
+<h2 class="title">Twenty Years After</h2>
+<p class="author">Alexandre Dumas</p>
+<a href="https://www.gutenberg.org/ebooks/1259" class="btn" target="_blank">READ NOW</a>
+</div>
+</div>
+
+<!-- Book 4 -->
+<div class="book-card">
+<div class="cover-wrap">
+<img src="https://www.gutenberg.org/cache/epub/76/pg76.cover.medium.jpg">
+</div>
+<div class="info">
+<div class="category">Adventure</div>
+<h2 class="title">Adventures of Huckleberry Finn</h2>
+<p class="author">Mark Twain</p>
+<a href="https://www.gutenberg.org/ebooks/76" class="btn" target="_blank">READ NOW</a>
+</div>
+</div>
+
+<!-- Book 5 -->
+<div class="book-card">
+<div class="cover-wrap">
+<img src="https://www.gutenberg.org/cache/epub/74/pg74.cover.medium.jpg">
+</div>
+<div class="info">
+<div class="category">Adventure</div>
+<h2 class="title">The Adventures of Tom Sawyer</h2>
+<p class="author">Mark Twain</p>
+<a href="https://www.gutenberg.org/ebooks/74" class="btn" target="_blank">READ NOW</a>
+</div>
+</div>
+
+<!-- Book 6 -->
+<div class="book-card">
+<div class="cover-wrap">
+<img src="https://www.gutenberg.org/cache/epub/829/pg829.cover.medium.jpg">
+</div>
+<div class="info">
+<div class="category">Adventure</div>
+<h2 class="title">Gulliver's Travels</h2>
+<p class="author">Jonathan Swift</p>
+<a href="https://www.gutenberg.org/ebooks/829" class="btn" target="_blank">READ NOW</a>
+</div>
+</div>
+
+<!-- Book 7 -->
+<div class="book-card">
+<div class="cover-wrap">
+<img src="https://www.gutenberg.org/cache/epub/120/pg120.cover.medium.jpg">
+</div>
+<div class="info">
+<div class="category">Adventure</div>
+<h2 class="title">Treasure Island</h2>
+<p class="author">Robert Louis Stevenson</p>
+<a href="https://www.gutenberg.org/ebooks/120" class="btn" target="_blank">READ NOW</a>
+</div>
+</div>
+
+<!-- Book 8 -->
+<div class="book-card">
+<div class="cover-wrap">
+<img src="https://www.gutenberg.org/cache/epub/55/pg55.cover.medium.jpg">
+</div>
+<div class="info">
+<div class="category">Adventure</div>
+<h2 class="title">The Wonderful Wizard of Oz</h2>
+<p class="author">L. Frank Baum</p>
+<a href="https://www.gutenberg.org/ebooks/55" class="btn" target="_blank">READ NOW</a>
+</div>
+</div>
+
+<!-- Book 9 -->
+<div class="book-card">
+<div class="cover-wrap">
+<img src="https://www.gutenberg.org/cache/epub/16/pg16.cover.medium.jpg">
+</div>
+<div class="info">
+<div class="category">Adventure</div>
+<h2 class="title">Peter Pan</h2>
+<p class="author">J. M. Barrie</p>
+<a href="https://www.gutenberg.org/ebooks/16" class="btn" target="_blank">READ NOW</a>
+</div>
+</div>
+
+<!-- Book 10 -->
+<div class="book-card">
+<div class="cover-wrap">
+<img src="https://www.gutenberg.org/cache/epub/215/pg215.cover.medium.jpg">
+</div>
+<div class="info">
+<div class="category">Adventure</div>
+<h2 class="title">The Call of the Wild</h2>
+<p class="author">Jack London</p>
+<a href="https://www.gutenberg.org/ebooks/215" class="btn" target="_blank">READ NOW</a>
+</div>
+</div>
+
+<!-- Adventure Books Collection -->
+
+<!-- Book 11 -->
+<div class="book-card" data-category="Adventure">
+    <div class="cover-wrap">
+        <img src="https://www.gutenberg.org/cache/epub/164/pg164.cover.medium.jpg">
+    </div>
+    <div class="info">
+        <div class="category">Adventure</div>
+        <h2 class="title">Twenty Thousand Leagues Under the Sea</h2>
+        <p class="author">Jules Verne</p>
+        <a href="https://www.gutenberg.org/cache/epub/164/pg164-images.html" class="btn" target="_blank">READ NOW</a>
+    </div>
+</div>
+
+<!-- Book 12 -->
+<div class="book-card" data-category="Adventure">
+    <div class="cover-wrap">
+        <img src="https://www.gutenberg.org/cache/epub/521/pg521.cover.medium.jpg">
+    </div>
+    <div class="info">
+        <div class="category">Adventure</div>
+        <h2 class="title">Robinson Crusoe</h2>
+        <p class="author">Daniel Defoe</p>
+        <a href="https://www.gutenberg.org/cache/epub/521/pg521-images.html" class="btn" target="_blank">READ NOW</a>
+    </div>
+</div>
+
+<!-- Book 13 -->
+<div class="book-card" data-category="Adventure">
+    <div class="cover-wrap">
+        <img src="https://www.gutenberg.org/cache/epub/1257/pg1257.cover.medium.jpg">
+    </div>
+    <div class="info">
+        <div class="category">Adventure</div>
+        <h2 class="title">The Three Musketeers</h2>
+        <p class="author">Alexandre Dumas</p>
+        <a href="https://www.gutenberg.org/cache/epub/1257/pg1257-images.html" class="btn" target="_blank">READ NOW</a>
+    </div>
+</div>
+
+<!-- Book 14 -->
+<div class="book-card" data-category="Adventure">
+    <div class="cover-wrap">
+        <img src="https://www.gutenberg.org/cache/epub/65238/pg65238.cover.medium.jpg">
+    </div>
+    <div class="info">
+        <div class="category">Adventure</div>
+        <h2 class="title">The Secret of Chimneys</h2>
+        <p class="author">Agatha Christie</p>
+        <a href="https://www.gutenberg.org/cache/epub/65238/pg65238-images.html" class="btn" target="_blank">READ NOW</a>
+    </div>
+</div>
+
+<!-- Book 15 -->
+<div class="book-card" data-category="Adventure">
+    <div class="cover-wrap">
+        <img src="https://www.gutenberg.org/cache/epub/1695/pg1695.cover.medium.jpg">
+    </div>
+    <div class="info">
+        <div class="category">Adventure</div>
+        <h2 class="title">The Man Who Was Thursday</h2>
+        <p class="author">G. K. Chesterton</p>
+        <a href="https://www.gutenberg.org/cache/epub/1695/pg1695-images.html" class="btn" target="_blank">READ NOW</a>
+    </div>
+</div>
+
+<!-- Book 16 -->
+<div class="book-card" data-category="Adventure">
+    <div class="cover-wrap">
+        <img src="https://www.gutenberg.org/cache/epub/3011/pg3011.cover.medium.jpg">
+    </div>
+    <div class="info">
+        <div class="category">Adventure</div>
+        <h2 class="title">The Lady of the Lake</h2>
+        <p class="author">Walter Scott</p>
+        <a href="https://www.gutenberg.org/cache/epub/3011/pg3011-images.html" class="btn" target="_blank">READ NOW</a>
+    </div>
+</div>
+
+<!-- Book 17 -->
+<div class="book-card" data-category="Adventure">
+    <div class="cover-wrap">
+        <img src="https://www.gutenberg.org/cache/epub/23962/pg23962.cover.medium.jpg">
+    </div>
+    <div class="info">
+        <div class="category">Adventure</div>
+        <h2 class="title">Journey to the West</h2>
+        <p class="author">Wu Cheng'en</p>
+        <a href="https://www.gutenberg.org/cache/epub/23962/pg23962-images.html" class="btn" target="_blank">READ NOW</a>
+    </div>
+</div>
+
+<!-- Book 18 -->
+<div class="book-card" data-category="Adventure">
+    <div class="cover-wrap">
+        <img src="https://www.gutenberg.org/cache/epub/6133/pg6133.cover.medium.jpg">
+    </div>
+    <div class="info">
+        <div class="category">Adventure</div>
+        <h2 class="title">Arsène Lupin, Gentleman-Burglar</h2>
+        <p class="author">Maurice Leblanc</p>
+        <a href="https://www.gutenberg.org/cache/epub/6133/pg6133-images.html" class="btn" target="_blank">READ NOW</a>
+    </div>
+</div>
+
+<!-- Book 19 -->
+<div class="book-card" data-category="Adventure">
+    <div class="cover-wrap">
+        <img src="https://www.gutenberg.org/cache/epub/236/pg236.cover.medium.jpg">
+    </div>
+    <div class="info">
+        <div class="category">Adventure</div>
+        <h2 class="title">The Jungle Book</h2>
+        <p class="author">Rudyard Kipling</p>
+        <a href="https://www.gutenberg.org/cache/epub/236/pg236-images.html" class="btn" target="_blank">READ NOW</a>
+    </div>
+</div>
+
+<!-- Book 20 -->
+<div class="book-card" data-category="Adventure">
+    <div class="cover-wrap">
+        <img src="https://www.gutenberg.org/cache/epub/103/pg103.cover.medium.jpg">
+    </div>
+    <div class="info">
+        <div class="category">Adventure</div>
+        <h2 class="title">Around the World in 80 Days</h2>
+        <p class="author">Jules Verne</p>
+        <a href="https://www.gutenberg.org/cache/epub/103/pg103-images.html" class="btn" target="_blank">READ NOW</a>
+    </div>
+</div>
+
+<!-- Book 21 -->
+<div class="book-card" data-category="Adventure">
+    <div class="cover-wrap">
+        <img src="https://www.gutenberg.org/cache/epub/10636/pg10636.cover.medium.jpg">
+    </div>
+    <div class="info">
+        <div class="category">Adventure</div>
+        <h2 class="title">The Travels of Marco Polo</h2>
+        <p class="author">Marco Polo</p>
+        <a href="https://www.gutenberg.org/cache/epub/10636/pg10636-images.html" class="btn" target="_blank">READ NOW</a>
+    </div>
+</div>
+
+<!-- Book 22 -->
+<div class="book-card" data-category="Adventure">
+    <div class="cover-wrap">
+        <img src="https://www.gutenberg.org/cache/epub/72/pg72.cover.medium.jpg">
+    </div>
+    <div class="info">
+        <div class="category">Adventure</div>
+        <h2 class="title">Thuvia, Maid of Mars</h2>
+        <p class="author">Edgar Rice Burroughs</p>
+        <a href="https://www.gutenberg.org/cache/epub/72/pg72-images.html" class="btn" target="_blank">READ NOW</a>
+    </div>
+</div>
+
+<!-- Book 23 -->
+<div class="book-card" data-category="Adventure">
+    <div class="cover-wrap">
+        <img src="https://www.gutenberg.org/cache/epub/910/pg910.cover.medium.jpg">
+    </div>
+    <div class="info">
+        <div class="category">Adventure</div>
+        <h2 class="title">White Fang</h2>
+        <p class="author">Jack London</p>
+        <a href="https://www.gutenberg.org/cache/epub/910/pg910-images.html" class="btn" target="_blank">READ NOW</a>
+    </div>
+</div>
+
+<!-- Book 24 -->
+<div class="book-card" data-category="Adventure">
+    <div class="cover-wrap">
+        <img src="https://www.gutenberg.org/cache/epub/51252/pg51252.cover.medium.jpg">
+    </div>
+    <div class="info">
+        <div class="category">Adventure</div>
+        <h2 class="title">Arabian Nights Volume 1</h2>
+        <p class="author">Anonymous</p>
+        <a href="https://www.gutenberg.org/cache/epub/51252/pg51252-images.html" class="btn" target="_blank">READ NOW</a>
+    </div>
+</div>
+
+<!-- Book 25 -->
+<div class="book-card" data-category="Adventure">
+    <div class="cover-wrap">
+        <img src="https://www.gutenberg.org/cache/epub/18857/pg18857.cover.medium.jpg">
+    </div>
+    <div class="info">
+        <div class="category">Adventure</div>
+        <h2 class="title">Journey to the Centre of the Earth</h2>
+        <p class="author">Jules Verne</p>
+        <a href="https://www.gutenberg.org/cache/epub/18857/pg18857-images.html" class="btn" target="_blank">READ NOW</a>
+    </div>
+</div>
+
+<!-- Book 25 -->
+<div class="book-card" data-category="Adventure">
+    <div class="cover-wrap">
+        <img src="https://www.gutenberg.org/cache/epub/18857/pg18857.cover.medium.jpg">
+    </div>
+    <div class="info">
+        <div class="category">Adventure</div>
+        <h2 class="title">Journey to the Centre of the Earth</h2>
+        <p class="author">Jules Verne</p>
+        <a href="https://www.gutenberg.org/cache/epub/18857/pg18857-images.html" class="btn" target="_blank">READ NOW</a>
+    </div>
+</div>
+
+
+
+
+ <!-- Book 4 -->
+        <div class="book-card" data-category="Technical/Detective">
+            <div class="cover-wrap">
+                <img src="https://www.bakertilly.com/_next/image?url=https%3A%2F%2Fimages.prismic.io%2Fbakertilly%2FZxAvs4F3NbkBXmmQ_Artificialintelligenceinpalmofmanshand.jpg%3Fauto%3Dformat%252Ccompress%26rect%3D531%252C0%252C864%252C1080%26w%3D768%26h%3D960&amp;w=3840&amp;q=75" jsaction="" class="sFlh5c FyHeAf iPVvYb">
+            </div>
+            <div class="info">
+                <div class="category">Psychological</div>
+                <h2 class="title">The Yellow Wallpaper</h2>
+                <p class="author">Charlotte P. Gilman</p>
+                <a href="https://repo.darmajaya.ac.id/5094/1/Lecture-AI.pdf"
+                   class="btn"
+                   target="_blank"
+                   rel="noopener noreferrer">
+                   READ NOW
+                </a>
+            </div>
+</div>
+
+
+
+
+
+
+
+
+
+<!-- Book 4 -->
+        <div class="book-card" data-category="Technical/Detective">
+            <div class="cover-wrap">
+                <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxASEBISExIWFhUXFxYVGBUXEhgbFxYQFRgXGBcYFhcYHSggGBomGxUVITEhJSkrLi8uGB8zODMtNygtLisBCgoKDg0OGxAQGy8lICUvKy0tLSstMi0tLS0tLi0rLS0vLS0yLS0tLS0rLystLS0tLSstLS0tLS0tLS0tLS0vLf/AABEIAOEA4QMBIgACEQEDEQH/xAAcAAEAAQUBAQAAAAAAAAAAAAAABAIDBQYHAQj/xABIEAABAwEFAwgGBggEBwEAAAABAAIDEQQFEiExBkFxEzJRYXKBscEiMzRDkaEUI0KC0fAHFSRSkrLC4RZTYnQ1c4Ois9LTF//EABoBAQADAQEBAAAAAAAAAAAAAAABAwQCBgX/xAAuEQACAQIBCwQCAwEAAAAAAAAAAQIDEQQSExQhMTIzQVGBsQVhcfAioZHR4UL/2gAMAwEAAhEDEQA/ANiREX0zyQREQBERAEREAREQBERAEREAREQBERAEXlVcZE46NJ4AnwQlayhFKZds50if/AR4qzPC5ji1wo4UqD1ivgVF0S4SSu0W0RFJyEREAREQBERAEREAREQBEUu6YGyTxsdzSc86bifJQ3ZXOoxcpKK5kRFvcVxWUU+qHe5x8SpLLsgGkUf8A/BUaRHofRXplTm0c6qrzLNI7RjjwaT4BdHZG0aADgFWudJ9ixel9Zfr/TnjLptB0hf3tp4qQzZ61H3dOL2+RW9ooeIl0LF6ZT5tmmM2WtB1LB94+QUhmyT98rRwaT5hbWi5deZavT6C5fs1tmyTN8rjwaB41Uhmy1nGpeeLh5BZxFznZ9SxYOgv+TFs2eso93Xi534q+y6bONIWd7QfFTUXLnJ8yxUaa2RX8FqOzsboxo4NAV1eEoHBcliSWw9WAvK5WSTOeS6pplUAZADo6ln1Dk9Ye7wUxk47DmdONRWkrmoXzYY4gzDXMkGprpRYtZ3aXmx8XeSwS3Um3G7PP42EY1moqy1eAiIrDKEREAREQBERAEREAWQuD2mLtH+UrHrIXB7TF2j4Fcz3WW0OLH5Xk31mgVSoBoKnoWnWz9JNiaaRtklz5waA0jpBca/JYFFvYelnUjDeZuiLQT+k2It9GzPLt4L2hvcRUnLqCjH9JEtHUs7N9PTOXRXL0vkus1LoV6TT6nR0XMP/ANDthyEUNenC/wAMa8btneDic4m9QjyHCpKnNSI0qB1BFyuTaa8TWk4HBjPl6KsyXpeTqH6Y8DqDP/VM0+pGlR6M6zRerj0lqthIJt1o7n0+QyVZMrxhknmkHQ+VxFemlaKc17kaT7HXHSNGpA4lQp75szK4po+AeCcuoZrlH0OOpq0E+fermFM0upGkvodL/wATWL/OGlea7f3fJXLBflnmfgjdU0rm0gHqFc6rmLw2iqsFswyxFriKPZUg0OEOFRnlp0qc0iFiZX1nX1Ef6w93gpaiv557vBUGw1jaXSPi7yWBWd2m0j4u8lgluo7iPPY/jvt4CIitMYREQBERAEREAREQBT7g9pi7XkVAU+4faYu15Fcz3WW0eJH5Xk3C+58FktD6NOGGR1Hc04WE0dTcuC2CPEM8qZLvd8RB1lnaWl9YpBgGrqsIwjrOi4Ndr8j3LPQ2M+xjN6JNbG1pyXgXrGkklXmx9KtM1g1oFFe5Q6q25gqqmiv53ISSYrUN4Vb7RUZBRnNFFddGQaOBFOkUPwK5Ors8ZO6tMleEridR8FX9CeD6twIIFC0j0joD15j4hBZX0BDaAguBOQLRTOp3Zj4pqJsy09p1xL1gpmSaqp0Lm0q2lQHDMZtOhy0VNT0IDx3Wf7qu6GftUGdBysef3wqXwnVV3fCXzQtH2nsHCrhu3pyC2nYlFfzz3eClKM/nnu8FjPqmr7TaR8XeSwKzu02kfF3ksEt1HcR57H8d9vAREVpjCIiAIiIAiIgCIiAKfcPtMXa8ioCn3D7TF2vIrme6y2jxI/K8m9TTNYxz3GjWtLiehrRU/ILhE1pbNJJK0Ycb3vp0Y3F1MuK7RtL7DaswP2ebM6D6t2q4PdjvSWagtTZ9nGS/KKMzZmYag6FSbHaAx1aA65HShBHmojX58FVqrTMnYycVtc1oADKVaebnVmCmevuxUdZ6qUWi8XOBbQYXPx6Z4sOHUmugHGigOcnKA6JY6ymS3Px5mmQAFB0ADyV62Wlz6l1CeAHgocbqDKiuYxpqosLl83lK6tXmpcHntjQ/IK7Ha35UecgQBXIA0B8B8FEYw1r+QrrWmuaWRKbEsriRU1AFBU6NGgCqjcOheEdK8fWiAuPlFKKi73uE8JGvKR0OEmhximQzPBWy/oVyw+viJ/zI60zNA8VoN6gczsajO557vBSVGdzz3eCyH1TVtptI+LvJYJZ3abSPi7yWCW6juI89j+PLt4CIitMYREQBERAEREAREQBT7h9pi7XkVAU64vaYu15Fcz3WW0eJH5Xk3K+afRZ8WnIyV4YDVcLsdlDQDUk07l3S+T+yz/8AKk/kPSuSw2ZoAAAyWegrpn1sfNRlG/uQY466qtp+KyYhTkVfkHz9JXQxGFxPUqhZ6GiywYVdDEyRpC6GMbYHFS2WAChqa8FMaqlGQzpYldCwWdCqjh6VcXtUzZOl+xZwahUPgJCkleVTNkPF+xClhoFeusHloSACQ9hAcSASHCgJoaDroVdeqYH4ZI3Z+i9hyFTk4aDeVEoWR3TxGVJKx1pRnc893gpKjHnnu8FhPumrbTaR8XeSwSzu03u+LvJYJbqO4jz2P48u3hBERWmMIiIAiIgCIiAIiIAp1xe0xdryKgqdcXtMXa8iuZ7rLKPEj8rybjfcTn2S0Ma3E50UjQ394lhAHzXGr+lcyzvc0lpBZmDQir2g/IkLuY0XPJbsbaWGFzcQkGEitNd4O476rNQdkz62PhecH95GlXveL4Z3uGbW2cvwVOEu5VorxoV4+/ZW42OhaJQ+JjGh9WnlgS3E6m4NNVsc+wjY45WyumcZWiPlXva5zY2moa0gUGY6M15btmYpTI7E4OfyRq0gGN8NcLmZZHM1rVX5V9aMLpRWpr7qNTZfMkTrQXhoe6WNgDpDyTPq6l2IjJtBXSuavx7SSPETY42Oe90rDR/o4o8JxNdvaQ6qzDtmIwHjlZS9z2yiUubjbKxuGoNKZgmoOWfBSYLmAdC8yPe6LlKFxBLjLSuLLdTIClFOs4eb6a/8NdtN+zPZagwRsMbZKDG4StwGmItI3tqQR1VV2e+J4oIS7kMbmFxDpXAuaAMOEUzcRqTkCsxa9lg2WTlpJXEskjwuLDgbMKuo5oqcqUqTRRhs0PQpPKCIzCXehV0JNcJq3KmlRnRNYeQnZmPn2hmNTFEwtEDJzicQQ1wJIy1OXyVVovmaTlGwxtLWxNe8ucQ76xmIBlN4HT8llrPs3G1r2hziHQNs5NG5MaCMQy52a8n2UjNMEsjKxtikDcP1jWDCC6oyNN4UazpKBrdhvAxta8Crm2EPq5zs6PpQitO/VTv8RSsL+WiaPqeXYGuJyqGhrid9Tu061nP8Fs5LFidhMH0StG7jixU/e+SuWy4oy4yBuMizGziI0ax28EuAq0k7xoou+R24xe0wkN52oTQRyxxgSh7qtc4kBrcVM9Dp0jNbJdNnL7TA0D3jSeoMOI/JpWu3Ds/KLTFI+F0TImvyktAlc4uGENbhyaxtTuH4dB2eiDbSwgAH0tB/pKOX4smEFnY29vJuSjHnnu8FJUY8893gsJ941Xab3fF/ksGs5tN7vi/+lYNbqO4jz2P48u3hBERWmMIiIAiIgCIiAIiIAp1x+0xdryKgqdcftMXa/Fcy3WWUeJH5Xk38aLTbpIE8fRX8VuQ0XPobVEXUxtJ0piGqyUldM+1jHaUH95GegjbE3BKW+nIw4cQNADm49A3KXIRykYeDiq/ATyeeXogAHSulVrTrVD++wffGnxXr3RZem0V/1DNWZBnVWyskZ9zCXPIZ9byX2wz0nYvRNASK/wBlhb+FHR4gBIWAyAU52etN9FbZamgPaHCjhhOYP5KgYa1zXcI2dyivVyo5KX3+/c2C9LuebWXvaeSLmVdUUw0aDXOtK5KRarNifG3CA7lSGudAAzk2tJwUB9MZZLWS91KYiRxyTlHkj0nZaZnLh0Kch6tZzpELv8drvt+9jao4mOfC9zMy2aoMWAkNpSramh61bs87SyN/JR1fNgIwZBhAGS1z6RJWpe+ueeI79d+9X22h1BQnI1Aro7pHQVy6ZZHEp8vur+v2bBBZYw5gwNpy8jc2g+iGuoD1KmCKKURFzGt+tcz0RQEBpLQenMD8lYX6VJkcbtSececdTxSO0kUB9JoOLCSaEqMh9SxV49PuozFqi+okc6Fkbg5oFGgZV/Oe9Rrhd9ezrxV+BVm0XjjbgazCCQXHGXE00zduUy4G0mHA+ChpqLudRalVjk+3nsbOox557vBSVFPPPd4LKfWNW2m93xf/AErBrObTe74v8lg1uo7iPPY/jy7eEERFaYwiIgCIiAIiIAiIgCnXH7TF2vxUFTbk9pi7QXMt1llHiR+V5Ni27lLbrtrgSDyEmYNDmKZHdquPMtgfGw6VA8F2LbqNrrrtocSByEpqNataXAcCQB3r5zsFofQDEaDLXQdQWWk7Jn28XTy2jaRQVVUUg6Fg2Wx4zr8slcbbX9I4ZK3KMzoGzRSs35KS2Rp0IK1H9YPrupwV2G9y11cI7+hSqhTLCX2G2Z01XrpSN5+K1o3+f3fFXhfbaZjPqOS6ziK9EmZ8Wh25xHevI55Aee7+L8ViI70z5n/d/ZVtvQH7JATLRKw0+hmRapaU5Q/LxXht0w+2T3D8Fhf1lxPcFcF6NpmD8P7qMtE6PNGVdbpdcZWRuG/Z47TACcbXvZEQdwkcBiBArUfnpWu/rCPLMjqpnkp9w25httlaK+tZnT89K5m1kssoQmqi1PadlUU+sd3eClKIfWO7vBYz7Zq+03u/veSwaze0vu/vf0rCLfR3Eeex3Hl28IIiKwxhERAEREAREQBERAFNuX2iLtBQlNuX2iLtBRLdZZS4kfleTYtvP+FW7/by/wAhXzZZHUX0ptz/AMKt/wDtp/8AxuXzE15CxU9h6CvtRlmuHUqrGwvy0pvp4LHw2mhzWRs1rblmPJWFKJrLrzqX5b8v7qn6A0EjEerJe/T21z06gVV9JDtBTioJ1D9Wg51OXBVvu9jRWp+P4LwTOAyVQlqNT3DJBqLjYhu0VxsJNQqI9VcbJVQSUNZqhqqHHeM+CvRy0GdEBZdCcVdcvhmsvsyKW6yZj10e8j7Qyy+CxrySshso79vsopX61n8wz7te5GStp3lRD6x3d4KWoZ9Y7u8FQbDV9pvd/e8lhFm9pfd/e8lhFvo7iPO47jy7eEERFYZAiIgCIiAIiIAiIgCm3L7RF2woSmXN7RF2wolusspcSPyjY9u2A3XbqitLPMe9rC4fMBfM0EWJwGdF9P7YROfdttY1pc51nnaGtFSXOjcAAN5zXzbYsJYDke/5HoWKnsPQV9qJDII26Ad+aNpSlArTXEVpn19CrDqqwpL8bADX4o6VgJVh8lD1K0X4twCC5ccHE1BUyJwbnXXVQcRAyV1jxlWvcgMpy7d1afjwVTCDvz4LHRuzy+Cm2WWpz061BJeYNcx+PwXp/PFUEAZincrzJQBnRCSPLE+tTm3d1LLbKuw26yE/5sYr2nU81BkeSPwUnZiMPttmY4kVlZmDQgtOIU7wFD2Erad/UM+sd3eCmKE71ju7wVBsNY2l9397yWEWb2l1j+95LCLfR3Eedx3Hl28IIiKwyBERAEREAREQBFbklAUKe8SNAlzpRbMiplze0Rdtq1Ga+XqTs1ez3W2zNJ1laPmq5TVmX0qMstP3R2UHJY+3XHY5yDNZopDSgL4mkgE1NCRlmsi1erAektc1qbYO63V/ZWtqDm0ubSu+gNK9yxz/ANF920AHKjhLqek1B+S3ZFOUznIj0OeSfohsJrSe0iv+qL/5rFWj9CzauMdtcBlhD4Q4jpxFr21z6AO9dZRTls5zUehxeX9DFqFcNtjPRWJ4rxo40+ahz/osvNnNEL+zKc/42tXdF4VOWyMzE4E/YK9GH2VxFPsyRGmnQ+qjO2dtrR6VlnH/AEX+IFF9CHF1IC7qU5xkZlHzhJZ5GCr2Ob2mloPeQo/KDICi+madKjT3bA8UfDG4a0dG059OYTOEZn3PnGS0U5xp35rKbFyYr0sQFSeUrl0YXVPADP4rtc2yd3PFHWKznd6hnkFVdGzFhssjpILOyN7tXAZgGlQ2vNbkMhQJlqxCou5l1Bd6x3d4KcoL/WO7vBVmg1jaXWP73ksKs1tLrH97yWFW+juI87juPLt4QREVhkCIiAIiIAiIgKXNBVl9kYVIRCbmNluhhVFkunkpWSxkYmODhUZVGlR0LKoocUztVZrYzJxbV20c6OF3AOb/AFFSY9tZBz7L/DLX5FoWDRVujA0rH11zNli24g+1FM37rSPk5S4tsLC73pb2o3j54aLT1SWDoC5eHiWx9TqLakb/AA39Y3820RHq5RoPwJU+OZrs2uB4EHwXLnWZh1aFa/V8dagUPSMlw8P7lsfVOsf2dZRcsjEreZPK3hK6nwrRSY7ztzdLU49prXeIXLw8i1epUntTOlIufR7TXg3fE7jGf6XBSY9s7SOdZ2O7MhHiCuXRn0LljqD5m8ItRj25b9uzSDslp8SFKi21sh53KN4xk/y1XLhJci1Yik9kkbIiw8W1Fid79g7VW/zAKdBeMD+ZLG7g9p8CubMsUk9jJSgu9Y787lNBWgX1tDaGWyaNrGlrXAA1INMLTu4lTGLlsOalWNNXky/tVMGmKu/H/SsO14KuXnaDaOTLm4SzFoa1xU6hTRWmRgLbSTUbM+Bi5xnVcov7YrREVhlCIiAIiIAiIgCIiAIiIAiIgCIiAIiIAiIgCIiALwgL1EBSYx0D4Kg2dh1aPgFdRCbnkTcPNq3skjwVT3EkkkknUk1J4k6rxEsiXJtWbCIiHIREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREB/9k=">
+            </div>
+            <div class="info">
+                <div class="category">Psychological</div>
+                <h2 class="title">The Yellow Wallpaper</h2>
+                <p class="author">Charlotte P. Gilman</p>
+                <a href="https://fleuret.org/public/lbdl.pdf"
+                   class="btn"
+                   target="_blank"
+                   rel="noopener noreferrer">
+                   READ NOW
+                </a>
+            </div>
+        </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <!-- Book 4 -->
+        <div class="book-card">
+            <div class="cover-wrap">
+                <img src="https://www.gutenberg.org/cache/epub/1952/pg1952.cover.medium.jpg">
+            </div>
+            <div class="info">
+                <div class="category">Psychological</div>
+                <h2 class="title">The Yellow Wallpaper</h2>
+                <p class="author">Charlotte P. Gilman</p>
+                <a href="https://www.gutenberg.org/ebooks/1952"
+                   class="btn"
+                   target="_blank"
+                   rel="noopener noreferrer">
+                   READ NOW
+                </a>
+            </div>
+        </div>
+
+
+
+
+
+
+
+    <!-- No Results Message -->
+    <div id="noResults">No books found matching your search.</div>
+</div>
+
+<script>
+window.onload = () => {
+    const searchInput = document.getElementById('searchInput');
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const cards = document.querySelectorAll('.book-card');
+    const noResults = document.getElementById('noResults');
+
+    function performFilter() {
+        const query = searchInput.value.toLowerCase();
+        const activeFilter = document.querySelector('.filter-btn.active').dataset.filter;
+        let visibleCount = 0;
+
+        cards.forEach(card => {
+            const title = card.querySelector('.title').textContent.toLowerCase();
+            const author = card.querySelector('.author').textContent.toLowerCase();
+            const category = card.getAttribute('data-category');
+
+            const matchesSearch = title.includes(query) || author.includes(query);
+            const matchesCategory = activeFilter === 'all' || category === activeFilter;
+
+            if (matchesSearch && matchesCategory) {
+                card.style.display = "flex";
+                visibleCount++;
+            } else {
+                card.style.display = "none";
+            }
+        });
+
+        noResults.style.display = visibleCount === 0 ? "block" : "none";
+    }
+
+    searchInput.addEventListener('input', performFilter);
+
+    filterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            filterBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            performFilter();
+        });
+    });
+};
+</script>
+
+</body>
+</html>

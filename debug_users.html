@@ -1,0 +1,37 @@
+<?php
+include 'db.php';
+
+echo "<h2>--- Database Connection Check ---</h2>";
+if ($conn) {
+    echo "<p style='color:green;'>✅ Connected to Database: <b>dept_library</b></p>";
+} else {
+    echo "<p style='color:red;'>❌ Connection Failed!</p>";
+}
+
+echo "<h2>--- Users Table Check ---</h2>";
+$query = "SELECT * FROM users";
+$result = mysqli_query($conn, $query);
+
+if ($result) {
+    $count = mysqli_num_rows($result);
+    echo "<p style='color:blue;'>📊 Found <b>$count</b> users in 'users' table.</p>";
+    
+    if ($count > 0) {
+        echo "<table border='1' cellpadding='10'>";
+        echo "<tr><th>ID</th><th>Name</th><th>User ID</th><th>Role</th></tr>";
+        while ($row = mysqli_fetch_assoc($result)) {
+            echo "<tr>";
+            echo "<td>".$row['id']."</td>";
+            echo "<td>".$row['fullname']."</td>";
+            echo "<td>".$row['user_id']."</td>";
+            echo "<td>".$row['role']."</td>";
+            echo "</tr>";
+        }
+        echo "</table>";
+    } else {
+        echo "<p style='color:orange;'>⚠️ Table is EMPTY! Please register some users first.</p>";
+    }
+} else {
+    echo "<p style='color:red;'>❌ Query Failed! Error: " . mysqli_error($conn) . "</p>";
+}
+?>

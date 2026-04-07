@@ -1,0 +1,20 @@
+<?php
+session_start();
+include 'db.php';
+
+if(isset($_GET['book_id']) && isset($_GET['file'])) {
+    $book_id = $_GET['book_id'];
+    $student_id = $_SESSION['user_id'];
+    $file_path = "uploads/pdf/" . $_GET['file'];
+
+    // 1. History-la entry podalam (Reading Log)
+    $log_query = "INSERT INTO reading_log (student_id, book_id) VALUES ('$student_id', '$book_id')";
+    mysqli_query($conn, $log_query);
+
+    // 2. Redirection to PDF
+    header("Location: " . $file_path);
+    exit();
+} else {
+    echo "Invalid Request";
+}
+?>
