@@ -1,6 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>View Users</title>
 
     <style>
@@ -53,15 +55,23 @@
         }
 
         .delete-btn {
-            background: red;
+            background: #ff4d4d;
             color: white;
+        }
+
+        .delete-btn:hover {
+            background: #cc0000;
         }
 
         .logout-btn {
             float: right;
-            background: black;
+            background: #333;
             color: white;
             margin-bottom: 10px;
+        }
+        
+        .logout-btn:hover {
+            background: #000;
         }
     </style>
 </head>
@@ -86,66 +96,68 @@
         </thead>
 
         <tbody id="userTable">
-        </tbody>
+            </tbody>
     </table>
 
 </div>
 
 <script>
+/**
+ * 🔒 Access Control Removed
+ * The logic that checked for "Admin" role has been deleted 
+ * so the page is now accessible to everyone.
+ */
 
-// 🔒 Check Admin Access
-let currentUser = JSON.parse(localStorage.getItem("currentUser"));
-
-if(!currentUser || currentUser.role !== "Admin"){
-    alert("Access Denied!");
-    window.location.href = "login.html";
-}
-
-// 📥 Load Users
-function loadUsers(){
+// 📥 Load Users from LocalStorage
+function loadUsers() {
     let users = JSON.parse(localStorage.getItem("users")) || [];
-    let table = document.getElementById("userTable");
+    let tableBody = document.getElementById("userTable");
 
-    table.innerHTML = "";
+    // Clear current table content
+    tableBody.innerHTML = "";
 
-    if(users.length === 0){
-        table.innerHTML = "<tr><td colspan='5'>No Users Found</td></tr>";
+    if (users.length === 0) {
+        tableBody.innerHTML = "<tr><td colspan='5'>No Users Found</td></tr>";
         return;
     }
 
+    // Build the table rows string
+    let rows = "";
     users.forEach((user, index) => {
-        table.innerHTML += `
+        rows += `
             <tr>
                 <td>${index + 1}</td>
-                <td>${user.fullname}</td>
-                <td>${user.user_id}</td>
-                <td>${user.role}</td>
+                <td>${user.fullname || 'N/A'}</td>
+                <td>${user.user_id || 'N/A'}</td>
+                <td>${user.role || 'User'}</td>
                 <td>
                     <button class="delete-btn" onclick="deleteUser(${index})">Delete</button>
                 </td>
             </tr>
         `;
     });
+    
+    tableBody.innerHTML = rows;
 }
 
-// ❌ Delete User
-function deleteUser(index){
+// ❌ Delete User function
+function deleteUser(index) {
     let users = JSON.parse(localStorage.getItem("users")) || [];
 
-    if(confirm("Are you sure to delete this user?")){
+    if (confirm("Are you sure you want to delete this user?")) {
         users.splice(index, 1);
         localStorage.setItem("users", JSON.stringify(users));
-        loadUsers();
+        loadUsers(); // Refresh the table
     }
 }
 
-// 🚪 Logout
-function logout(){
+// 🚪 Logout function
+function logout() {
     localStorage.removeItem("currentUser");
     window.location.href = "login.html";
 }
 
-// 🔄 Load on Start
+// 🔄 Initial Load
 loadUsers();
 
 </script>
