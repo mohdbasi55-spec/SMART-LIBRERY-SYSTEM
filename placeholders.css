@@ -1,0 +1,24 @@
+/* Simple placeholder styles for e-books and avatars */
+.ebook-placeholder {
+    background: linear-gradient(135deg, #f0f0f0 0%, #e0e0e0 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #666;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.avatar-placeholder {
+    background: linear-gradient(135deg, #ddd 0%, #ccc 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #999;
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    font-weight: bold;
+}
